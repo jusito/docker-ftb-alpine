@@ -1,0 +1,32 @@
+FROM openjdk:8-jre-alpine
+
+EXPOSE 25565/tcp
+
+ENV MY_GROUP_ID=10000 \
+	MY_USER_ID=10000 \
+	MY_NAME=docker \
+	MY_HOME=/home/docker \
+	MY_VOLUME=/home/docker/volume \
+	MY_FILE="FTBServer.zip"
+	MY_SERVER="https://media.forgecdn.net/files/2484/486/FTBInfinityServer_3.0.2.zip" \
+	MY_MD5="90bddc206ef5abe9867f32b20fd7aa11"
+
+VOLUME "${MY_SERVER}"
+
+USER "${MY_USER_ID}:${MY_GROUP_ID}"
+
+COPY ["entrypoint.sh", "${MY_HOME}/entrypoint.sh" ]
+
+RUN apk update && \
+	apk add --no-cache ca-certificates && \
+	addgroup -g "${MY_GROUP_ID}" "${MY_NAME}" && \
+	adduser -h "${MY_HOME}" -g "" -s "/bin/false" -G "${MY_NAME}" -D -u "${MY_USER_ID}" "${MY_NAME}" && \
+	mkdir "${MY_VOLUME}" && \
+	wget -O 'FTBInfinityServer.zip' "${MY_SERVER}" && \
+	echo "${MY_MD5}  ${MY_FILE}" | md5sum -s -c - && \
+	chown -R "${MY_NAME}" "${MY_HOME}" && \
+	chmod -R u=rwx,go= "${MY_HOME}" && \
+	apk del --quiet --no-cache --progress --purge && \
+	rm -rf /var/cache/apk/*
+	
+ENTRYPOINT ["./home/docker/entrypoint.sh"]
