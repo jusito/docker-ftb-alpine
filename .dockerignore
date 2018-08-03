@@ -1,0 +1,6 @@
+.git/*
+*.md
+.travis.yml
+LICENSE
+changeIDs.sh
+config.sh
