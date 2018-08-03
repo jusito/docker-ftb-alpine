@@ -22,8 +22,8 @@ doRestore() {
 	
 	if [ ! -n "$file" ]; then
 		echo "can't restore empty filename"
-	elif [ ! -e "$file" ]; then
-		echo "can't restore file which doesn't exists: $file"
+	elif [ ! -e "${MY_HOME}/$file" ]; then
+		echo "can't restore file which doesn't exists: ${MY_HOME}/$file"
 	else
 		mv -fv "${MY_HOME}/$file" "$file"
 	fi
