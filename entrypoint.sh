@@ -7,7 +7,7 @@ doBackup() {
 	file=$1
 	cd "$MY_VOLUME"
 	
-	if [ -n "$file" ]; then
+	if [ ! -n "$file" ]; then
 		echo "can't backup empty filename"
 	elif [ ! -e "$file" ]; then
 		echo "can't backup file which doesn't exists: $file"
@@ -20,7 +20,7 @@ doRestore() {
 	file=$1
 	cd "$MY_VOLUME"
 	
-	if [ -n "$file" ]; then
+	if [ ! -n "$file" ]; then
 		echo "can't restore empty filename"
 	elif [ ! -e "$file" ]; then
 		echo "can't restore file which doesn't exists: $file"
@@ -49,7 +49,7 @@ cp -f "${MY_HOME}/${MY_FILE}" "${MY_VOLUME}/${MY_FILE}"
 cd "${MY_VOLUME}"
 
 # unzip server files
-unzip -o "${MY_FILE}"
+unzip -q -o "${MY_FILE}"
 
 # delete copied zip
 rm -f "${MY_FILE}"
