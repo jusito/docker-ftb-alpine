@@ -8,8 +8,8 @@ ENV MY_GROUP_ID=10000 \
 	MY_HOME=/home/docker \
 	MY_VOLUME=/home/docker/volume \
 	MY_FILE="FTBServer.zip" \
-	MY_SERVER="https://media.forgecdn.net/files/2481/284/FTBPresentsSkyfactory3Server_3.0.15.zip" \
-	MY_MD5="a7d54a9937cbf5707efc007caa18a5b6"
+	MY_SERVER="https://media.forgecdn.net/files/2582/366/FTB+Presents+Direwolf20+1.12-1.12.2-2.1.0-Server.zip" \
+	MY_MD5="fdfbedd84bdff0417634e652678fe1dd"
 
 VOLUME "${MY_SERVER}"
 
