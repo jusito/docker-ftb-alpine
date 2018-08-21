@@ -36,6 +36,6 @@ jusito/docker-ftb-alpine:FTBPresentsDirewolf20-2.1.0-1.12.2
 https://www.feed-the-beast.com/projects/ftb-continuum
 jusito/docker-ftb-alpine:FTBContinuum-1.4.1-1.12.2
 
-## FTB Revelation 2.2.0:
+## FTB Revelation 2.3.0:
 https://www.feed-the-beast.com/projects/ftb-revelation
-jusito/docker-ftb-alpine:FTBRevelation-2.2.0-1.12.2
+jusito/docker-ftb-alpine:FTBRevelation-2.3.0-1.12.2
