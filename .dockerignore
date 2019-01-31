@@ -1,6 +1,6 @@
 .git/*
 *.md
 .travis.yml
+modpacks
 LICENSE
-changeIDs.sh
-config.sh
+README.md

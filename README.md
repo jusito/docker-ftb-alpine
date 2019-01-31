@@ -10,8 +10,7 @@ This repository contains servers for: https://www.feed-the-beast.com/
 Combine all, here is an example with motd, persistend files and Skyfactor:
 `docker run -d -p 25565:25565 -v minecraft_modded:/home/docker/volume:rw -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2`
 
-### Usage
-#### Tags
+## Tags
 [FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved "FTB Infinity Evolved") 
 * FTBInfinity-3.0.2-1.7.10
 
@@ -30,26 +29,32 @@ Combine all, here is an example with motd, persistend files and Skyfactor:
 [Vanilla MC 1.13.2](https://minecraft.net/de-de/download/server/ "Lade den Minecraft: Java Edition-Server herunter")
 * [old template]Vanilla-1.13.2-beta (I don't test this well)
 
-#### Environment Variables
+## Environment Variables
 Example:
 `docker [...] -e JAVA_PARAMETERS="-Xms4G -Xmx4G" [...] jusito/docker-ftb-alpine:*TAG*`
 
-##### JAVA_PARAMETERS (JVM Arguments, Performance)
+### JAVA_PARAMETERS (JVM Arguments, Performance)
 [Default value in container:](https://www.reddit.com/r/feedthebeast/comments/5jhuk9/modded_mc_and_memory_usage_a_history_with_a/ "Modded MC and memory usage, a history with a crappy graph") 
 `-XX:+UseG1GC -Xmx4G -Xms4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M`
 
 FTB using this in normal case:
 `-XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=5 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10` depending on server type `-xmx=2G or -xmx=4G`
 
-##### [server.properties](https://minecraft-de.gamepedia.com/Server.properties "https://minecraft-de.gamepedia.com/Server.properties") 
+### Server Properties
+https://minecraft-de.gamepedia.com/Server.properties
+
 In general Propertyname = Variablename, just replace "-"&"." with "_"
+
+<details><summary>All Available Properties (click me)</summary>
+<p>
+
 * allow_flight=false
 * allow_nether=true
-* broadcast_console_to_ops=true
+* broadcast\_console\_to_ops=true
 * difficulty=1
 * enable_query=false
 * enable_rcon=false
-* enable_command_block=false
+* enable\_command_block=false
 * enforce_whitelist=false
 * force_gamemode=false
 * gamemode=0
@@ -59,22 +64,22 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 * level_name="world"
 * level_seed=""
 * level_type=DEFAULT
-* max_build_height=256
+* max\_build_height=256
 * max_players=20
-* max_tick_time=60000
-* max_world_size=29999984
+* max\_tick_time=60000
+* max\_world_size=29999984
 * motd="A Minecraft Server"
-* network_compression_threshold=256
+* network\_compression_threshold=256
 * online_mode=true
-* op_permission_level=4
-* player_idle_timeout=0
-* prevent_proxy_connections=false
+* op\_permission_level=4
+* player\_idle_timeout=0
+* prevent\_proxy_connections=false
 * pvp=true
 * query_port=25565
 * rcon_password=""
 * rcon_port=25575
 * resource_pack=""
-* resource_pack_sha1=""
+* resource\_pack_sha1=""
 * server_ip=""
 * server_port=25565
 * snooper_enabled=true
@@ -85,7 +90,10 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 * view_distance=10
 * white_list=false
 
-##### Internal Used (don't change please)
+</p>
+</details>
+
+### Internal Used (don't change please)
 * MY\_USER_ID 10000
 * MY\_GROUP_ID 10000
 * MY_NAME docker
@@ -95,17 +103,17 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 * MY\_SERVER _*TagDependency*_
 * MY\_MD5 _*TagDependency*_
 
-#### Volumes
+## Additional Informations
+### Volumes
 * /home/docker/volume
 
-#### Useful File Locations
+### Useful File Locations
 * /home/docker/volume/config/ Mod configs
 * /home/docker/volume/logs/ FTB logs
 * /home/docker/volume/mods/ Mod folder
 * /home/docker/volume/server.properties
 * /home/docker/volume/config.sh your personal config
 
-## Additional Informations
 ### Use your existing server.properties
 1. start container one time until done, stop it
 2. docker cp _"Your server.properties"_ _ContainerName_:/home/docker/volume/server.properties
@@ -123,7 +131,7 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 ### Own Scripts
 * /home/docker/volume/config.sh, care because only alpine + busybox, no Bash, no PCRE
 
-## Find Us
+## Find Me
 https://github.com/jusito/docker-ftb-alpine
 
 ## Contributing / Requesting

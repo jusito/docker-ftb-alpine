@@ -2,30 +2,43 @@
 
 set -e
 
+# get arguments
+export MY_SERVER=$1
+export MY_MD5=$2
+
 # define functions
+download() {
+	target=$1
+	source=$2
+	md5=$3
+	
+	wget -O "${MY_FILE}" "${MY_SERVER}"
+	echo "${MY_MD5}  ${MY_FILE}" | md5sum -s -c -
+}
+
 doBackup() {
 	file=$1
-	cd "$MY_VOLUME"
-	
+	cd "${MY_VOLUME}"
+
 	if [ ! -n "$file" ]; then
 		echo "can't backup empty filename"
 	elif [ ! -e "$file" ]; then
 		echo "can't backup file which doesn't exists: $file"
 	else
-		mv -fv "$file" "${MY_HOME}/$file"
+		mv -fv "$file" "/home/$file"
 	fi
 }
 
 doRestore() {
 	file=$1
-	cd "$MY_VOLUME"
+	cd "${MY_VOLUME}"
 	
 	if [ ! -n "$file" ]; then
 		echo "can't restore empty filename"
-	elif [ ! -e "${MY_HOME}/$file" ]; then
-		echo "can't restore file which doesn't exists: ${MY_HOME}/$file"
+	elif [ ! -e "/home/$file" ]; then
+		echo "can't restore file which doesn't exists: /home/$file"
 	else
-		mv -fv "${MY_HOME}/$file" "$file"
+		mv -fv "/home/$file" "$file"
 	fi
 }
 
@@ -127,9 +140,11 @@ writeJVMArguments() {
 		echo "found NO custom jvm args"
 	fi	
 }
-
+# set workdir to volume
+cd "${MY_VOLUME}"
 
 # main processing:
+download "${MY_FILE}" "${MY_SERVER}" "${MY_MD5}"
 
 #backup files
 doBackup "server.properties"
@@ -140,12 +155,6 @@ doBackup "usercache.json"
 doBackup "usernamecache.json"
 doBackup "whitelist.json"
 doBackup "config.sh"
-
-# copy zip into dir
-cp -f "${MY_HOME}/${MY_FILE}" "${MY_VOLUME}/${MY_FILE}"
-
-# set workdir to volume
-cd "${MY_VOLUME}"
 
 # unzip server files
 unzip -q -o "${MY_FILE}"
