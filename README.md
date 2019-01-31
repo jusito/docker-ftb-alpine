@@ -42,8 +42,7 @@ Example:
 `-XX:+UseG1GC -Xmx4G -Xms4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M`
 
 FTB using this in normal case:
-`-XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=5 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10`
-`-xmx=2G or -xmx=4G`
+`-XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=5 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10` depending on server type `-xmx=2G or -xmx=4G`
 
 ##### [server.properties](https://minecraft-de.gamepedia.com/Server.properties "https://minecraft-de.gamepedia.com/Server.properties") 
 In general Propertyname = Variablename, just replace "-"&"." with "_"
