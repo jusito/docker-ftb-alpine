@@ -112,30 +112,15 @@ writeServerProperties() {
 writeJVMArguments() {
 	if [ -n "${JAVA_PARAMETERS}" ]; then
 		echo "found custom jvm args (${JAVA_PARAMETERS})"
-		if [ -e "${MY_VOLUME}/settings.sh" ]; then
-			echo "settings file found"
-		
-			#ignore default JAVA_PARAMETERS
-			sed -i 's/export JAVA_PARAMETERS=/#export JAVA_PARAMETERS=/g' "${MY_VOLUME}/settings.sh"
-		
-			#set FTB max RAM (maybe not needed)
-			set +e #if grep can't find something its an error
-			xmx=$(echo "${JAVA_PARAMETERS}" | grep -Eoi -e '-xmx\S+' | grep -Eoi -e '\d+\S+')
-			xms=$(echo "${JAVA_PARAMETERS}" | grep -Eoi -e '-xms\S+' | grep -Eoi -e '\d+\S+')
-			currentMaxRam=$(cat "${MY_VOLUME}/settings.sh" | grep -Eoi '^.*export MAX_RAM=\S+')
-			set -e
-			
-			if [ -n "${xmx}" ]; then
-				echo "value for xmx found ($xmx), set as MAX_RAM"
-				sed -i "s/${currentMaxRam}/export MAX_RAM=${xmx}/g" "${MY_VOLUME}/settings.sh"
-			elif [ -n "${xms}" ]; then
-				echo "no value found for xmx but for xms ($xms), set as MAX_RAM"
-				sed -i "s/${currentMaxRam}/export MAX_RAM=${xms}/g" "${MY_VOLUME}/settings.sh"
-			else
-				echo "No values found for xmx/xms, skip setting of MAX_RAM"
-			fi
+		if [ -e "${MY_VOLUME}/ServerStart.sh" ]; then
+			echo "ServerStart.sh file found"
+
+			startup=$(cat "${MY_VOLUME}/ServerStart.sh" | grep -Eoi -e '"\$JAVACMD" -server .+')
+			startupEnd=$(echo "${startup}" | grep -Eoi -e '-jar .+')
+			replaceStart='"$JAVACMD" -server '
+			sed -i "s/${startup}/${replaceStart} ${JAVA_PARAMETERS} ${startupEnd}/g" "${MY_VOLUME}/ServerStart.sh"
 		else
-			echo "settings file NOT found"
+			echo "ServerStart.sh file NOT found"
 		fi
 		
 	else

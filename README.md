@@ -12,6 +12,8 @@ Combine all, here is an example with motd, persistend files and Skyfactor:
 
 ### Usage
 #### Tags
+[old template] below means, close to all options in this readme you can ignore with this tag
+
 [FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved "FTB Infinity Evolved") 
 * FTBInfinity-3.0.2-1.7.10
 
@@ -19,19 +21,23 @@ Combine all, here is an example with motd, persistend files and Skyfactor:
 * FTBPresentsSkyfactory3-3.0.15-1.10.2
 
 [FTB Presents Direwolf20 MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-presents-direwolf20-1-12 "FTB Presents Direwolf20 1.12") 
-* FTBPresentsDirewolf20-2.1.0-1.12.2
+* FTBPresentsDirewolf20-2.4.0-1.12.2
+* [old template]FTBPresentsDirewolf20-2.1.0-1.12.2
 
 [FTB Continuum MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-continuum "FTB Continuum") 
-* FTBContinuum-1.4.1-1.12.2
-* FTBContinuum-1.5.2-1.12.2
+* FTBContinuum-1.6.0-1.12.2
+* [old template]FTBContinuum-1.5.2-1.12.2
+* [old template]FTBContinuum-1.4.1-1.12.2
+
 
 [FTB Revelation MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-revelation "FTB Revelation")
-* FTBRevelation-2.2.0-1.12.2
-* FTBRevelation-2.3.0-1.12.2
-* FTBRevelation-2.6.0-1.12.2
+* FTBRevelation-2.7.0-1.12.2
+* [old template]FTBRevelation-2.6.0-1.12.2
+* [old template]FTBRevelation-2.3.0-1.12.2
+* [old template]FTBRevelation-2.2.0-1.12.2
 
 [Vanilla MC 1.13.2](https://minecraft.net/de-de/download/server/ "Lade den Minecraft: Java Edition-Server herunter")
-* Vanilla-1.13.2-beta (I don't test this well)
+* [old template]Vanilla-1.13.2-beta (I don't test this well)
 
 #### Environment Variables
 Example:
