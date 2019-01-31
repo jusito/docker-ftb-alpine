@@ -8,8 +8,8 @@ ENV MY_GROUP_ID=10000 \
 	MY_HOME=/home/docker \
 	MY_VOLUME=/home/docker/volume \
 	MY_FILE="FTBServer.zip" \
-	MY_SERVER="https://media.forgecdn.net/files/2484/486/FTBInfinityServer_3.0.2.zip" \
-	MY_MD5="90bddc206ef5abe9867f32b20fd7aa11" \
+	MY_SERVER="" \
+	MY_MD5="" \
 	\
 	JAVA_PARAMETERS="-XX:+UseG1GC -Xms4G -Xmx4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M" \
 	\
