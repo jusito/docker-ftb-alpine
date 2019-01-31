@@ -8,8 +8,53 @@ ENV MY_GROUP_ID=10000 \
 	MY_HOME=/home/docker \
 	MY_VOLUME=/home/docker/volume \
 	MY_FILE="FTBServer.zip" \
-	MY_SERVER="https://media.forgecdn.net/files/2582/366/FTB+Presents+Direwolf20+1.12-1.12.2-2.1.0-Server.zip" \
-	MY_MD5="fdfbedd84bdff0417634e652678fe1dd"
+	MY_SERVER="https://media.forgecdn.net/files/2484/486/FTBInfinityServer_3.0.2.zip" \
+	MY_MD5="90bddc206ef5abe9867f32b20fd7aa11" \
+	\
+	JAVA_PARAMETERS="-XX:+UseG1GC -Xms4G -Xmx4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M" \
+	\
+	allow_flight=false \
+	allow_nether=true \
+	broadcast_console_to_ops=true \
+	difficulty=1 \
+	enable_query=false \
+	enable_rcon=false \
+	enable_command_block=false \
+	enforce_whitelist=false \
+	force_gamemode=false \
+	gamemode=0 \
+	generate_structures=true \
+	generator_settings="" \
+	hardcore=false \
+	level_name="world" \
+	level_seed="" \
+	level_type=DEFAULT \
+	max_build_height=256 \
+	max_players=20 \
+	max_tick_time=60000 \
+	max_world_size=29999984 \
+	motd="A Minecraft Server" \
+	network_compression_threshold=256 \
+	online_mode=true \
+	op_permission_level=4 \
+	player_idle_timeout=0 \
+	prevent_proxy_connections=false \
+	pvp=true \
+	query_port=25565 \
+	rcon_password="" \
+	rcon_port=25575 \
+	resource_pack="" \
+	resource_pack_sha1="" \
+	server_ip="" \
+	server_port=25565 \
+	snooper_enabled=true \
+	spawn_animals=true \
+	spawn_monsters=true \
+	spawn_npcs=true \
+	spawn_protection=16 \
+	view_distance=10 \
+	white_list=false
+	
 
 VOLUME "${MY_SERVER}"
 
@@ -28,6 +73,6 @@ RUN apk update && \
 	apk del --quiet --no-cache --progress --purge && \
 	rm -rf /var/cache/apk/*
 	
-CMD ["./home/docker/entrypoint.sh"]
+ENTRYPOINT ["/home/docker/entrypoint.sh"]
 
 USER "${MY_USER_ID}:${MY_GROUP_ID}"
