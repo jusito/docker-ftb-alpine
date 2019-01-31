@@ -3,11 +3,12 @@ This repository contains servers for: https://www.feed-the-beast.com/
 
 ## Getting Started
 1. Which server you want? Which version you want? Choose you _Tag_ below
-2. Do you want reddit jvm args? Yes go next, no see _Environment Variables_
-3. Do you want persistent files? No go next, yes `-v minecraft_modded:/home/docker/volume:rw`
-4. Do you want your own server.properties? No go next, yes see use Environmental Variables _server.properties_ or see _Additional Informations_
-5. Combine all, here is an example with motd, persistend files and Skyfactor.
-`docker run -d -v minecraft_modded:/home/docker/volume:rw -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2`
+2. Which Port? -p 25566:25565 means 25566 from internet, 25565 from inside of container
+3. Do you want reddit jvm args? Yes go next, no see _Environment Variables_
+4. Do you want persistent files? No go next, yes `-v minecraft_modded:/home/docker/volume:rw`
+5. Do you want your own server.properties? No go next, yes see use Environmental Variables _server.properties_ or see _Additional Informations_
+Combine all, here is an example with motd, persistend files and Skyfactor:
+`docker run -d -p 25565:25565 -v minecraft_modded:/home/docker/volume:rw -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2`
 
 ### Usage
 #### Tags
