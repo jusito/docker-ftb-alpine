@@ -29,6 +29,15 @@ Combine all, here is an example with motd, persistend files and Skyfactor:
 [Vanilla MC 1.13.2](https://minecraft.net/de-de/download/server/ "Lade den Minecraft: Java Edition-Server herunter")
 * [old template]Vanilla-1.13.2-beta (I don't test this well)
 
+### no Tag found?
+* Tag: FTBBase
+* First argument: Link to server download
+* Second argument: MD5 of server download
+* You are done
+
+Example:
+`docker run [...] jusito/docker-ftb-alpine:FTBBase "https://media.forgecdn.net...server.zip" "*md5 of server*"`
+
 ## Environment Variables
 Example:
 `docker [...] -e JAVA_PARAMETERS="-Xms4G -Xmx4G" [...] jusito/docker-ftb-alpine:*TAG*`
