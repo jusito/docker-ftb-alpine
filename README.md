@@ -5,10 +5,10 @@ This repository contains servers for: https://www.feed-the-beast.com/
 1. Which server you want? Which version you want? Choose you _Tag_ below
 2. Which Port? -p 25566:25565 means 25566 from internet, 25565 from inside of container
 3. Do you want reddit jvm args? Yes go next, no see _Environment Variables_
-4. Do you want persistent files? No go next, yes `-v minecraft_modded:/home/docker/volume:rw`
+4. Do you want persistent files? No go next, yes `-v minecraft_modded:/home/docker:rw`
 5. Do you want your own server.properties? No go next, yes see use Environmental Variables _server.properties_ or see _Additional Informations_
 Combine all, here is an example with motd, persistend files and Skyfactor:
-`docker run -d -p 25565:25565 -v minecraft_modded:/home/docker/volume:rw -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2`
+`docker run -d -p 25565:25565 -v minecraft_modded:/home/docker:rw -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2`
 
 ## Tags
 [FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved "FTB Infinity Evolved") 
@@ -107,25 +107,25 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 * MY\_GROUP_ID 10000
 * MY_NAME docker
 * MY_HOME /home/docker
-* MY_VOLUME /home/docker/volume
+* MY_VOLUME /home/docker
 * MY_FILE "FTBServer.zip"
 * MY\_SERVER _*TagDependency*_
 * MY\_MD5 _*TagDependency*_
 
 ## Additional Informations
 ### Volumes
-* /home/docker/volume
+* /home/docker
 
 ### Useful File Locations
-* /home/docker/volume/config/ Mod configs
-* /home/docker/volume/logs/ FTB logs
-* /home/docker/volume/mods/ Mod folder
-* /home/docker/volume/server.properties
-* /home/docker/volume/config.sh your personal config
+* /home/docker/config/ Mod configs
+* /home/docker/logs/ FTB logs
+* /home/docker/mods/ Mod folder
+* /home/docker/server.properties
+* /home/docker/config.sh your personal config
 
 ### Use your existing server.properties
 1. start container one time until done, stop it
-2. docker cp _"Your server.properties"_ _ContainerName_:/home/docker/volume/server.properties
+2. docker cp _"Your server.properties"_ _ContainerName_:/home/docker/server.properties
 
 ### persistent files on update
 * banned-ips.json
@@ -138,7 +138,7 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 * whitelist.json
 
 ### Own Scripts
-* /home/docker/volume/config.sh, care because only alpine + busybox, no Bash, no PCRE
+* /home/docker/config.sh, care because only alpine + busybox, no Bash, no PCRE
 
 ## Find Me
 https://github.com/jusito/docker-ftb-alpine
