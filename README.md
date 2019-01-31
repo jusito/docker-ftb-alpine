@@ -1,4 +1,4 @@
-# Minecraft docker-ftb-alpine
+# Minecraft FTB meets alpine
 This repository contains servers for: https://www.feed-the-beast.com/
 
 ## Getting Started
@@ -130,4 +130,8 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 https://github.com/jusito/docker-ftb-alpine
 
 ## Contributing / Requesting
-Git issue or comment here
+Git issue or comment here, I don't check everytime for newer version but I can easily push a new tag
+
+## Acknowledgments
+* [Feed The Beast Project](https://www.feed-the-beast.com "Feed The Beast Project")
+* [PurpleBooth Docker Template](https://gist.github.com/PurpleBooth/ea518ae68a49029bae95 "Template-README-for-containers.md")
