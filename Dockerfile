@@ -53,7 +53,9 @@ ENV MY_GROUP_ID=10000 \
 	spawn_npcs=true \
 	spawn_protection=16 \
 	view_distance=10 \
-	white_list=false
+	white_list=false \
+	\
+	TEST_ONLY=false
 		
 COPY ["entrypoint.sh", "/home/" ]
 

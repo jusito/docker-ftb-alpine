@@ -9,10 +9,10 @@ script:
   - docker build -t "jusito/docker-ftb-alpine:FTBPresentsSkyfactory3" "modpacks/FTBPresentsSkyfactory3"
   - docker build -t "jusito/docker-ftb-alpine:FTBRevelation" "modpacks/FTBRevelation"
   - docker build -t "jusito/docker-ftb-alpine:Vanilla" "modpacks/Vanilla"
-  - docker run -ti --rm --name "FTBContinuum" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBContinuum "test-only"
-  - docker run -ti --rm --name "FTBInfinity" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBInfinity "test-only"
-  - docker run -ti --rm --name "FTBPresentsDirewolf20" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBPresentsDirewolf20 "test-only"
-  - docker run -ti --rm --name "FTBPresentsSkyfactory3" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3 "test-only"
-  - docker run -ti --rm --name "FTBRevelation" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBRevelation "test-only"
-  - docker run -ti --rm --name "Vanilla" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:Vanilla "test-only"
+  - docker run -ti --rm --name "FTBContinuum" -e TEST_ONLY=true -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBContinuum
+  - docker run -ti --rm --name "FTBInfinity" -e TEST_ONLY=true -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBInfinity
+  - docker run -ti --rm --name "FTBPresentsDirewolf20" -e TEST_ONLY=true -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBPresentsDirewolf20
+  - docker run -ti --rm --name "FTBPresentsSkyfactory3" -e TEST_ONLY=true -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3
+  - docker run -ti --rm --name "FTBRevelation" -e TEST_ONLY=true -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:FTBRevelation
+  - docker run -ti --rm --name "Vanilla" -e TEST_ONLY=true -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e motd="test" jusito/docker-ftb-alpine:Vanilla
   

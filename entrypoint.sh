@@ -3,13 +3,8 @@
 set -e
 
 # get arguments
-if [ "$1" == "test-only" ]; then
-	TEST_ONLY="true"
-else
-	TEST_ONLY="false"
-	export MY_SERVER=$1
-	export MY_MD5=$2
-fi
+export MY_SERVER=$1
+export MY_MD5=$2
 
 # define functions
 download() {
