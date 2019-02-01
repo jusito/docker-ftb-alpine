@@ -1,5 +1,6 @@
 # Minecraft FTB meets alpine
 This repository contains servers for: https://www.feed-the-beast.com/
+[![Build Status](https://travis-ci.org/jusito/docker-ftb-alpine.svg?branch=master)](https://travis-ci.org/jusito/docker-ftb-alpine)
 
 ## Getting Started
 1. Which server you want? Which version you want? Choose you _Tag_ below
