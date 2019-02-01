@@ -3,8 +3,13 @@
 set -e
 
 # get arguments
-export MY_SERVER=$1
-export MY_MD5=$2
+if [ "$1" == "test-only" ]; then
+	TEST_ONLY="true"
+else
+	TEST_ONLY="false"
+	export MY_SERVER=$1
+	export MY_MD5=$2
+fi
 
 # define functions
 download() {
@@ -241,17 +246,21 @@ if [ -e "config.sh" ]; then
 	sh config.sh
 fi
 
-# register SIGTERM trap => exit server securely
-trap 'pkill -15 java' SIGTERM
-	
-# execute server
-if [ "$isZip" == "true" ]; then
-	chmod +x ServerStart.sh
-	./ServerStart.sh &
-elif [ "$isJar" == "true" ]; then
-	java $JAVA_PARAMETERS -jar "${MY_FILE}" &
+if [ "$TEST_ONLY" == "true" ]; then
+	echo "Testing done" # todo wait until server is up
 else
-	echo "ERROR BUG unexpected file type [5]"
-	exit 5
+	# register SIGTERM trap => exit server securely
+	trap 'pkill -15 java' SIGTERM
+		
+	# execute server
+	if [ "$isZip" == "true" ]; then
+		chmod +x ServerStart.sh
+		./ServerStart.sh &
+	elif [ "$isJar" == "true" ]; then
+		java $JAVA_PARAMETERS -jar "${MY_FILE}" &
+	else
+		echo "ERROR BUG unexpected file type [5]"
+		exit 5
+	fi
+	wait "$!"
 fi
-wait "$!"
