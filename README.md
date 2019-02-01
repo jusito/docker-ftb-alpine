@@ -27,7 +27,7 @@ Combine all, here is an example with motd, persistend files and Skyfactor:
 * FTBRevelation-2.7.0-1.12.2
 
 [Vanilla MC 1.13.2](https://minecraft.net/de-de/download/server/ "Lade den Minecraft: Java Edition-Server herunter")
-* [old template]Vanilla-1.13.2-beta (I don't test this well)
+* Vanilla-1.13.2
 
 ### no Tag found?
 * Tag: FTBBase
