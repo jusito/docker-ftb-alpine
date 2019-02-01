@@ -1,0 +1,11 @@
+services:
+  - docker
+
+script:
+  - docker build -t "jusito/docker-ftb-alpine:FTBBase" .
+  - docker build -t "jusito/docker-ftb-alpine:FTBContinuum" "modpacks/FTBContinuum"
+  - docker build -t "jusito/docker-ftb-alpine:FTBInfinity" "modpacks/FTBInfinity"
+  - docker build -t "jusito/docker-ftb-alpine:FTBPresentsDirewolf20" "modpacks/FTBPresentsDirewolf20"
+  - docker build -t "jusito/docker-ftb-alpine:FTBPresentsSkyfactory3" "modpacks/FTBPresentsSkyfactory3"
+  - docker build -t "jusito/docker-ftb-alpine:FTBRevelation" "modpacks/FTBRevelation"
+  - docker build -t "jusito/docker-ftb-alpine:Vanilla" "modpacks/Vanilla"
