@@ -13,7 +13,15 @@ download() {
 	md5=$3
 	
 	wget -O "${MY_FILE}" "${MY_SERVER}"
+	set +e
 	echo "${MY_MD5}  ${MY_FILE}" | md5sum -s -c -
+	if [ "$?" == "0" ]; then
+		echo "MD5 ok!"
+	else
+		echo "MD5 failed!"
+		exit 5
+	fi
+	set -e
 }
 
 doBackup() {
@@ -146,6 +154,36 @@ cd "${MY_VOLUME}"
 # main processing:
 download "${MY_FILE}" "${MY_SERVER}" "${MY_MD5}"
 
+# get file ending
+set +e # if grep can't find a match, its an error
+isZip=$(echo "${MY_FILE}" | grep -Ei -e '\.zip$')
+if [ -n "$isZip" ]; then
+	isZip="true"
+else
+	isZip="false"
+fi
+isJar=$(echo "${MY_FILE}" | grep -Ei -e '\.jar$')
+if [ -n "$isJar" ]; then
+	isJar="true"
+else
+	isJar="false"
+fi
+set -e
+
+# check if we can handle it
+if [ "$isZip" == "true" ]; then
+	echo "File looks like zip"
+	if [ "$isJar" == "true" ]; then
+		echo "WARN file looks like zip and jar, thats strange I will try it as zip"	
+		isJar="false"
+	fi
+elif [ "$isJar" == "true" ]; then
+	echo "File looks like jar"
+else
+	echo "File doesn't look like jar / zip, can't handle it"
+	exit 2
+fi
+
 #backup files
 doBackup "server.properties"
 doBackup "banned-ips.json"
@@ -156,12 +194,20 @@ doBackup "usernamecache.json"
 doBackup "whitelist.json"
 doBackup "config.sh"
 
-# unzip server files
-unzip -q -o "${MY_FILE}"
-echo "server files extracted"
 
-# delete copied zip
-rm -f "${MY_FILE}"
+# unzip server files
+if [ "$isZip" == "true" ]; then
+	unzip -q -o "${MY_FILE}"
+	echo "server files extracted"
+	
+	# delete copied zip
+	rm -f "${MY_FILE}"
+elif [ "$isJar" == "true" ]; then
+	echo "jar is at correct position"
+else
+	echo "ERROR BUG unexpected file type [3]"
+	exit 3
+fi
 
 # set eula = accepted
 if [ -e 'eula.txt' ]; then
@@ -183,15 +229,29 @@ doRestore "config.sh"
 
 ## apply config
 writeServerProperties
-writeJVMArguments
+if [ "$isZip" == "true" ]; then
+	writeJVMArguments
+elif [ "$isJar" == "true" ]; then
+	echo "JVM Arguments are ready to go"
+else
+	echo "ERROR BUG unexpected file type [4]"
+	exit 4
+fi
 if [ -e "config.sh" ]; then
 	sh config.sh
 fi
 
-#register SIGTERM trap => exit server securely
+# register SIGTERM trap => exit server securely
 trap 'pkill -15 java' SIGTERM
 	
 # execute server
-chmod +x ServerStart.sh
-./ServerStart.sh &
+if [ "$isZip" == "true" ]; then
+	chmod +x ServerStart.sh
+	./ServerStart.sh &
+elif [ "$isJar" == "true" ]; then
+	java $JAVA_PARAMETERS -jar "${MY_FILE}" &
+else
+	echo "ERROR BUG unexpected file type [5]"
+	exit 5
+fi
 wait "$!"
