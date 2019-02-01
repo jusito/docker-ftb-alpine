@@ -112,6 +112,7 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 * MY_FILE "FTBServer.zip"
 * MY\_SERVER _*TagDependency*_
 * MY\_MD5 _*TagDependency*_
+* TEST_ONLY false (used for CI)
 
 ## Additional Informations
 ### Volumes
