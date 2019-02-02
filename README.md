@@ -1,6 +1,8 @@
 # Minecraft FTB meets alpine
-This repository contains servers for: https://www.feed-the-beast.com/
+This repository contains servers for: [Feed The Beast](https://www.feed-the-beast.com/)
 [![Build Status](https://travis-ci.org/jusito/docker-ftb-alpine.svg?branch=master)](https://travis-ci.org/jusito/docker-ftb-alpine)
+
+**By using this container you agree to the** [Minecraft Eula](https://help.mojang.com/customer/en/portal/articles/1590522-minecraft-commercial-use)
 
 ## Getting Started
 1. Which server you want? Which version you want? Choose you _Tag_ below
@@ -11,23 +13,29 @@ This repository contains servers for: https://www.feed-the-beast.com/
 Combine all, here is an example with motd, persistend files and Skyfactor:
 `docker run -d -p 25565:25565 -v minecraft_modded:/home/docker:rw -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2`
 
+### Example Skyfactor: 
+
+```
+docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2
+```
+
 ## Tags
-[FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved "FTB Infinity Evolved") 
+[FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved) 
 * FTBInfinity-3.0.2-1.7.10
 
-[FTB Presents SkyFactory 3 MC 1.10.2](https://www.feed-the-beast.com/projects/ftb-presents-skyfactory-3 "FTB Presents SkyFactory 3") 
+[FTB Presents SkyFactory 3 MC 1.10.2](https://www.feed-the-beast.com/projects/ftb-presents-skyfactory-3) 
 * FTBPresentsSkyfactory3-3.0.15-1.10.2
 
-[FTB Presents Direwolf20 MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-presents-direwolf20-1-12 "FTB Presents Direwolf20 1.12") 
+[FTB Presents Direwolf20 MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-presents-direwolf20-1-12) 
 * FTBPresentsDirewolf20-2.4.0-1.12.2
 
-[FTB Continuum MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-continuum "FTB Continuum") 
+[FTB Continuum MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-continuum) 
 * FTBContinuum-1.6.0-1.12.2
 
-[FTB Revelation MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-revelation "FTB Revelation")
+[FTB Revelation MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-revelation)
 * FTBRevelation-2.7.0-1.12.2
 
-[Vanilla MC 1.13.2](https://minecraft.net/de-de/download/server/ "Lade den Minecraft: Java Edition-Server herunter")
+[Vanilla MC 1.13.2](https://minecraft.net/de-de/download/server/)
 * Vanilla-1.13.2
 
 ### no Tag found?
