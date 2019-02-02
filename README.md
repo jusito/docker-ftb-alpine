@@ -10,8 +10,6 @@ This repository contains servers for: [Feed The Beast](https://www.feed-the-beas
 3. Do you want reddit jvm args? Yes go next, no see _Environment Variables_
 4. Do you want persistent files? No go next, yes `-v minecraft_modded:/home/docker:rw`
 5. Do you want your own server.properties? No go next, yes see use Environmental Variables _server.properties_ or see _Additional Informations_
-Combine all, here is an example with motd, persistend files and Skyfactor:
-`docker run -d -p 25565:25565 -v minecraft_modded:/home/docker:rw -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2`
 
 ### Example Skyfactor: 
 
