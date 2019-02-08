@@ -55,9 +55,11 @@ ENV MY_GROUP_ID=10000 \
 	view_distance=10 \
 	white_list=false \
 	\
-	TEST_ONLY=false
+	TEST_ONLY=false \
+	HEALTH_URL=127.0.0.1 \
+	HEALTH_PORT=""
 		
-COPY ["entrypoint.sh", "/home/" ]
+COPY ["entrypoint.sh", "checkHealth.sh", "/home/" ]
 
 RUN apk update && \
 	apk add --no-cache ca-certificates && \

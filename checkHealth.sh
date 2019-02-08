@@ -5,14 +5,25 @@
 # https://unix.stackexchange.com/questions/92447/bash-script-to-get-ascii-values-for-alphabet
 
 # find server properties
-PROPERTIES=$(ls "$MY_HOME" | grep -io -e 'server.properties')
+PROPERTIES="${MY_HOME}/"$(ls "$MY_HOME" | grep -io -e 'server.properties')
 
-# input
-host=127.0.0.1
-port=$(grep -Eio -e 'server_port=.+' "$PROPERTIES" | grep -o -e '[^=]*$')
-debug=$3
+### input
+set +e
+host=$HEALTH_URL
+port=$HEALTH_PORT
+# userdefined port?
+if [ -z "$port" ]; then
+	#try to find in props
+	port=$(grep -Eio -e 'server-port=.+' "$PROPERTIES" | grep -o -e '[^=]*$')
+	#if not in, its default
+	if [ -z "$port" ]; then
+		port=25565
+	fi
+fi
 
+debug=$1
 set -e
+
 
 # ASCII to Character
 function chr() {
@@ -57,19 +68,8 @@ function intToHex() {
 }
 
 function stringToHex() {
-	local in=$1
-	local ret=""
-	
-	local length=$(getLength "$in" true)
-
-	for c in $(echo "$in" | grep -o '.')
-	do
-		ascii=$(ord ${c})
-		hex=$(echo "16o $ascii p" | dc)
-		ret="$ret\x$hex"
-	done
-	
-	echo "$ret"
+	# expand to 1 byte and dont show offset, insert \x before, strip null terminate(string)
+	echo "$1" | od -t x1 -A n | sed 's/ /\\x/g' | sed 's/....$//g'
 }
 
 ### MAIN:
