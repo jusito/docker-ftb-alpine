@@ -157,11 +157,13 @@ This container is using a health check default. It checks every 30s if the serve
 * [MOTD colors](https://www.minecraftforum.net/forums/support/server-support-and/1940468-how-to-add-colour-to-your-server-motd)
 
 ## Find Me
-https://github.com/jusito/docker-ftb-alpine
+https://github.com/jusito/
 
 ## Contributing / Requesting
 Git issue or comment here, I don't check everytime for newer version but I can easily push a new tag
 
 ## Acknowledgments
 * [Feed The Beast Project](https://www.feed-the-beast.com "Feed The Beast Project")
-* [PurpleBooth Docker Template](https://gist.github.com/PurpleBooth/ea518ae68a49029bae95 "Template-README-for-containers.md")
+* [PurpleBooth@github Docker Template](https://gist.github.com/PurpleBooth/ea518ae68a49029bae95 "Template-README-for-containers.md")
+* [jamietech@github MC server status](https://github.com/jamietech/MinecraftServerPing)
+* [Valiano@stackoverflow ash grep behaviour](https://stackoverflow.com/questions/54572688/different-behaviour-of-grep-with-pipe-from-nc-on-alpine-vs-ubuntu)
