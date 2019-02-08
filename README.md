@@ -53,8 +53,7 @@ Example:
 [Default value in container:](https://www.reddit.com/r/feedthebeast/comments/5jhuk9/modded_mc_and_memory_usage_a_history_with_a/ "Modded MC and memory usage, a history with a crappy graph") 
 `-XX:+UseG1GC -Xmx4G -Xms4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M`
 
-FTB using this in normal case:
-`-XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=5 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10` depending on server type `-xmx=2G or -xmx=4G`
+If you want default FTB values: JAVA_PARAMETERS=""
 
 ### Server Properties
 https://minecraft-de.gamepedia.com/Server.properties
@@ -109,6 +108,11 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 </p>
 </details>
 
+### Healthcheck
+This container is using a health check default. It checks every 30s if the server status is available. If you don't want this use: `--no-healthcheck`
+* HEALTH_URL 127.0.0.1, maybe you want to set this to external address
+* HEALTH\_PORT _read from server.properties_
+
 ### Internal Used (don't change please)
 * MY\_USER_ID 10000
 * MY\_GROUP_ID 10000
@@ -147,6 +151,10 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 
 ### Own Scripts
 * /home/docker/config.sh, care because only alpine + busybox, no Bash, no PCRE
+
+### Minecraft related
+* [Set server image](https://www.spigotmc.org/threads/how-to-add-a-server-icon-to-your-server-1-7-1-8.6564/)
+* [MOTD colors](https://www.minecraftforum.net/forums/support/server-support-and/1940468-how-to-add-colour-to-your-server-motd)
 
 ## Find Me
 https://github.com/jusito/docker-ftb-alpine

@@ -1,13 +1,36 @@
 #!/bin/sh
 
 #thanks @ 
-# https://github.com/jamietech/MinecraftServerPing
-# https://unix.stackexchange.com/questions/92447/bash-script-to-get-ascii-values-for-alphabet
+# jamietech@github: https://github.com/jamietech/MinecraftServerPing
+# Valiano@stackoverflow: https://stackoverflow.com/questions/54572688/different-behaviour-of-grep-with-pipe-from-nc-on-alpine-vs-ubuntu
+
+function debugMsg() {
+	if [ -n "$debug" ]; then
+		echo "$1"
+	fi	
+}
+
+# Get length of first arg
+function getLength() {
+	# echo without \n, count 
+	echo -e "$1\c" | wc -c
+}
+
+function intToHex() {
+	# int to hex,, separate bytes 2 each line, add at beginning \x, delete whitespaces, delete \x\n or \n
+	echo "16o $1 p" | dc | od -w2 -c -A n | sed 's/^/\\x/' | tr -d '\n ' | sed -E 's/(\\x)?\\n//'
+}
+
+function stringToHex() {
+	# expand to 1 byte and dont show offset,, insert \x before, strip \x\n
+	echo "$1" | od -t x1 -A n | sed 's/ /\\x/g' | sed 's/....$//g'
+}
 
 # find server properties
 PROPERTIES="${MY_HOME}/"$(ls "$MY_HOME" | grep -io -e 'server.properties')
 
-### input
+### MAIN:
+## input
 set +e
 host=$HEALTH_URL
 port=$HEALTH_PORT
@@ -20,85 +43,28 @@ if [ -z "$port" ]; then
 		port=25565
 	fi
 fi
-
 debug=$1
 set -e
 
-
-# ASCII to Character
-function chr() {
-  [ "$1" -lt 256 ] || return 1
-  printf "\\$(printf '%03o' "$1")"
-}
-
-# Character to ASCII
-function ord() {
-  printf '%d' "'$1"
-}
-
-# Get length of first arg
-function getLength() {
-	local in=$1
-	local mode=$2
-	
-	local temp=$(echo "$in" | wc -m)
-	if [ -n "$mode" ]; then
-		temp=$((temp - 1))
-	fi
-	
-	echo $temp
-}
-
-function intToHex() {
-	local in="$1"
-	local ret=""
-	
-	local hex=$(echo "16o $in p" | dc)
-	local length=$(getLength $hex)
-	
-	for next in $(echo "$hex" | grep -Eo '[a-zA-Z0-9]{2}|[a-zA-Z0-9]')
-	do	
-		if [ "$(getLength $next nullTerminated)" == "1" ]; then
-			next="0$next"
-		fi
-		ret="$ret\x${next}"
-	done
-	
-	echo "$ret"
-}
-
-function stringToHex() {
-	# expand to 1 byte and dont show offset, insert \x before, strip null terminate(string)
-	echo "$1" | od -t x1 -A n | sed 's/ /\\x/g' | sed 's/....$//g'
-}
-
-### MAIN:
 # process host
 hostHex=$(stringToHex "$host")
-hostLength=$(getLength $host true)
+hostLength=$(getLength $host)
 hostLengthHex=$(intToHex $hostLength)
-if [ -n "$debug" ]; then
-	echo "Host: $host($hostLength = $hostLengthHex) = $hostHex"
-fi
+debugMsg "Host: $host($hostLength = $hostLengthHex) = $hostHex"
 
 # process port
 portHex=$(intToHex $port)
-if [ -n "$debug" ]; then
-	echo "Port: $port = $portHex"
-fi
+debugMsg "Port: $port = $portHex"
 
 # create handshake
 handshake="\x00\x04${hostLengthHex}${hostHex}${portHex}\x01"
-handshakeLength=$(getLength "$handshake")
-handshakeLength=$((handshakeLength / 4))
+handshakeLength=$(getLength "$handshake") # side effect, hex->byte before count
 handshakeLengthHex=$(intToHex $handshakeLength)
-if [ -n "$debug" ]; then
-	echo "Handshake: $handshake($handshakeLength = $handshakeLengthHex)"
-fi
+debugMsg "Handshake: $handshake($handshakeLength = $handshakeLengthHex)"
 
 # create request
 request="${handshakeLengthHex}${handshake}\x01\x00"
-echo "Request1: $request"
+echo "Request: $request"
 
 set -e
 # convert request, send, binary-to-text, check

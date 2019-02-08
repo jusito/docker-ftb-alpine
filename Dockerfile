@@ -11,8 +11,15 @@ ENV MY_GROUP_ID=10000 \
 	MY_SERVER="" \
 	MY_MD5="" \
 	\
+# for CI needed
+	TEST_ONLY=false \
+	\
+# changeable by user
+	HEALTH_URL=127.0.0.1 \
+	HEALTH_PORT="" \
 	JAVA_PARAMETERS="-XX:+UseG1GC -Xms4G -Xmx4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M" \
 	\
+# server.properties
 	allow_flight=false \
 	allow_nether=true \
 	broadcast_console_to_ops=true \
@@ -53,20 +60,19 @@ ENV MY_GROUP_ID=10000 \
 	spawn_npcs=true \
 	spawn_protection=16 \
 	view_distance=10 \
-	white_list=false \
-	\
-	TEST_ONLY=false \
-	HEALTH_URL=127.0.0.1 \
-	HEALTH_PORT=""
+	white_list=false
 		
 COPY ["entrypoint.sh", "checkHealth.sh", "/home/" ]
 
 RUN apk update && \
 	apk add --no-cache ca-certificates && \
+# create user
 	addgroup -g "${MY_GROUP_ID}" "${MY_NAME}" && \
 	adduser -h "${MY_HOME}" -g "" -s "/bin/false" -G "${MY_NAME}" -D -u "${MY_USER_ID}" "${MY_NAME}" && \
+# add permissions to all in /home
 	chown -R "${MY_NAME}:${MY_NAME}" "/home" && \
 	chmod -R u=rwx,go= "/home" && \
+# remove temp files
 	apk del --quiet --no-cache --progress --purge && \
 	rm -rf /var/cache/apk/*
 
@@ -75,3 +81,10 @@ VOLUME "$MY_HOME"
 ENTRYPOINT ["/home/entrypoint.sh"]
 
 USER "${MY_USER_ID}:${MY_GROUP_ID}"
+
+# retry default is 3
+HEALTHCHECK --interval=30s --timeout=5s CMD \
+# check integrity of checkHealth.sh
+ sha3sum "/home/checkHealth.sh" | grep -Eq '^37176cc835ae01fab28a822a72a986fcd32d0a33de98ebb3852167e1' && \
+# execute sh
+ sh /home/checkHealth.sh 
