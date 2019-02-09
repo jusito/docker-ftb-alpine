@@ -274,7 +274,7 @@ if [ -e "config.sh" ]; then
 	sh config.sh
 fi
 
-if [ "$TEST_ONLY" == "true" ]; then
+if [ -n "$TEST_MODE" ]; then
 	echo "Testing done" # todo wait until server is up
 else
 	# register SIGTERM trap => exit server securely

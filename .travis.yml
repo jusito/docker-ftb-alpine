@@ -6,4 +6,5 @@ services:
 script:
   - bash test/checkBuild.sh
   - bash test/checkRun.sh
+  - bash test/checkHealth.sh
   

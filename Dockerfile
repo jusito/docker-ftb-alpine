@@ -12,7 +12,7 @@ ENV MY_GROUP_ID=10000 \
 	MY_MD5="" \
 	\
 # for CI needed
-	TEST_ONLY=false \
+	TEST_MODE="" \
 	\
 # changeable by user
 	HEALTH_URL=127.0.0.1 \

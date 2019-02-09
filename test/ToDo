@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# test download 
+# * MD5 ok / not ok
+# * is backup done?
+# * is backup taken?
+# * is backup validated?
+
+# test zip / jar / nothing
+
+# test backup / recovery
+
+# check properties written
+
+# check java args

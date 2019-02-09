@@ -125,7 +125,7 @@ This container is using a health check default. It checks every 30s if the serve
 * MY_FILE "FTBServer.zip"
 * MY\_SERVER _*TagDependency*_
 * MY\_MD5 _*TagDependency*_
-* TEST_ONLY false (used for CI)
+* TEST_MODE "" (used for CI)
 
 ## Additional Informations
 ### Volumes
