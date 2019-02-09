@@ -15,7 +15,7 @@ ENV MY_GROUP_ID=10000 \
 	TEST_MODE="" \
 	\
 # changeable by user
-	HEALTH_URL=127.0.0.1 \
+	HEALTH_URL="127.0.0.1" \
 	HEALTH_PORT="" \
 	FORCE_RELOAD="false" \
 	JAVA_PARAMETERS="-XX:+UseG1GC -Xms4G -Xmx4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M" \
@@ -84,8 +84,8 @@ ENTRYPOINT ["/home/entrypoint.sh"]
 USER "${MY_USER_ID}:${MY_GROUP_ID}"
 
 # retry default is 3
-HEALTHCHECK --interval=30s --timeout=5s CMD \
 # check integrity of checkHealth.sh
- sha3sum "/home/checkHealth.sh" | grep -Eq '^37176cc835ae01fab28a822a72a986fcd32d0a33de98ebb3852167e1' && \
 # execute sh
+HEALTHCHECK --interval=30s --timeout=5s CMD \
+ sha3sum "/home/checkHealth.sh" | grep -Eq '^37176cc835ae01fab28a822a72a986fcd32d0a33de98ebb3852167e1\s' && \
  sh /home/checkHealth.sh 
