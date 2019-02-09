@@ -32,18 +32,25 @@ PROPERTIES="${MY_HOME}/"$(ls "$MY_HOME" | grep -io -e 'server.properties')
 ### MAIN:
 ## input
 set +e
+debug=$1
+
 host=$HEALTH_URL
 port=$HEALTH_PORT
 # userdefined port?
 if [ -z "$port" ]; then
+	debugMsg "no HEALTH_PORT given"
 	#try to find in props
 	port=$(grep -Eio -e 'server-port=.+' "$PROPERTIES" | grep -o -e '[^=]*$')
 	#if not in, its default
 	if [ -z "$port" ]; then
+		debugMsg "couldn't extract server port from $PROPERTIES, fallback to default"
 		port=25565
+	else
+		debugMsg "could extract server port: $port"
 	fi
+else
+	debugMsg "HEALTH_PORT given"
 fi
-debug=$1
 set -e
 
 # process host
@@ -67,5 +74,15 @@ request="${handshakeLengthHex}${handshake}\x01\x00"
 echo "Request: $request"
 
 set -e
-# convert request, send, binary-to-text, check
-echo -e "${request}" | nc  "$host" "$port" | od -a -A n | tr -d '\n ' | grep -q '"players"'
+# convert request, send, binary-to-text
+recv=$(echo -e "${request}" | nc  "$host" "$port" | od -a -A n | tr -d '\n ')
+debugMsg "$recv"
+
+# check
+if [ $(echo "$recv" | grep -Fo '"players":' | wc -c) != "0" ]; then
+	echo "Status valid"
+	exit 0
+else
+	echo "Status invalid"
+	exit 1
+fi
