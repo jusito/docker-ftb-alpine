@@ -19,7 +19,7 @@ fi
 echo "newLine" >> temp
 docker cp temp $NAME_UNHEALTHY2:/home/checkHealth.sh
 
-sleep 40s
+sleep 100s
 info=$(docker ps | grep -F -e "$NAME_HEALTHY")
 if [ -z "$info" ]; then
 	echo "[FATAL] couldn't run $NAME_HEALTHY"
