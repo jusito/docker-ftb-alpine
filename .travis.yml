@@ -4,6 +4,6 @@ services:
   - docker
 
 script:
-  - bash /test/checkBuild.sh
-  - bash /test/checkRun.sh
+  - bash test/checkBuild.sh
+  - bash test/checkRun.sh
   
