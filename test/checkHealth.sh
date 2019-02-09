@@ -28,6 +28,7 @@ if [ -z "$info" ]; then
 elif [ $( echo "$info" | grep -F -e "(healthy)" | wc -c) == "0" ]; then
 	echo "[ERROR] health check failed"
 	docker ps
+	docker exec $NAME_HEALTHY /home/checkHealth.sh debugMode
 	echo "$info"
 	exit 3
 fi
@@ -40,6 +41,7 @@ if [ -z "$info" ]; then
 elif [ $( echo "$info" | grep -F -e unhealthy | wc -c) == "0" ]; then
 	echo "[ERROR] unhealth check failed"
 	docker ps
+	docker exec $NAME_UNHEALTHY /home/checkHealth.sh debugMode
 	echo "$info"
 	exit 5
 fi
@@ -52,6 +54,7 @@ if [ -z "$info" ]; then
 elif [ $( echo "$info" | grep -F -e unhealthy | wc -c) == "0" ]; then
 	echo "[ERROR] unhealth check failed"
 	docker ps
+	docker exec $NAME_UNHEALTHY2 /home/checkHealth.sh debugMode
 	echo "$info"
 	exit 7
 fi
