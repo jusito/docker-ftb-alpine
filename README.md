@@ -113,6 +113,9 @@ This container is using a health check default. It checks every 30s if the serve
 * HEALTH_URL 127.0.0.1, maybe you want to set this to external address
 * HEALTH\_PORT _read from server.properties_
 
+### other config
+* FORCE_RELOAD false, if true the container redownloads the file everytime
+
 ### Internal Used (don't change please)
 * MY\_USER_ID 10000
 * MY\_GROUP_ID 10000

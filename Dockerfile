@@ -17,6 +17,7 @@ ENV MY_GROUP_ID=10000 \
 # changeable by user
 	HEALTH_URL=127.0.0.1 \
 	HEALTH_PORT="" \
+	FORCE_RELOAD="false" \
 	JAVA_PARAMETERS="-XX:+UseG1GC -Xms4G -Xmx4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M" \
 	\
 # server.properties

@@ -11,17 +11,51 @@ download() {
 	target=$1
 	source=$2
 	md5=$3
+	skip="false"
+	cache="/home/${MY_FILE}"
 	
-	wget -O "${MY_FILE}" "${MY_SERVER}"
-	set +e
-	echo "${MY_MD5}  ${MY_FILE}" | md5sum -s -c -
-	if [ "$?" == "0" ]; then
-		echo "MD5 ok!"
+	# check if file already exists
+	if [ -e "${cache}" ]; then
+		echo "found existing file ${cache}"
+		
+		# check user config
+		if [ "$FORCE_RELOAD" == "true" ]; then
+			echo "force reload activated"
+			rm "${cache}"
+			skip="false"
+			
+		# check if md5 matches
+		elif [ $(md5sum "/home/${MY_FILE}" | grep -Eo "^${MY_MD5}" | wc -c) != "0" ]; then
+			echo "found existing file, no redownload: ${MY_MD5}"
+			skip="true"
+			
+		# if md5 doesn't match
+		else
+			echo "file doesn't match md5, redownloading: ${MY_MD5}"
+			rm "${cache}"
+			skip="false"
+		fi
 	else
-		echo "MD5 failed!"
-		exit 5
+		echo "found no cached download"
 	fi
-	set -e
+	
+	if [ "$skip" == "false" ]; then
+		echo "downloading..."
+		wget -O "${MY_FILE}" "${MY_SERVER}"
+
+		if [ $(md5sum "${MY_FILE}" | grep -Eo "^${MY_MD5}" | wc -c) != "0" ]; then
+			cp -vf "${MY_FILE}" "${cache}"
+			echo "MD5 ok!"
+		else
+			rm -f "${MY_FILE}"
+			echo "MD5 failed!"
+			exit 5
+		fi
+
+	else
+		echo "download skipped, cp"
+		cp -vf "${cache}" "${MY_FILE}"
+	fi
 }
 
 doBackup() {
@@ -200,7 +234,6 @@ if [ "$isZip" == "true" ]; then
 	unzip -q -o "${MY_FILE}"
 	echo "server files extracted"
 	
-	# delete copied zip
 	rm -f "${MY_FILE}"
 elif [ "$isJar" == "true" ]; then
 	echo "jar is at correct position"
