@@ -15,9 +15,9 @@ if [ -n "$MODE" ]; then
 fi
 
 echo "starting container Healthy, Healthy->Unhealthy, Unhealthy"
-docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30000 "jusito:develop"
-docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30001 -e HEALTH_PORT="20" "jusito:develop"
-docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30002 "jusito:develop"
+docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30000 "jusito/docker-ftb-alpine:Vanilla"
+docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30001 -e HEALTH_PORT="20" "jusito/docker-ftb-alpine:Vanilla"
+docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30002 "jusito/docker-ftb-alpine:Vanilla"
 
 if [ "$MODE" == 1 ]; then
 	exit 100
