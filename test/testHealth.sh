@@ -7,17 +7,19 @@ MODE="$1"
 NAME_HEALTHY="VanillaHealthy"
 NAME_UNHEALTHY="VanillaUnhealthy"
 NAME_UNHEALTHY2="VanillaFromHealthyToUnhealthy"
+IMAGE="jusito/docker-ftb-alpine:Vanilla"
 
 if [ -n "$MODE" ]; then
 	set +e
+	IMAGE="jusito:develop"
 	docker stop "$NAME_HEALTHY" "$NAME_UNHEALTHY" "$NAME_UNHEALTHY2"
 	set -e
 fi
 
 echo "starting container Healthy, Healthy->Unhealthy, Unhealthy"
-docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30000 "jusito/docker-ftb-alpine:Vanilla"
-docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30001 -e HEALTH_PORT="20" "jusito/docker-ftb-alpine:Vanilla"
-docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30002 "jusito/docker-ftb-alpine:Vanilla"
+docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30000 "$IMAGE"
+docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30001 -e HEALTH_PORT="20" "$IMAGE"
+docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30002 "$IMAGE"
 
 if [ "$MODE" == 1 ]; then
 	exit 100

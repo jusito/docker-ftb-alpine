@@ -76,6 +76,10 @@ echo "Request: $request"
 set -e
 # convert request, send, binary-to-text
 recv=$(echo -e "${request}" | nc  "$host" "$port" | od -a -A n | tr -d '\n ')
+debugMsg $(echo -e "${request}")
+debugMsg $(echo -e "${request}" | nc -v "$host" "$port")
+debugMsg $(echo -e "${request}" | nc -v "$host" "$port" | od -a -A n)
+debugMsg $(echo -e "${request}" | nc -v "$host" "$port" | od -a -A n | tr -d '\n ')
 debugMsg "$recv"
 
 # check
