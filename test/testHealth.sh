@@ -52,6 +52,8 @@ elif [ $(echo "$info" | grep -F -e "(healthy)" | wc -c) == "0" ]; then
 	docker exec $NAME_HEALTHY /home/checkHealth.sh debugMode || true
 	docker exec $NAME_HEALTHY ifconfig
 	echo "$info"
+	docker exec $NAME_HEALTHY ls -lA "/home/docker"
+	docker exec $NAME_HEALTHY ls -lA "/home/docker/logs"
 	docker exec $NAME_HEALTHY cat "/home/docker/logs/latest.log"
 	exit 3
 else
