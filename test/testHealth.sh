@@ -48,6 +48,7 @@ elif [ $(echo "$info" | grep -F -e "(healthy)" | wc -c) == "0" ]; then
 	echo "[ERROR] health check failed"
 	docker ps
 	docker exec $NAME_HEALTHY /home/checkHealth.sh debugMode
+	docker exec $NAME_HEALTHY ifconfig
 	echo "$info"
 	exit 3
 else
