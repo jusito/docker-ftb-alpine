@@ -17,9 +17,9 @@ if [ -n "$MODE" ]; then
 fi
 
 echo "starting container Healthy, Healthy->Unhealthy, Unhealthy"
-docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30000 "$IMAGE"
-docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30001 -e HEALTH_PORT="20" "$IMAGE"
-docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30002 "$IMAGE"
+docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30000 -e server_ip=127.0.0.1 "$IMAGE"
+docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30001 -e server_ip=127.0.0.1 -e HEALTH_PORT="20" "$IMAGE"
+docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30002 -e server_ip=127.0.0.1 "$IMAGE"
 
 if [ "$MODE" == 1 ]; then
 	exit 100
