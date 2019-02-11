@@ -80,6 +80,8 @@ elif [ $counter -gt $timeout ]; then
 	exit 4
 else
 	echo "Test ok!"
-	pkill -15 'java'
+	if [ $TEST_MODE != "keepRunning" ]; then
+		pkill -15 'java'
+	fi
 	exit 0
 fi

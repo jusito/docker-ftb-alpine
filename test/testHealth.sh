@@ -50,13 +50,7 @@ elif [ $(echo "$info" | grep -F -e "(healthy)" | wc -c) == "0" ]; then
 	echo "[ERROR] health check failed"
 	docker ps || true
 	docker exec $NAME_HEALTHY /home/checkHealth.sh debugMode || true
-	docker exec $NAME_HEALTHY ifconfig || true
-	
-	docker exec $NAME_HEALTHY ls -lA "/home/docker" || true
-	docker exec $NAME_HEALTHY ls -lshA "/home/docker/logs" || true
-	docker exec $NAME_HEALTHY cat "/home/docker/logs/latest.log" || true
 	echo "$info" || true
-	docker run -ti --rm --name "2$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30005 "$IMAGE"
 	exit 3
 else
 	echo "[INFO] Healthy container looks healthy"
