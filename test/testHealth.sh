@@ -17,9 +17,9 @@ if [ -n "$MODE" ]; then
 fi
 
 echo "starting container Healthy, Healthy->Unhealthy, Unhealthy"
-docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30000 "$IMAGE"
-docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30001 -e HEALTH_PORT="20" "$IMAGE"
-docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e server_port=30002 "$IMAGE"
+docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" "$IMAGE"
+docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e HEALTH_PORT="20" "$IMAGE"
+docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" "$IMAGE"
 
 if [ "$MODE" == 1 ]; then
 	exit 100
@@ -50,6 +50,13 @@ elif [ $(echo "$info" | grep -F -e "(healthy)" | wc -c) == "0" ]; then
 	echo "[ERROR] health check failed"
 	docker ps || true
 	docker exec $NAME_HEALTHY /home/checkHealth.sh debugMode || true
+	echo "Is the server already done?"
+	docker exec $NAME_HEALTHY ls -lAsh "/home/docker/logs/"
+	if [ $(grep -F "[Server thread/INFO]: Done" "$latest" | wc -l) -ge 1 ]; then
+		echo "Yep server looks up"
+	else
+		echo "No server isn't up"
+	fi
 	echo "$info" || true
 	exit 3
 else
