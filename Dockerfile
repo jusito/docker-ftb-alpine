@@ -63,7 +63,7 @@ ENV MY_GROUP_ID=10000 \
 	view_distance=10 \
 	white_list=false
 		
-COPY ["entrypoint.sh", "checkHealth.sh", "/home/" ]
+COPY ["entrypoint.sh", "checkHealth.sh", "entrypointTestMode.sh", "/home/" ]
 
 RUN apk update && \
 	apk add --no-cache ca-certificates && \

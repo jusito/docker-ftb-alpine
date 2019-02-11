@@ -275,7 +275,9 @@ if [ -e "config.sh" ]; then
 fi
 
 if [ -n "$TEST_MODE" ]; then
-	echo "Testing done" # todo wait until server is up
+	sh /home/entrypointTestMode.sh $isZip $isJar
+	exit $?
+
 else
 	# register SIGTERM trap => exit server securely
 	trap 'pkill -15 java' SIGTERM
