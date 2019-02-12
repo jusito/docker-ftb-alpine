@@ -24,7 +24,7 @@ if [ "$isZip" == "true" ]; then
 		if [ $(ls *.jar | grep -F 'minecraft_server' | wc -w) != 0 ]; then
 			running=false
 			found=true
-			echo "[entrypointTestMode][INFO]jar found, sleep..."
+			echo "[entrypointTestMode][INFO]jar found, sleeping to be sure its downloaded..."
 			sleep 10s
 			echo "[entrypointTestMode][INFO]... sleep ended"
 		elif [ $counter -gt $timeout ]; then
@@ -50,7 +50,7 @@ processExists=true
 running=true
 
 counter=0
-timeout=120
+timeout=180
 while [ "$running" == true ]; do
 	# Vanilla
 	if [ $(grep -F "[Server thread/INFO]: Done" "$latest" | wc -l) -ge 1 ]; then
@@ -79,7 +79,7 @@ elif [ $counter -gt $timeout ]; then
 	pkill -15 'java'
 	exit 4
 else
-	echo "[entrypointTestMode][INFO]Test ok!"
+	echo "[entrypointTestMode][INFO]Test ok! Needed sleeps: ${counter}/${timeout}"
 	if [ $TEST_MODE != "keepRunning" ]; then
 		pkill -15 'java'
 	fi
