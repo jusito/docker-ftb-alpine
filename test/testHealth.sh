@@ -60,6 +60,17 @@ function isHealthy() {
 	elif [ $(echo "$info" | grep -F -e "$state" | wc -c) == "0" ]; then
 		echo "[testHealth[ERROR]$state check failed"
 		echo "$info" || true
+		set +o errexit
+		docker exec $container "/home/checkHealth.sh" "debug"
+		docker exec $container ls "/home/docker/"
+		docker exec $container ls "/home/docker/logs/"
+		# shellcheck disable=SC2002
+		if docker exec $container grep -Eq -e ':\s*Done\s*\([0-9.]+\w?\)!' "/home/docker/logs/latest.log"; then
+			echo "[testHealth][INFO]server log contains done"
+		else
+			echo "[testHealth][ERROR]server log DOESN'T contains done"
+		fi
+		set -o errexit
 		return 3
 	else
 		echo "[testHealth][INFO]$container container looks: $state"
