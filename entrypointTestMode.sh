@@ -13,20 +13,24 @@ if [ "$isZip" == "true" ]; then
 	chmod +x ServerStart.sh
 	./ServerStart.sh &
 	echo "[entrypointTestMode][INFO]process started, waiting on jar"
-	
+
 	running=true
 	counter=0
 	timeout=60
 	found=false
-	while [ "$running" == true ]; do
+	echo "[entrypointTestMode][TRACE] starting loop"
+	while [ "$running" == "true" ]; do
 		counter=$((counter+1))
 		
-		if [ $(ls *.jar | grep -F 'minecraft_server' | wc -w) != 0 ]; then
+		fileExisting=$(if [ $(ls | grep -Eo '^minecraft_server.*\.jar$' | wc -w) != 0 ]; then echo true; else echo false; fi )
+		wgetRunning=$(if [ $(pidof wget | wc -w) != 0 ]; then echo true; else echo false; fi )
+		jarDownloaded=false
+
+		if [ "$fileExisting" == "true" ] && [ "$wgetRunning" == "false" ]; then
 			running=false
 			found=true
-			echo "[entrypointTestMode][INFO]jar found, sleeping to be sure its downloaded..."
-			sleep 10s
-			echo "[entrypointTestMode][INFO]... sleep ended"
+			echo "[entrypointTestMode][INFO]looks like the jar download is fine..."
+
 		elif [ $counter -gt $timeout ]; then
 			running=false
 			found=false
@@ -36,6 +40,7 @@ if [ "$isZip" == "true" ]; then
 			sleep 1s
 		fi
 	done
+	echo "[entrypointTestMode][TRACE] loop ended"
 	
 elif [ "$isJar" == "true" ]; then
 	java $JAVA_PARAMETERS -jar "${MY_FILE}" &
@@ -51,7 +56,8 @@ running=true
 
 counter=0
 timeout=180
-while [ "$running" == true ]; do
+while [ "$running" ]; do
+
 	# Vanilla
 	if [ $(grep -Eo "\]:\s*Done\s*\([0-9.]+\w?\)!" "$latest" | wc -l) -ge 1 ]; then
 		foundLogEntry=true
