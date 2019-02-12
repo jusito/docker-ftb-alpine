@@ -56,7 +56,7 @@ foundLogEntry=false
 running=true
 
 counter=0
-timeout=180
+timeout=300
 echo "[entrypointTestMode][TRACE]Run server loop starting"
 
 while [ "$running" = "true" ]; do
