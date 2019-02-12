@@ -3,13 +3,13 @@
 set -e
 
 MODE="$1"
-HEALTH=" --health-start-period 10s --health-retries 3 --health-timeout 3s --health-interval 2s "
+HEALTH=" --health-start-period 20s --health-retries 3 --health-timeout 3s --health-interval 2s "
 
 function await() {
 	container=$1
 	file=$2
 	waitFor=$3
-	minTime=$((10+9+3))
+	minTime=$((20+9+3))
 		
 	isRunning=true
 	counter=0
