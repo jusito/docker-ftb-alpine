@@ -50,7 +50,7 @@ function isHealthy() {
 	if [ $healthy == true ]; then
 		state="(healthy)"
 	else
-		state="unhealthy"
+		state="(unhealthy)"
 	fi
 	
 	if [ $(echo "$info" | wc -c) == "0" ]; then
