@@ -87,5 +87,5 @@ USER "${MY_USER_ID}:${MY_GROUP_ID}"
 # check integrity of checkHealth.sh
 # execute sh
 HEALTHCHECK --interval=30s --timeout=5s CMD \
- sha3sum "/home/checkHealth.sh" | grep -Eq '^e98d9f2328b9b58ed0529a7f8af59b17bc4fc23e23d1bd427864aa75\s' && \
+ sha3sum "/home/checkHealth.sh" | grep -Eq '^6d0185670db995fc7637d4d1fab6712eb018b8d97cce7b3d62700a6e\s' && \
  sh /home/checkHealth.sh 

@@ -16,44 +16,44 @@ download() {
 	
 	# check if file already exists
 	if [ -e "${cache}" ]; then
-		echo "found existing file ${cache}"
+		echo "[entrypoint][INFO]found existing file ${cache}"
 		
 		# check user config
 		if [ "$FORCE_RELOAD" == "true" ]; then
-			echo "force reload activated"
+			echo "[entrypoint][INFO]force reload activated"
 			rm "${cache}"
 			skip="false"
 			
 		# check if md5 matches
 		elif [ $(md5sum "/home/${MY_FILE}" | grep -Eo "^${MY_MD5}" | wc -c) != "0" ]; then
-			echo "found existing file, no redownload: ${MY_MD5}"
+			echo "[entrypoint][INFO]found existing file, no redownload: ${MY_MD5}"
 			skip="true"
 			
 		# if md5 doesn't match
 		else
-			echo "file doesn't match md5, redownloading: ${MY_MD5}"
+			echo "[entrypoint][WARN]file doesn't match md5, redownloading: ${MY_MD5}"
 			rm "${cache}"
 			skip="false"
 		fi
 	else
-		echo "found no cached download"
+		echo "[entrypoint][INFO]found no cached download"
 	fi
 	
 	if [ "$skip" == "false" ]; then
-		echo "downloading..."
+		echo "[entrypoint][INFO]downloading..."
 		wget -O "${MY_FILE}" "${MY_SERVER}"
 
 		if [ $(md5sum "${MY_FILE}" | grep -Eo "^${MY_MD5}" | wc -c) != "0" ]; then
 			cp -vf "${MY_FILE}" "${cache}"
-			echo "MD5 ok!"
+			echo "[entrypoint][INFO]MD5 ok!"
 		else
 			rm -f "${MY_FILE}"
-			echo "MD5 failed!"
+			echo "[entrypoint][ERROR]MD5 failed!"
 			exit 5
 		fi
 
 	else
-		echo "download skipped, cp"
+		echo "[entrypoint][INFO]download skipped, cp"
 		cp -vf "${cache}" "${MY_FILE}"
 	fi
 }
@@ -63,9 +63,9 @@ doBackup() {
 	cd "${MY_VOLUME}"
 
 	if [ ! -n "$file" ]; then
-		echo "can't backup empty filename"
+		echo "[entrypoint][ERROR]can't backup empty filename"
 	elif [ ! -e "$file" ]; then
-		echo "can't backup file which doesn't exists: $file"
+		echo "[entrypoint][INFO]can't backup file which doesn't exists: $file"
 	else
 		mv -fv "$file" "/home/$file"
 	fi
@@ -76,9 +76,9 @@ doRestore() {
 	cd "${MY_VOLUME}"
 	
 	if [ ! -n "$file" ]; then
-		echo "can't restore empty filename"
+		echo "[entrypoint][ERROR]can't restore empty filename"
 	elif [ ! -e "/home/$file" ]; then
-		echo "can't restore file which doesn't exists: /home/$file"
+		echo "[entrypoint][INFO]can't restore file which doesn't exists: /home/$file"
 	else
 		mv -fv "/home/$file" "$file"
 	fi
@@ -96,14 +96,14 @@ writeServerProperty() {
 	error=$?
 	set -e
 	if [ "1" == "$error" ]; then
-		echo "illegal value($value) for $name, fallback to ($default), used regex pattern $pattern"
+		echo "[entrypoint][WARN]illegal value($value) for $name, fallback to ($default), used regex pattern $pattern"
 		value="$default"
 	fi
 	
 	if [ "$value" == "$default" ]; then
-		echo "Property: $name=$value (Default)"
+		echo "[entrypoint][INFO]Property: $name=$value (Default)"
 	else
-		echo "Property: $name=$value"
+		echo "[entrypoint][INFO]Property: $name=$value"
 	fi
 	echo "$name=$value" >> "$target"
 }
@@ -166,20 +166,20 @@ writeServerProperties() {
 
 writeJVMArguments() {
 	if [ -n "${JAVA_PARAMETERS}" ]; then
-		echo "found custom jvm args (${JAVA_PARAMETERS})"
+		echo "[entrypoint][INFO]found custom jvm args (${JAVA_PARAMETERS})"
 		if [ -e "${MY_VOLUME}/ServerStart.sh" ]; then
-			echo "ServerStart.sh file found"
+			echo "[entrypoint][INFO]ServerStart.sh file found"
 
 			startup=$(cat "${MY_VOLUME}/ServerStart.sh" | grep -Eoi -e '"\$JAVACMD" -server .+')
 			startupEnd=$(echo "${startup}" | grep -Eoi -e '-jar .+')
 			replaceStart='"$JAVACMD" -server '
 			sed -i "s/${startup}/${replaceStart} ${JAVA_PARAMETERS} ${startupEnd}/g" "${MY_VOLUME}/ServerStart.sh"
 		else
-			echo "ServerStart.sh file NOT found"
+			echo "[entrypoint][ERROR]ServerStart.sh file NOT found"
 		fi
 		
 	else
-		echo "found NO custom jvm args"
+		echo "[entrypoint][INFO]found NO custom jvm args"
 	fi	
 }
 # set workdir to volume
@@ -206,15 +206,15 @@ set -e
 
 # check if we can handle it
 if [ "$isZip" == "true" ]; then
-	echo "File looks like zip"
+	echo "[entrypoint][INFO]File looks like zip"
 	if [ "$isJar" == "true" ]; then
-		echo "WARN file looks like zip and jar, thats strange I will try it as zip"	
+		echo "[entrypoint][WARN]file looks like zip and jar, thats strange I will try it as zip"	
 		isJar="false"
 	fi
 elif [ "$isJar" == "true" ]; then
-	echo "File looks like jar"
+	echo "[entrypoint][INFO]File looks like jar"
 else
-	echo "File doesn't look like jar / zip, can't handle it"
+	echo "[entrypoint][ERROR]File doesn't look like jar / zip, can't handle it"
 	exit 2
 fi
 
@@ -232,13 +232,13 @@ doBackup "config.sh"
 # unzip server files
 if [ "$isZip" == "true" ]; then
 	unzip -q -o "${MY_FILE}"
-	echo "server files extracted"
+	echo "[entrypoint][INFO]server files extracted"
 	
 	rm -f "${MY_FILE}"
 elif [ "$isJar" == "true" ]; then
-	echo "jar is at correct position"
+	echo "[entrypoint][INFO]jar is at correct position"
 else
-	echo "ERROR BUG unexpected file type [3]"
+	echo "[entrypoint][ERROR]unexpected file type [3]"
 	exit 3
 fi
 
@@ -248,7 +248,7 @@ if [ -e 'eula.txt' ]; then
 else
 	echo 'eula=true' > 'eula.txt'
 fi
-echo "eula accepted"
+echo "[entrypoint][INFO]You accepted the eula of Minecraft."
 
 #restore files
 doRestore "server.properties"
@@ -263,11 +263,12 @@ doRestore "config.sh"
 ## apply config
 writeServerProperties
 if [ "$isZip" == "true" ]; then
+	echo "[entrypoint][INFO]Injecting JVM arguments in FTB"
 	writeJVMArguments
 elif [ "$isJar" == "true" ]; then
-	echo "JVM Arguments are ready to go"
+	echo "[entrypoint][INFO]JVM Arguments are ready to go"
 else
-	echo "ERROR BUG unexpected file type [4]"
+	echo "[entrypoint][ERROR]unexpected file type [4]"
 	exit 4
 fi
 if [ -e "config.sh" ]; then
@@ -289,7 +290,7 @@ else
 	elif [ "$isJar" == "true" ]; then
 		java $JAVA_PARAMETERS -jar "${MY_FILE}" &
 	else
-		echo "ERROR BUG unexpected file type [5]"
+		echo "[entrypoint][ERROR]unexpected file type [5]"
 		exit 5
 	fi
 	wait "$!"

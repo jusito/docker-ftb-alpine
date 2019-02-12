@@ -12,7 +12,7 @@ touch "$latest" || true
 if [ "$isZip" == "true" ]; then
 	chmod +x ServerStart.sh
 	./ServerStart.sh &
-	echo "process started, waiting on jar"
+	echo "[entrypointTestMode][INFO]process started, waiting on jar"
 	
 	running=true
 	counter=0
@@ -24,13 +24,13 @@ if [ "$isZip" == "true" ]; then
 		if [ $(ls *.jar | grep -F 'minecraft_server' | wc -w) != 0 ]; then
 			running=false
 			found=true
-			echo "jar found, sleep..."
+			echo "[entrypointTestMode][INFO]jar found, sleep..."
 			sleep 10s
-			echo "... sleep ended"
+			echo "[entrypointTestMode][INFO]... sleep ended"
 		elif [ $counter -gt $timeout ]; then
 			running=false
 			found=false
-			echo "timout"
+			echo "[entrypointTestMode][ERROR]timout"
 			exit 1
 		else
 			sleep 1s
@@ -40,7 +40,7 @@ if [ "$isZip" == "true" ]; then
 elif [ "$isJar" == "true" ]; then
 	java $JAVA_PARAMETERS -jar "${MY_FILE}" &
 else
-	echo "ERROR BUG unexpected file type [5]"
+	echo "[entrypointTestMode][ERROR]unexpected file type [5]"
 	exit 2
 fi
 	
@@ -72,14 +72,14 @@ while [ "$running" == true ]; do
 done
 
 if [ $processExists == false ]; then
-	echo "Test failed, process closed before done"
+	echo "[entrypointTestMode][ERROR]Test failed, process closed before done"
 	exit 3
 elif [ $counter -gt $timeout ]; then
-	echo "Test failed, timeout reached."
+	echo "[entrypointTestMode][ERROR]Test failed, timeout reached."
 	pkill -15 'java'
 	exit 4
 else
-	echo "Test ok!"
+	echo "[entrypointTestMode][INFO]Test ok!"
 	if [ $TEST_MODE != "keepRunning" ]; then
 		pkill -15 'java'
 	fi

@@ -38,18 +38,18 @@ host=$HEALTH_URL
 port=$HEALTH_PORT
 # userdefined port?
 if [ -z "$port" ]; then
-	debugMsg "no HEALTH_PORT given"
+	debugMsg "[checkHealth][DEBUG]no HEALTH_PORT given"
 	#try to find in props
 	port=$(grep -Eio -e 'server-port=.+' "$PROPERTIES" | grep -o -e '[^=]*$')
 	#if not in, its default
 	if [ -z "$port" ]; then
-		debugMsg "couldn't extract server port from $PROPERTIES, fallback to default"
+		debugMsg "[checkHealth][DEBUG]couldn't extract server port from $PROPERTIES, fallback to default"
 		port=25565
 	else
-		debugMsg "could extract server port: $port"
+		debugMsg "[checkHealth][DEBUG]could extract server port: $port"
 	fi
 else
-	debugMsg "HEALTH_PORT given"
+	debugMsg "[checkHealth][DEBUG]HEALTH_PORT given"
 fi
 set -e
 
@@ -57,21 +57,21 @@ set -e
 hostHex=$(stringToHex "$host")
 hostLength=$(getLength $host)
 hostLengthHex=$(intToHex $hostLength)
-debugMsg "Host: $host($hostLength = $hostLengthHex) = $hostHex"
+debugMsg "[checkHealth][DEBUG]Host: $host($hostLength = $hostLengthHex) = $hostHex"
 
 # process port
 portHex=$(intToHex $port)
-debugMsg "Port: $port = $portHex"
+debugMsg "[checkHealth][DEBUG]Port: $port = $portHex"
 
 # create handshake
 handshake="\x00\x04${hostLengthHex}${hostHex}${portHex}\x01"
 handshakeLength=$(getLength "$handshake") # side effect, hex->byte before count
 handshakeLengthHex=$(intToHex $handshakeLength)
-debugMsg "Handshake: $handshake($handshakeLength = $handshakeLengthHex)"
+debugMsg "[checkHealth][DEBUG]Handshake: $handshake($handshakeLength = $handshakeLengthHex)"
 
 # create request
 request="${handshakeLengthHex}${handshake}\x01\x00"
-echo "Request: $request"
+echo "[checkHealth][INFO]Request: $request"
 
 set -e
 # convert request, send, binary-to-text
@@ -88,9 +88,9 @@ debugMsg "$recv"
 
 # check
 if [ $(echo "$recv" | grep -Fo '"players":' | wc -c) != "0" ]; then
-	echo "Status valid"
+	echo "[checkHealth][INFO]Status valid"
 	exit 0
 else
-	echo "Status invalid"
+	echo "[checkHealth][ERROR]Status invalid"
 	exit 1
 fi
