@@ -11,4 +11,6 @@ do
 	if ! docker run -ti --rm -e TEST_MODE=true -e JAVA_PARAMETERS="-Xms1G -Xmx2G" "jusito/docker-ftb-alpine:$tag"; then
 		exit $ec
 	fi
+	docker stop jusito/docker-ftb-alpine:$tag || true
+	docker rm jusito/docker-ftb-alpine:$tag || true
 done

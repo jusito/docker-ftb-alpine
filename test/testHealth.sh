@@ -61,6 +61,7 @@ function isHealthy() {
 		echo "[testHealth[ERROR]$state check failed"
 		echo "$info" || true
 		set +o errexit
+		ps -o comm,pid,etime,vsz,stat,args
 		docker exec $container "/home/checkHealth.sh" "debug"
 		docker exec $container ls "/home/docker/"
 		docker exec $container ls "/home/docker/logs/"
@@ -119,7 +120,7 @@ else
 	exit 1
 fi
 docker stop $NAME_HEALTHY || true
-
+docker rm $NAME_HEALTHY || true
 
 
 
@@ -146,7 +147,6 @@ else
 	exit 3
 fi
 docker stop "$NAME_UNHEALTHY" || true
-
 
 
 
@@ -184,5 +184,6 @@ else
 	exit 5
 fi
 docker stop "$NAME_UNHEALTHY2" || true
+docker rm "$NAME_UNHEALTHY2" || true
 
 exit 0
