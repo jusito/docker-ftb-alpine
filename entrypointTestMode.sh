@@ -53,7 +53,7 @@ counter=0
 timeout=180
 while [ "$running" == true ]; do
 	# Vanilla
-	if [ $(grep -F "[Server thread/INFO]: Done" "$latest" | wc -l) -ge 1 ]; then
+	if [ $(grep -Eo "\]:\s*Done\s*\([0-9.]+\w?\)!" "$latest" | wc -l) -ge 1 ]; then
 		foundLogEntry=true
 		running=false
 			
