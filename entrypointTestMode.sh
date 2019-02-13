@@ -27,7 +27,7 @@ if [ "$isZip" = "true" ]; then
 
 	running=true
 	counter=0
-	timeout=60
+	timeout=300
 	traceMsg "Waiting on jar loop starting"
 	while [ "$running" = "true" ]; do
 		counter=$((counter+1))

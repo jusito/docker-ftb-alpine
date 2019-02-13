@@ -126,7 +126,7 @@ This container is using a health check default. It checks every 10s if the serve
 * MY\_SERVER _*TagDependency*_
 * MY\_MD5 _*TagDependency*_
 * TEST_MODE "" (used for CI)
-* STARTUP_TIMEOUT 300 timeout for TEST\_MODE
+* STARTUP_TIMEOUT 600 timeout for TEST\_MODE
 
 ## Additional Informations
 ### Volumes

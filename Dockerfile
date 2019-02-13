@@ -13,7 +13,7 @@ ENV MY_GROUP_ID=10000 \
 	\
 # for CI needed
 	TEST_MODE="" \
-	STARTUP_TIMEOUT=300 \
+	STARTUP_TIMEOUT=600 \
 	\
 # changeable by user
 	HEALTH_URL="127.0.0.1" \
@@ -87,6 +87,6 @@ USER "${MY_USER_ID}:${MY_GROUP_ID}"
 # retry default is 3
 # check integrity of checkHealth.sh
 # execute sh
-HEALTHCHECK --interval=10s --timeout=310s CMD \
+HEALTHCHECK --interval=10s --timeout=610s CMD \
  sha3sum "/home/checkHealth.sh" | grep -Eq '^39e59b65162ffb1952f33cda08f1f4a43d5e049a94637949b7b5b868\s' && \
  sh /home/checkHealth.sh 
