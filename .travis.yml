@@ -1,7 +1,10 @@
-language: bash
+dist: xenial
 
 services:
   - docker
+  
+language:
+  - bash
 
 before_install:
   - sudo apt-get install -y libdigest-sha3-perl
