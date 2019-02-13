@@ -114,7 +114,7 @@ This container is using a health check default. It checks every 10s if the serve
 * HEALTH\_PORT _read from server.properties_
 
 ### additional config
-* FORCE_RELOAD false, if true the container redownloads the file everytime
+* FORCE_DOWNLOAD false, if true the container redownloads the server on every restart
 
 ### Internal Used (don't change please)
 * MY\_USER_ID 10000

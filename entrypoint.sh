@@ -11,7 +11,7 @@ set -o nounset #3 not always given
 
 # define functions
 download() {
-	# using env $FORCE_RELOAD
+	# using env $FORCE_DOWNLOAD
 	target=$1
 	source=$2
 	md5=$3
@@ -24,7 +24,7 @@ download() {
 		
 		md5Matches=$(md5sum "/home/$target" | grep -Eco -e "^$md5")
 		# check user config
-		if [ "$FORCE_RELOAD" = "true" ]; then
+		if [ "$FORCE_DOWNLOAD" = "true" ]; then
 			echo "[entrypoint][INFO]force reload activated"
 			rm "$cache"
 			skip="false"
