@@ -4,7 +4,7 @@ services:
   - docker
 
 before_install:
-  - sudo apt-get install -y sha3sum
+  - sudo apt-get install -y libdigest-sha3-perl
 
 script:
   - bash test/testCaseAll.sh
