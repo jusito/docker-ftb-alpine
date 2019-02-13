@@ -1,12 +1,12 @@
 #!/bin/sh
 
-set +o errexit
+set -o errexit
 set -o nounset
 set -o pipefail
 
 # test sha3sums
 
-if ! printf '%s  %s' "$(grep -Eo "grep -Eq '\^[^\\]+" Dockerfile | sed 's/...........//')a" "checkHealth.sh"; then
+if ! printf '%s  %s' "$(grep -Eo "grep -Eq '\^[^\\]+" Dockerfile | sed 's/...........//')" "checkHealth.sh" | sha3sum -c ; then
 	echo "[testStyle][ERROR]Sha3sum of checkHealth.sh in Dockerfile invalid"
 	exit 2
 fi
@@ -22,6 +22,7 @@ check() {
 	fi
 
 	echo "[testStyle][INFO]processing $file with extra arg: $exclude"
+	# shellcheck disable=SC2086
 	if shellcheck $exclude "$file"; then
 		return 0
 	else
@@ -31,15 +32,16 @@ check() {
 }
 
 
-find ${directory} -maxdepth 1 -type f -iname '*.sh' |
-while read filename
+find "${directory}" -maxdepth 1 -type f -iname '*.sh' |
+while read -r filename
 do
     if ! check "$filename" ''; then
 		exit 1
 	fi
 done
 
-if [ "$?" == "0" ]; then
+# shellcheck disable=SC2181
+if [ "$?" = "0" ]; then
 	echo "[testStyle][INFO]all elements passed style check"
 	exit 0
 else

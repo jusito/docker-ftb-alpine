@@ -1,12 +1,13 @@
 #!/bin/sh
 
 set -o errexit
-set -o nounset
 set -o pipefail
 
 # get arguments
 export MY_SERVER=$1
 export MY_MD5=$2
+cacheOnly=$3
+set -o nounset #3 not always given
 
 # define functions
 download() {
@@ -205,6 +206,11 @@ cd "${MY_VOLUME}"
 
 # main processing:
 download "${MY_FILE}" "${MY_SERVER}" "${MY_MD5}"
+if [ "$cacheOnly" = "true" ]; then
+	echo "[entrypoint][INFO]Cache only activated"
+	rm "${MY_FILE}"
+	exit 0
+fi
 
 # get file ending
 set +e # if grep can't find a match, its an error

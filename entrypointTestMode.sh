@@ -7,6 +7,13 @@ set -o pipefail
 
 isZip=$1
 isJar=$2
+TRACE=false
+
+traceMsg() {
+	if [ "$TRACE" = "true" ]; then
+		echo "[entrypointTestMode][TRACE]$1"	
+	fi
+}
 
 cd "${MY_VOLUME}"
 mkdir "${MY_VOLUME}/logs/" || true
@@ -16,12 +23,12 @@ touch "$latest" || true
 if [ "$isZip" = "true" ]; then
 	chmod +x ServerStart.sh
 	./ServerStart.sh &
-	echo "[entrypointTestMode][INFO]process started, waiting on jar"
+	traceMsg "process started, waiting on jar"
 
 	running=true
 	counter=0
 	timeout=60
-	echo "[entrypointTestMode][TRACE]Waiting on jar loop starting"
+	traceMsg "Waiting on jar loop starting"
 	while [ "$running" = "true" ]; do
 		counter=$((counter+1))
 		
@@ -32,7 +39,7 @@ if [ "$isZip" = "true" ]; then
 			running=false
 			echo "[entrypointTestMode][INFO]looks like the jar download is fine..."
 
-		elif [ $counter -gt $timeout ]; then
+		elif [ "$counter" -gt "$timeout" ]; then
 			running=false
 			echo "[entrypointTestMode][ERROR]timout"
 			exit 1
@@ -40,7 +47,7 @@ if [ "$isZip" = "true" ]; then
 			sleep 1s
 		fi
 	done
-	echo "[entrypointTestMode][TRACE]Waiting on jar loop ended"
+	traceMsg "Waiting on jar loop ended"
 	
 elif [ "$isJar" = "true" ]; then
 	#TODO unsafe
@@ -56,28 +63,28 @@ foundLogEntry=false
 running=true
 
 counter=0
-timeout=300
-echo "[entrypointTestMode][TRACE]Run server loop starting"
+timeout="${STARTUP_TIMEOUT:?}"
+traceMsg "Run server loop starting"
 
 while [ "$running" = "true" ]; do
 	counter=$((counter+1))
-	echo "[entrypointTestMode][TRACE]Run server loop $counter"
+	traceMsg "Run server loop $counter"
 
 	# Vanilla
 	logLinesServerDone="0"
 	if [ -e "$latest" ]; then
-		echo "[entrypointTestMode][TRACE]$latest exists"
+		traceMsg "$latest exists"
 		set +o errexit
 		# shellcheck disable=SC2002
 		logLinesServerDone=$(grep -Ec -e ':\s*Done\s*\([0-9.]+\w?\)!' "$latest")
 		set -o errexit
 	else
-		echo "[entrypointTestMode][TRACE]$latest NOT exists"
+		traceMsg "$latest NOT exists"
 	fi
-	echo "[entrypointTestMode][TRACE]Found log entries: $logLinesServerDone"
+	traceMsg "Found log entries: $logLinesServerDone"
 	
 	processesRunning=$( (pidof 'java' || echo "") | wc -w )
-	echo "[entrypointTestMode][TRACE]Found java processes $processesRunning"
+	traceMsg "Found java processes $processesRunning"
 	if [ "$processesRunning" -lt 1 ]; then
 		running=false
 		
@@ -92,14 +99,14 @@ while [ "$running" = "true" ]; do
 		sleep 1s
 	fi
 done
-echo "[entrypointTestMode][TRACE] loop ending"
+traceMsg "loop ending"
 
 if [ "$foundLogEntry" = "true" ]; then
 	echo "[entrypointTestMode][INFO]Test ok! Needed sleeps: ${counter}/${timeout}"
 	pkill -15 'java'
 	exit 0
 	
-elif [ $counter -gt $timeout ]; then
+elif [ "$counter" -gt "$timeout" ]; then
 	echo "[entrypointTestMode][ERROR]Test failed, timeout reached."
 	pkill -15 'java'
 	exit 4

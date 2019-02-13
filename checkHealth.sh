@@ -4,6 +4,11 @@
 # jamietech@github: https://github.com/jamietech/MinecraftServerPing
 # Valiano@stackoverflow: https://stackoverflow.com/questions/54572688/different-behaviour-of-grep-with-pipe-from-nc-on-alpine-vs-ubuntu
 
+## input
+debug=$1
+host=$HEALTH_URL
+port=$HEALTH_PORT
+
 debugMsg() {
 	if [ -n "$debug" ]; then
 		echo "$1"
@@ -27,17 +32,64 @@ stringToHex() {
 	echo "$1" | od -t x1 -A n | sed 's/ /\\x/g' | sed 's/....$//g'
 }
 
+delayCheck() {
+	set +o errexit
+	
+	latestLog="$MY_VOLUME/logs/latest.log"
+	stateFile="/home/serverWasUp"
+	startupTimeout="${STARTUP_TIMEOUT:?}"
+	startupCounter=0
+	if [ -e "$stateFile" ]; then
+		echo "[checkHealth][INFO]Looks like server was already up"
+	else
+		waiting="true"
+		
+		while [ "$waiting" = "true" ]; do
+			startupCounter=$((startupCounter+1))
+			
+			# is timeout reached
+			if [ "$startupCounter" -gt "$startupTimeout" ]; then
+				waiting="false"
+				
+			# timeout far away
+			else
+				# server already tried to start?
+				if [ -e "$latestLog" ]; then
+					# is server up?
+					if grep -Eq -e ':\s*Done\s*\([0-9.]+\w?\)!' "$latestLog"; then
+						waiting="false"
+						
+					# server is booting
+					else
+						sleep 1s
+					fi
+					
+				# very early check, downloading maybe
+				else
+					sleep 1s
+				fi
+			fi
+		done
+		
+		if [ "$startupCounter" -gt "$startupTimeout" ]; then
+			echo "[checkHealth][ERROR]Timeout reached, server needed to much time to boot"
+			exit 2
+		else
+			echo "[checkHealth][INFO]Server reported startup done"
+			touch "$stateFile"
+		fi
+	fi
+	set -o errexit
+}
+
+delayCheck # wait until server up / global timeout reached
+
 # find server properties
 PROPERTIES=$(find "$MY_HOME" -maxdepth 1 -type f -iname 'server.properties')
 
 ### MAIN:
-## input
-set +e
-debug=$1
-
-host=$HEALTH_URL
-port=$HEALTH_PORT
 # userdefined port?
+set +e
 if [ -z "$port" ]; then
 	debugMsg "[checkHealth][DEBUG]no HEALTH_PORT given"
 	#try to find in props

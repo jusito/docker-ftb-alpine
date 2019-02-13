@@ -1,26 +1,38 @@
 #!/bin/bash
 
-set -e
+set -o errexit
+set -o nounset
+set -o pipefail
 
+set +o nounset
 MODE="$1"
-HEALTH=" --health-start-period 20s --health-retries 100 --health-timeout 3s --health-interval 2s "
+HEALTH=" " #default should be fine
+set -o nounset
 
 function await() {
 	container=$1
 	file=$2
 	waitFor=$3
-	minTime=$((20+9+3))
+	#minTime=$((30))
 		
 	isRunning=true
 	counter=0
 	timeout=120
-	while [ $isRunning == true ]; do
+	step=1
+	while [ $isRunning = true ]; do
 		counter=$((counter+1))
 		
-		set -e
-		current=$( (docker exec $container grep -F -e "$waitFor" "$file" || true) | wc -w )
-		set +e
-		if [ "$current" != "0" ]; then
+		if [ "$step" = "1" ]; then
+			echo -en "\r[testHealth][INFO]waiting[-]..."
+		elif [ "$step" = "2" ]; then
+			echo -en "\r[testHealth][INFO]waiting[\\]..."
+		else
+			echo -en "\r[testHealth][INFO]waiting[/]..."
+			step=0
+		fi
+		step=$((step+1))
+		
+		if docker exec "$container" grep -Fq -e "$waitFor" "$file" 2>/dev/null; then
 			isRunning=false
 			timeout=$((timeout+1))
 		elif [ $counter -ge $timeout ]; then
@@ -31,13 +43,13 @@ function await() {
 	done
 	
 	if [ $counter -ge $timeout ]; then
-		echo "[testHealth][ERROR]TIMEOUT!"
+		echo -en "\r[testHealth][ERROR]TIMEOUT!\n"
 		return 1
 	else
-		echo "[testHealth][INFO]await done"
-		if [ $counter -lt $minTime ]; then
-			sleep $((minTime-counter))s
-		fi
+		echo -en "\r[testHealth][INFO]await done\n"
+		#if [ $counter -lt $minTime ]; then
+		#	sleep $((minTime-counter))s
+		#fi
 		return 0
 	fi
 }
@@ -47,67 +59,86 @@ function isHealthy() {
 	healthy=$2
 	info=$(docker ps | grep -F -e "$container")
 	
-	if [ $healthy == true ]; then
+	if [ "$healthy" = "true" ]; then
 		state="(healthy)"
 	else
 		state="(unhealthy)"
 	fi
 	
-	if [ $(echo "$info" | wc -c) == "0" ]; then
+	if [ -z "$info" ]; then
 		echo "[testHealth][FATAL]$container isn't running"
 		docker ps
 		return 2
-	elif [ $(echo "$info" | grep -F -e "$state" | wc -c) == "0" ]; then
-		echo "[testHealth[ERROR]$state check failed"
+	else
+		step=1
+		while docker ps | grep -F -e "$container" | grep -Fq -e '(health: starting)'; do
+			if [ "$step" = "1" ]; then
+				echo -en "\r[testHealth][INFO]health starting[-]..."
+			elif [ "$step" = "2" ]; then
+				echo -en "\r[testHealth][INFO]health starting[\\]..."
+			else
+				echo -en "\r[testHealth][INFO]health starting[/]..."
+				step=0
+			fi
+			step=$((step+1))
+			sleep 1s
+		done
+		echo -en "\r[testHealth][INFO]health starting... done!\n"
+		info=$(docker ps | grep -F -e "$container")
+	fi
+	
+	if echo "$info" | grep -Fq -e "$state"; then
+		echo "[testHealth][INFO]$container health state $state"
+		return 0
+	else
+		echo "[testHealth[ERROR]$container health state $state"
 		echo "$info" || true
 		set +o errexit
 		ps -o comm,pid,etime,vsz,stat,args
-		docker exec $container "/home/checkHealth.sh" "debug"
-		docker exec $container ls "/home/docker/"
-		docker exec $container ls "/home/docker/logs/"
+		docker exec "$container" "/home/checkHealth.sh" "debug"
+		docker exec "$container" ls "/home/docker/"
+		docker exec "$container" ls "/home/docker/logs/"
 		# shellcheck disable=SC2002
-		if docker exec $container grep -Eq -e ':\s*Done\s*\([0-9.]+\w?\)!' "/home/docker/logs/latest.log"; then
+		if docker exec "$container" grep -Eq -e ':\s*Done\s*\([0-9.]+\w?\)!' "/home/docker/logs/latest.log"; then
 			echo "[testHealth][INFO]server log contains done"
 		else
 			echo "[testHealth][ERROR]server log DOESN'T contains done"
 		fi
 		set -o errexit
 		return 3
-	else
-		echo "[testHealth][INFO]$container container looks: $state"
-		return 0
 	fi
 }
 
 function printDebug() {
 	container=$1
-	docker ps --filter "name=Vanilla"
+	docker ps --filter "name=JusitoTesting"
 	if [ -z "$container" ]; then
-		docker exec $container /home/checkHealth.sh debugMode || true
+		docker exec "$container" /home/checkHealth.sh debugMode || true
 	fi
 }
 
-NAME_HEALTHY="VanillaHealthy"
-NAME_UNHEALTHY="VanillaUnhealthy"
-NAME_UNHEALTHY2="VanillaFromHealthyToUnhealthy"
+NAME_HEALTHY="JusitoTesting_VanillaHealthy"
+NAME_UNHEALTHY="JusitoTesting_VanillaUnhealthy"
+NAME_UNHEALTHY2="JusitoTesting_VanillaFromHealthyToUnhealthy"
 IMAGE="jusito/docker-ftb-alpine:Vanilla"
 
 if [ -n "$MODE" ]; then
 	set +e
 	IMAGE="jusito:develop"
-	docker stop "$NAME_HEALTHY" "$NAME_UNHEALTHY" "$NAME_UNHEALTHY2"
 	set -e
 fi
+docker stop "$NAME_HEALTHY" "$NAME_UNHEALTHY" "$NAME_UNHEALTHY2" 2>/dev/null 1>/dev/null || true 
 
 echo "[testHealth][INFO]starting container Healthy"
-docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" $HEALTH "$IMAGE"
+# shellcheck disable=SC2086
+docker run -d --rm --name "$NAME_HEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" $HEALTH "$IMAGE" 1>/dev/null
 await "$NAME_HEALTHY" "/home/docker/logs/latest.log" "[Server thread/INFO]: Done"
 ret=$?
-if [ $ret == 0 ]; then
+if [ $ret = 0 ]; then
 	echo "[testHealth][INFO]$NAME_HEALTHY starting done"
 	isHealthy "$NAME_HEALTHY" true
 	ret=$?
-	if [ "$ret" == "0" ]; then
+	if [ "$ret" = "0" ]; then
 		echo "[testHealth][INFO]$NAME_HEALTHY looks healthy"	
 	else
 		echo "[testHealth][ERROR]$NAME_HEALTHY looks unhealthy"
@@ -119,8 +150,7 @@ else
 	printDebug "$NAME_HEALTHY"
 	exit 1
 fi
-docker stop $NAME_HEALTHY || true
-docker rm $NAME_HEALTHY || true
+docker stop $NAME_HEALTHY 1>/dev/null || true
 
 
 
@@ -128,13 +158,14 @@ docker rm $NAME_HEALTHY || true
 
 
 echo "[testHealth][INFO]starting Unhealthy"
-docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e HEALTH_PORT="20" $HEALTH "$IMAGE"
+# shellcheck disable=SC2086
+docker run -d --rm --name "$NAME_UNHEALTHY" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e HEALTH_PORT="20" $HEALTH "$IMAGE" 1>/dev/null
 await "$NAME_UNHEALTHY" "/home/docker/logs/latest.log" "[Server thread/INFO]: Done"
 ret=$?
-if [ "$ret" == "0" ]; then
+if [ "$ret" = "0" ]; then
 	isHealthy "$NAME_UNHEALTHY" false
 	ret=$?
-	if [ "$ret" == "0" ]; then
+	if [ "$ret" = "0" ]; then
 		echo "[testHealth][INFO]$NAME_UNHEALTHY looks unhealthy"	
 	else
 		echo "[testHealth][ERROR]$NAME_UNHEALTHY looks healthy"
@@ -146,14 +177,15 @@ else
 	printDebug "$NAME_UNHEALTHY"
 	exit 3
 fi
-docker stop "$NAME_UNHEALTHY" || true
+docker stop "$NAME_UNHEALTHY" 1>/dev/null || true
 
 
 
 
 
 echo "[testHealth][INFO]starting Healthy->Unhealthy"
-docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" $HEALTH "$IMAGE"
+# shellcheck disable=SC2086
+docker run -d --rm --name "$NAME_UNHEALTHY2" -e JAVA_PARAMETERS="-Xms1G -Xmx1G" $HEALTH "$IMAGE" 1>/dev/null
 
 # make unhealth
 echo "[testHealth][INFO]lets make it unhealthy"
@@ -168,10 +200,10 @@ docker cp MyFile $NAME_UNHEALTHY2:/home/checkHealth.sh
 echo "[testHealth][INFO]should be unhealthy"
 await "$NAME_UNHEALTHY2" "/home/docker/logs/latest.log" "[Server thread/INFO]: Done"
 ret=$?
-if [ "$ret" == "0" ]; then
+if [ "$ret" = "0" ]; then
 	isHealthy "$NAME_UNHEALTHY2" false
 	ret=$?
-	if [ "$ret" == "0" ]; then
+	if [ "$ret" = "0" ]; then
 		echo "[testHealth][INFO]$NAME_UNHEALTHY2 looks unhealthy"	
 	else
 		echo "[testHealth][ERROR]$NAME_UNHEALTHY2 looks healthy"
@@ -183,7 +215,6 @@ else
 	printDebug "$NAME_UNHEALTHY2"
 	exit 5
 fi
-docker stop "$NAME_UNHEALTHY2" || true
-docker rm "$NAME_UNHEALTHY2" || true
+docker stop "$NAME_UNHEALTHY2" 1>/dev/null || true
 
 exit 0
