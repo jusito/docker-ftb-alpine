@@ -109,11 +109,11 @@ In general Propertyname = Variablename, just replace "-"&"." with "_"
 </details>
 
 ### Healthcheck
-This container is using a health check default. It checks every 30s if the server status is available. If you don't want this use: `--no-healthcheck`
+This container is using a health check default. It checks every 10s if the server status is available. If you don't want this use: `--no-healthcheck`
 * HEALTH_URL 127.0.0.1, maybe you want to set this to external address
 * HEALTH\_PORT _read from server.properties_
 
-### other config
+### additional config
 * FORCE_RELOAD false, if true the container redownloads the file everytime
 
 ### Internal Used (don't change please)
@@ -126,6 +126,7 @@ This container is using a health check default. It checks every 30s if the serve
 * MY\_SERVER _*TagDependency*_
 * MY\_MD5 _*TagDependency*_
 * TEST_MODE "" (used for CI)
+* STARTUP_TIMEOUT 300 timeout for TEST\_MODE
 
 ## Additional Informations
 ### Volumes
