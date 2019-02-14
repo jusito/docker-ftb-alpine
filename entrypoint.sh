@@ -116,66 +116,71 @@ writeServerProperty() {
 
 writeServerProperties() {
 	
-	# prepare server.properties
-	target="${MY_VOLUME}/server.properties"
-	if [ -e "${target}" ]; then
-		rm "${target}"
+	if [ "$OVERWRITE_PROPERTIES" = "true" ]; then
+		echo "[entrypoint][INFO]OVERWRITE_PROPERTIES activated (default) overwriting properties."
+		
+		# prepare server.properties
+		target="${MY_VOLUME}/server.properties"
+		if [ -e "${target}" ]; then
+			rm "${target}"
+		fi
+		touch "$target"
+		
+		# define const
+		patternBoolean="^(true|false)$"
+		
+		# write properties
+		writeServerProperty "allow-flight" "${allow_flight:?}" "$patternBoolean" "false"
+		writeServerProperty "allow-nether" "${allow_nether:?}" "$patternBoolean" "true"
+		writeServerProperty "broadcast-console-to-ops" "${broadcast_console_to_ops:?}" "$patternBoolean" "true"
+		writeServerProperty "difficulty" "${difficulty:?}" "^[0-3]$" "1"
+		writeServerProperty "enable-query" "${enable_query:?}" "$patternBoolean" "false"
+		writeServerProperty "enable-rcon" "${enable_rcon:?}" "$patternBoolean" "false"
+		writeServerProperty "enable-command-block" "${enable_command_block:?}" "$patternBoolean" "false"
+		writeServerProperty "enforce-whitelist" "${enforce_whitelist:?}" "$patternBoolean" "false"
+		writeServerProperty "force-gamemode" "${force_gamemode:?}" "$patternBoolean" "false"
+		writeServerProperty "gamemode" "${gamemode:?}" "^[0-3]$" "0"
+		writeServerProperty "generate-structures" "${generate_structures:?}" "$patternBoolean" "true"
+		# shellcheck disable=SC2154
+		writeServerProperty "generator-settings" "${generator_settings}" "^.*$" "" #if user is setting this, he knows what he does
+		writeServerProperty "hardcore" "${hardcore:?}" "$patternBoolean" "false"
+		writeServerProperty "level-name" "${level_name:?}" "^[a-zA-Z0-9]([ a-zA-Z0-9]*[a-zA-Z0-9])?$" "world"
+		# shellcheck disable=SC2154
+		writeServerProperty "level-seed" "${level_seed}" "^.*$" ""
+		writeServerProperty "level-type" "${level_type:?}" "^(DEFAULT|FLAT|LARGEBIOMES|AMPLIFIED|BUFFET)$" "DEFAULT"
+		writeServerProperty "max-build-height" "${max_build_height:?}" "^\d+$" "256"
+		writeServerProperty "max-players" "${max_players:?}" "^[1-9][0-9]*$" "20"
+		writeServerProperty "max-tick-time" "${max_tick_time:?}" "^\d+$" "60000" #yes 0 is allowed
+		writeServerProperty "max-world-size" "${max_world_size:?}" "^\d+$" "29999984"
+		# shellcheck disable=SC2154
+		writeServerProperty "motd" "${motd}" "^.*$" "A Minecraft Server"
+		writeServerProperty "network-compression-threshold" "${network_compression_threshold:?}" "^\d+$" "256"
+		writeServerProperty "online-mode" "${online_mode:?}" "$patternBoolean" "true"
+		writeServerProperty "op-permission-level" "${op_permission_level:?}" "^[1-4]$" "4"
+		writeServerProperty "player-idle-timeout" "${player_idle_timeout:?}" "^\d+$" "0"
+		writeServerProperty "prevent-proxy-connections" "${prevent_proxy_connections:?}" "$patternBoolean" "false"
+		writeServerProperty "pvp" "${pvp:?}" "$patternBoolean" "true"
+		writeServerProperty "query.port" "${query_port:?}" "^[1-9][0-9]*$" "25565"
+		# shellcheck disable=SC2154
+		writeServerProperty "rcon.password" "${rcon_password}" "^.*$" ""
+		writeServerProperty "rcon.port" "${rcon_port:?}" "^[1-9][0-9]*$" "25575"
+		# shellcheck disable=SC2154
+		writeServerProperty "resource-pack" "${resource_pack}" "^.*$" ""
+		# shellcheck disable=SC2154
+		writeServerProperty "resource-pack-sha1" "${resource_pack_sha1}" "^.*$" "" #TODO correct pattern
+		# shellcheck disable=SC2154
+		writeServerProperty "server-ip" "${server_ip}" "^.*$" "" #TODO correct pattern
+		writeServerProperty "server-port" "${server_port:?}" "^[1-9][0-9]*$" "25565"
+		writeServerProperty "snooper-enabled" "${snooper_enabled:?}" "$patternBoolean" "true"
+		writeServerProperty "spawn-animals" "${spawn_animals:?}" "$patternBoolean" "true"
+		writeServerProperty "spawn-monsters" "${spawn_monsters:?}" "$patternBoolean" "true"
+		writeServerProperty "spawn-npcs" "${spawn_npcs:?}" "$patternBoolean" "true"
+		writeServerProperty "spawn-protection" "${spawn_protection:?}" "^\d+$" "16"
+		writeServerProperty "view-distance" "${view_distance:?}" "^([3-9]|1[0-5])$" "10"
+		writeServerProperty "white-list" "${white_list:?}" "$patternBoolean" "false"
+	else
+		echo "[entrypoint][INFO]OVERWRITE_PROPERTIES deactivated, skipping properties."
 	fi
-	touch "$target"
-	
-	# define const
-	patternBoolean="^(true|false)$"
-	
-	# write properties
-	writeServerProperty "allow-flight" "${allow_flight:?}" "$patternBoolean" "false"
-	writeServerProperty "allow-nether" "${allow_nether:?}" "$patternBoolean" "true"
-	writeServerProperty "broadcast-console-to-ops" "${broadcast_console_to_ops:?}" "$patternBoolean" "true"
-	writeServerProperty "difficulty" "${difficulty:?}" "^[0-3]$" "1"
-	writeServerProperty "enable-query" "${enable_query:?}" "$patternBoolean" "false"
-	writeServerProperty "enable-rcon" "${enable_rcon:?}" "$patternBoolean" "false"
-	writeServerProperty "enable-command-block" "${enable_command_block:?}" "$patternBoolean" "false"
-	writeServerProperty "enforce-whitelist" "${enforce_whitelist:?}" "$patternBoolean" "false"
-	writeServerProperty "force-gamemode" "${force_gamemode:?}" "$patternBoolean" "false"
-	writeServerProperty "gamemode" "${gamemode:?}" "^[0-3]$" "0"
-	writeServerProperty "generate-structures" "${generate_structures:?}" "$patternBoolean" "true"
-	# shellcheck disable=SC2154
-	writeServerProperty "generator-settings" "${generator_settings}" "^.*$" "" #if user is setting this, he knows what he does
-	writeServerProperty "hardcore" "${hardcore:?}" "$patternBoolean" "false"
-	writeServerProperty "level-name" "${level_name:?}" "^[a-zA-Z0-9]([ a-zA-Z0-9]*[a-zA-Z0-9])?$" "world"
-	# shellcheck disable=SC2154
-	writeServerProperty "level-seed" "${level_seed}" "^.*$" ""
-	writeServerProperty "level-type" "${level_type:?}" "^(DEFAULT|FLAT|LARGEBIOMES|AMPLIFIED|BUFFET)$" "DEFAULT"
-	writeServerProperty "max-build-height" "${max_build_height:?}" "^\d+$" "256"
-	writeServerProperty "max-players" "${max_players:?}" "^[1-9][0-9]*$" "20"
-	writeServerProperty "max-tick-time" "${max_tick_time:?}" "^\d+$" "60000" #yes 0 is allowed
-	writeServerProperty "max-world-size" "${max_world_size:?}" "^\d+$" "29999984"
-	# shellcheck disable=SC2154
-	writeServerProperty "motd" "${motd}" "^.*$" "A Minecraft Server"
-	writeServerProperty "network-compression-threshold" "${network_compression_threshold:?}" "^\d+$" "256"
-	writeServerProperty "online-mode" "${online_mode:?}" "$patternBoolean" "true"
-	writeServerProperty "op-permission-level" "${op_permission_level:?}" "^[1-4]$" "4"
-	writeServerProperty "player-idle-timeout" "${player_idle_timeout:?}" "^\d+$" "0"
-	writeServerProperty "prevent-proxy-connections" "${prevent_proxy_connections:?}" "$patternBoolean" "false"
-	writeServerProperty "pvp" "${pvp:?}" "$patternBoolean" "true"
-	writeServerProperty "query.port" "${query_port:?}" "^[1-9][0-9]*$" "25565"
-	# shellcheck disable=SC2154
-	writeServerProperty "rcon.password" "${rcon_password}" "^.*$" ""
-	writeServerProperty "rcon.port" "${rcon_port:?}" "^[1-9][0-9]*$" "25575"
-	# shellcheck disable=SC2154
-	writeServerProperty "resource-pack" "${resource_pack}" "^.*$" ""
-	# shellcheck disable=SC2154
-	writeServerProperty "resource-pack-sha1" "${resource_pack_sha1}" "^.*$" "" #TODO correct pattern
-	# shellcheck disable=SC2154
-	writeServerProperty "server-ip" "${server_ip}" "^.*$" "" #TODO correct pattern
-	writeServerProperty "server-port" "${server_port:?}" "^[1-9][0-9]*$" "25565"
-	writeServerProperty "snooper-enabled" "${snooper_enabled:?}" "$patternBoolean" "true"
-	writeServerProperty "spawn-animals" "${spawn_animals:?}" "$patternBoolean" "true"
-	writeServerProperty "spawn-monsters" "${spawn_monsters:?}" "$patternBoolean" "true"
-	writeServerProperty "spawn-npcs" "${spawn_npcs:?}" "$patternBoolean" "true"
-	writeServerProperty "spawn-protection" "${spawn_protection:?}" "^\d+$" "16"
-	writeServerProperty "view-distance" "${view_distance:?}" "^([3-9]|1[0-5])$" "10"
-	writeServerProperty "white-list" "${white_list:?}" "$patternBoolean" "false"
-
 }
 
 writeJVMArguments() {
@@ -201,6 +206,15 @@ writeJVMArguments() {
 		echo "[entrypoint][INFO]found NO custom jvm args"
 	fi	
 }
+writeOp() {
+	if [ -z "$ADMIN_NAME" ]; then
+		echo "[entrypoint][WARN]ADMIN_NAME unset, are you sure?"
+	else
+		echo "[entrypoint][INFO]ADMIN_NAME set, writing..."
+		sh "/home/addOp.sh" "" "$ADMIN_NAME" "" ""
+	fi
+}
+
 # set workdir to volume
 cd "${MY_VOLUME}"
 
@@ -286,6 +300,7 @@ doRestore "config.sh"
 
 ## apply config
 writeServerProperties
+writeOp
 if [ "$isZip" = "true" ]; then
 	echo "[entrypoint][INFO]Injecting JVM arguments in FTB"
 	writeJVMArguments

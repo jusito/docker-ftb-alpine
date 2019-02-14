@@ -20,6 +20,8 @@ ENV MY_GROUP_ID=10000 \
 	HEALTH_PORT="" \
 	FORCE_DOWNLOAD="false" \
 	JAVA_PARAMETERS="-XX:+UseG1GC -Xms4G -Xmx4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M" \
+	OVERWRITE_PROPERTIES="true" \
+	ADMIN_NAME="" \
 	\
 # server.properties
 	allow_flight=false \
@@ -64,7 +66,7 @@ ENV MY_GROUP_ID=10000 \
 	view_distance=10 \
 	white_list=false
 		
-COPY ["entrypoint.sh", "checkHealth.sh", "entrypointTestMode.sh", "/home/" ]
+COPY ["entrypoint.sh", "checkHealth.sh", "entrypointTestMode.sh", "addOp.sh", "/home/" ]
 
 RUN apk update && \
 	apk add --no-cache ca-certificates && \

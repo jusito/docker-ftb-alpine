@@ -8,13 +8,13 @@ This repository contains servers for: [Feed The Beast](https://www.feed-the-beas
 1. Which server you want? Which version you want? Choose you _Tag_ below
 2. Which Port? -p 25566:25565 means 25566 from internet, 25565 from inside of container
 3. Do you want reddit jvm args? Yes go next, no see _Environment Variables_
-4. Do you want persistent files? No go next, yes `-v minecraft_modded:/home/docker:rw`
+4. Should I enter an operator level 4? He would be also whitelisted. No go next, yes use `-e ADMIN_NAME="YourNameHere"`
 5. Do you want your own server.properties? No go next, yes see use Environmental Variables _server.properties_ or see _Additional Informations_
 
 ### Example Skyfactor: 
 
 ```
-docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2
+docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNameHere" -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2
 ```
 
 ## Tags
@@ -56,77 +56,91 @@ Example:
 If you want default FTB values: JAVA_PARAMETERS=""
 
 ### Server Properties
-https://minecraft-de.gamepedia.com/Server.properties
+The values of this environment variables are written on every restart. If you don't set them, default value is written.
 
-In general Propertyname = Variablename, just replace "-"&"." with "_"
+|Name|Default|Description|
+|----|-------|-----------|
+|OVERWRITE\_PROPERTIES|true|server.properties are deleted and rewritten at each restart. Unused variables remain on default. Unknown properties are deleted.|
 
+In general Propertyname = Variablename, just replace "-"&"." with "_".
 <details><summary>All Available Properties (click me)</summary>
 <p>
 
-* allow_flight=false
-* allow_nether=true
-* broadcast\_console\_to_ops=true
-* difficulty=1
-* enable_query=false
-* enable_rcon=false
-* enable\_command_block=false
-* enforce_whitelist=false
-* force_gamemode=false
-* gamemode=0
-* generate_structures=true
-* generator_settings=""
-* hardcore=false
-* level_name="world"
-* level_seed=""
-* level_type=DEFAULT
-* max\_build_height=256
-* max_players=20
-* max\_tick_time=60000
-* max\_world_size=29999984
-* motd="A Minecraft Server"
-* network\_compression_threshold=256
-* online_mode=true
-* op\_permission_level=4
-* player\_idle_timeout=0
-* prevent\_proxy_connections=false
-* pvp=true
-* query_port=25565
-* rcon_password=""
-* rcon_port=25575
-* resource_pack=""
-* resource\_pack_sha1=""
-* server_ip=""
-* server_port=25565
-* snooper_enabled=true
-* spawn_animals=true
-* spawn_monsters=true
-* spawn_npcs=true
-* spawn_protection=16
-* view_distance=10
-* white_list=false
+|Name|Default|Name in server.properties|
+|----|-------|-------------------------|
+|allow\_flight|false|allow-flight|
+|allow\_nether|true|allow-nether|
+|broadcast\_console\_to\_ops|true|broadcast-console-to-ops|
+|difficulty|1|difficulty|
+|enable\_query|false|enable-query|
+|enable\_rcon|false|enable-rcon|
+|enable\_command\_block|false|enable-command-block|
+|enforce\_whitelist|false|enforce-whitelis|
+|force\_gamemode|false|force-gamemode|
+|gamemode|0|gamemode|
+|generate\_structures|true|generate-structures|
+|generator\_settings||generator-settings|
+|hardcore|false|hardcore|
+|level\_name|world|level-name|
+|level\_seed||level-seed|
+|level\_type|DEFAULT|level-type|
+|max\_build\_height|256|max-build-height|
+|max\_players|20|max-players|
+|max\_tick\_time|60000|max-tick-time|
+|max\_world\_size|29999984|max-world-size|
+|motd|A Minecraft Server||
+|network\_compression\_threshold|256|network-compression-threshold|
+|online\_mode|true|online-mode|
+|op\_permission\_level|4|op-permission-level|
+|player\_idle\_timeout|0|player-idle-timeout|
+|prevent\_proxy\_connections|false|prevent-proxy-connections|
+|pvp|true|pvp|
+|query\_port|25565|query-port|
+|rcon\_password||rcon-password|
+|rcon\_port|25575|rcon-port|
+|resource\_pack||resource-pack|
+|resource\_pack\_sha1||resource-pack-sha1|
+|server\_ip||server-ip|
+|server\_port|25565|server-port|
+|snooper\_enabled|true|snooper-enabled|
+|spawn\_animals|true|spawn-animals|
+|spawn\_monsters|true|spawn-monsters|
+|spawn\_npcs|true|spawn-npcs|
+|spawn\_protection|16|spawn-protection|
+|view\_distance|10|view-distance|
+|white\_list|false|white-list|
 
 </p>
 </details>
 
 ### Healthcheck
 This container is using a health check default. It checks every 10s if the server status is available. If you don't want this use: `--no-healthcheck`
-* HEALTH_URL 127.0.0.1, maybe you want to set this to external address
-* HEALTH\_PORT _read from server.properties_
+
+|Name|Default|Description|
+|-|-|-|
+|HEALTH\_URL|127.0.0.1|Target address for healthcheck. Maybe you want to add your external address.|
+|HEALTH\_PORT|_read from server.properties_|Target port for healthcheck.|
 
 ### additional config
-* FORCE_DOWNLOAD false, if true the container redownloads the server on every restart
+
+|Name|Default|Description|
+|----|-------|-----------|
+|FORCE\_DOWNLOAD|false|Whether the server should be downloaded every time it is restarted.|
+|ADMIN_NAME||Set here your first admin level 4 name. This will allow you to change config ingame.|
 
 ### Internal Used (don't change please)
-* MY\_USER_ID 10000
-* MY\_GROUP_ID 10000
-* MY_NAME docker
-* MY_HOME /home/docker
-* MY_VOLUME /home/docker
-* MY_FILE "FTBServer.zip"
-* MY\_SERVER _*TagDependency*_
-* MY\_MD5 _*TagDependency*_
-* TEST_MODE "" (used for CI)
-* STARTUP_TIMEOUT 600 timeout for TEST\_MODE
+|Name|Default|Description|
+|-|-|-|
+|MY\_USER_ID|10000||
+|MY\_GROUP_ID|10000||
+|MY\_NAME|docker||
+|MY\_HOME|/home/docker||
+|MY\_VOLUME|/home/docker||
+|MY\_FILE|_*TagDependency*_|Name of the server file.|
+|MY\_SERVER|_*TagDependency*_|Download link of the server.|
+|MY\_MD5|_*TagDependency*_|MD5 of Download.|
+|TEST\_MODE||used for CI|
+|STARTUP\_TIMEOUT|600|timeout for TEST\_MODE|
 
 ## Additional Informations
 ### Volumes
@@ -138,6 +152,15 @@ This container is using a health check default. It checks every 10s if the serve
 * /home/docker/mods/ Mod folder
 * /home/docker/server.properties
 * /home/docker/config.sh your personal config
+* /home/addOp.sh script you can use for adding op.
+
+### add Operator
+You can use the ingame command, if you don't like it:
+`docker exec "CONTAINER" /home/addOp.sh "uuid" "name" "level" "bypassesPlayerLimit"`
+* uuid can be empty, will be resolved
+* name is needed
+* level if unset 4
+* bypassesPlayerLimit if unset true
 
 ### Use your existing server.properties
 1. start container one time until done, stop it
@@ -159,6 +182,8 @@ This container is using a health check default. It checks every 10s if the serve
 ### Minecraft related
 * [Set server image](https://www.spigotmc.org/threads/how-to-add-a-server-icon-to-your-server-1-7-1-8.6564/)
 * [MOTD colors](https://www.minecraftforum.net/forums/support/server-support-and/1940468-how-to-add-colour-to-your-server-motd)
+* [Whitelist usage ingame](https://minecraft.gamepedia.com/Commands/whitelist)
+* [Op usage ingame](https://minecraft.gamepedia.com/Commands/op)
 
 ## Find Me
 https://github.com/jusito/
