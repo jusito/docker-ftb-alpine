@@ -40,21 +40,24 @@ if [ -z "$uuid" ]; then
 	set -o errexit
 fi
 echo "[addOp][INFO]checking uuid $uuid"
-uuidLength=${#uuid}
+set -o xtrace
+uuidLength="${#uuid}"
 if [ "$uuidLength" = "32" ]; then
-	if grep -q -E -e '^[0-9a-fA-F]{32}$'; then
-		echo "[addOp][INFO]uuid is short form, converting to long form"
-		uuid=$(sed -E 's/^(.{8})(.{4})(.{4})(.{4})(.{12})$/\1-\2-\3-\4-\5/')
+	echo "[addOp][INFO]uuid is short form"
+	if echo "$uuid" | grep -q -E -e '^[0-9a-fA-F]{32}$'; then
+		echo "[addOp][INFO]converting to long form"
+		uuid=$(echo "$uuid" | sed -E 's/^(.{8})(.{4})(.{4})(.{4})(.{12})$/\1-\2-\3-\4-\5/')
 	else
 		echo "[addOp][ERROR]uuid contains invalid characters, only 0-9a-fA-F valid."
 		exit 12
 	fi
 elif [ "$uuidLength" = "36" ]; then
-	if ! grep -q -E -e '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'; then
+	echo"[addOp][INFO]uuid is long form"
+	if ! echo "$uuid" | grep -q -E -e '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'; then
 		echo "[addOp][ERROR]Given uuid is invalid, used regex: [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12"
 		exit 13
 	else
-		echo "[addOp][INFO]uuid is long form and looks valid"
+		echo "[addOp][INFO]uuid looks valid"
 	fi
 else
 	echo "[addOp][ERROR]Current uuid is invalid, not of length 33 or 37"
@@ -86,7 +89,9 @@ if [ -e "$file" ]; then
 fi
 
 # backup old one
-mv -fv "$file" "$fileBac"
+if [ -e "$file" ]; then
+	mv -fv "$file" "$fileBac"
+fi
 
 # write new one
 if [ -n "$existing" ]; then
