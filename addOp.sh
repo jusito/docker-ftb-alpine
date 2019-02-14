@@ -65,7 +65,7 @@ if [ -e "$file" ]; then
 		for current in "$(echo "$temp" | grep -Eo -e '\{[^}]+\}')"
 		do
 			if ! echo "$current" | grep -Eq -e "\"name\"\s*:\s*\"$name\""; then
-				existing="${existing}${current}"
+				existing="${existing},${current}"
 			fi
 		done
 	fi
@@ -75,4 +75,7 @@ fi
 mv -fv "$file" "$fileBac"
 
 # write new one
+if [ -n "$existing" ]; then
+	existing="${existing},"
+fi
 echo "[${existing}{\"uuid\": \"$uuid\",\"name\": \"$name\",\"level\": $level,\"bypassesPlayerLimit\": $bypassesPlayerLimit}]" > "$file"
