@@ -62,7 +62,7 @@ if [ -e "$file" ]; then
 	else
 		temp="$existing"
 		existing=""
-		for current in "$(echo "$temp" | grep -Eo -e '\{[^}]+\}')"
+		for current in $(echo "$temp" | grep -Eo -e '\{[^}]+\}')
 		do
 			if ! echo "$current" | grep -Eq -e "\"name\"\s*:\s*\"$name\""; then
 				existing="${existing},${current}"
