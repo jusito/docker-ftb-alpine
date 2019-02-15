@@ -40,7 +40,6 @@ if [ -z "$uuid" ]; then
 	set -o errexit
 fi
 echo "[addOp][INFO]checking uuid $uuid"
-set -o xtrace
 uuidLength="${#uuid}"
 if [ "$uuidLength" = "32" ]; then
 	echo "[addOp][INFO]uuid is short form"

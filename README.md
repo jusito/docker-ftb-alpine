@@ -76,7 +76,7 @@ In general Propertyname = Variablename, just replace "-"&"." with "_".
 |enable\_query|false|enable-query|
 |enable\_rcon|false|enable-rcon|
 |enable\_command\_block|false|enable-command-block|
-|enforce\_whitelist|false|enforce-whitelis|
+|enforce\_whitelist|false|enforce-whitelist|
 |force\_gamemode|false|force-gamemode|
 |gamemode|0|gamemode|
 |generate\_structures|true|generate-structures|
@@ -162,6 +162,7 @@ You can use the ingame command, if you don't like it:
 * name is needed
 * level if unset 4
 * bypassesPlayerLimit if unset true
+* docker restart CONTAINER needed
 
 ### Use your existing server.properties
 0. Step 1 & 2 can be done with copyToVolume.sh from tools section on git.
