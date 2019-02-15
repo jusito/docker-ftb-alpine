@@ -9,7 +9,6 @@ readonly name="$2"
 level="$3"
 bypassesPlayerLimit="$4"
 set -o nounset
-#uuid=$(wget -O - "https://api.mojang.com/users/profiles/minecraft/terzut" | grep -Eo -e '"id":"[^"]+' | grep -Eo -e '[^"]+$')
 
 readonly file="$MY_VOLUME/ops.json"
 readonly fileBac="$MY_VOLUME/ops.json.bac"
@@ -75,16 +74,19 @@ if [ -e "$file" ]; then
 		
 	# remove existing player
 	else
-		temp="$existing"
-		existing=""
+		tmpFile="/home/addOpTemp"
+		touch "$tmpFile"
+		echo "$existing" | grep -Eo -e '\{[^}]+\}' |
 		while read -r current
 		do
 			if echo "$current" | grep -Eq -e "\"name\"\s*:\s*\"$name\""; then
 				echo "[addOp][INFO]uuid is already in, replacing with new values"
 			else
-				existing="${existing},${current}"
+				echo ",${current}" >> "$tmpFile"
 			fi
-		done < <(echo "$temp" | grep -Eo -e '\{[^}]+\}')
+		done
+		existing=$(sed 's/^.//' < "/home/addOpTemp")
+		rm "$tmpFile"
 	fi
 fi
 
