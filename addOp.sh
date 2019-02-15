@@ -77,7 +77,6 @@ if [ -e "$file" ]; then
 	else
 		temp="$existing"
 		existing=""
-		echo "$temp" | grep -Eo -e '\{[^}]+\}' |
 		while read -r current
 		do
 			if echo "$current" | grep -Eq -e "\"name\"\s*:\s*\"$name\""; then
@@ -85,7 +84,7 @@ if [ -e "$file" ]; then
 			else
 				existing="${existing},${current}"
 			fi
-		done
+		done < <(echo "$temp" | grep -Eo -e '\{[^}]+\}')
 	fi
 fi
 
