@@ -77,12 +77,13 @@ if [ -e "$file" ]; then
 	else
 		temp="$existing"
 		existing=""
-		for current in $(echo "$temp" | grep -Eo -e '\{[^}]+\}')
+		echo "$temp" | grep -Eo -e '\{[^}]+\}' |
+		while read -r current
 		do
-			if ! echo "$current" | grep -Eq -e "\"name\"\s*:\s*\"$name\""; then
-				existing="${existing},${current}"
-			else
+			if echo "$current" | grep -Eq -e "\"name\"\s*:\s*\"$name\""; then
 				echo "[addOp][INFO]uuid is already in, replacing with new values"
+			else
+				existing="${existing},${current}"
 			fi
 		done
 	fi
