@@ -4,8 +4,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-docker run -ti --rm \
+docker run -d \
  --name "JusitoTesting" \
  -e TEST_MODE=true -e JAVA_PARAMETERS="-Xms1G -Xmx1G" \
  -e ADMIN_NAME=terzut \
  "jusito/docker-ftb-alpine:Vanilla"
+
+docker exec JusitoTesting /home/addOp.sh "" Hey_Schnitte "" ""
+
+docker restart JusitoTesting
