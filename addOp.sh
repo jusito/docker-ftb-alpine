@@ -69,9 +69,10 @@ existing=""
 if [ -e "$file" ]; then
 	existing=$(tr -d '\r\n[]' < "$file")
 	
-	players=$(grep -Eoc -e '\{[^}]*\}')
+	players=$(echo "$existing" | grep -Eoc -e '\{[^}]*\}')
 	if [ "$players" = "0" ]; then
 		existing=""
+		
 	# remove existing player
 	else
 		temp="$existing"
