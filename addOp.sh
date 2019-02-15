@@ -67,7 +67,7 @@ echo "[addOp][INFO]Using uuid: $uuid"
 # read existing entrys
 existing=""
 if [ -e "$file" ]; then
-	existing=$(tr '\r\n[]' '' < "$file")
+	existing=$(tr -d '\r\n[]' < "$file")
 	
 	players=$(grep -Eoc -e '\{[^}]*\}')
 	if [ "$players" = "0" ]; then
