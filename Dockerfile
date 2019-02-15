@@ -22,6 +22,7 @@ ENV MY_GROUP_ID=10000 \
 	JAVA_PARAMETERS="-XX:+UseG1GC -Xms4G -Xmx4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M" \
 	OVERWRITE_PROPERTIES="true" \
 	ADMIN_NAME="" \
+	DEBUGGING=false \
 	\
 # server.properties
 	allow_flight=false \
@@ -90,5 +91,5 @@ USER "${MY_USER_ID}:${MY_GROUP_ID}"
 # check integrity of checkHealth.sh
 # execute sh
 HEALTHCHECK --interval=10s --timeout=610s CMD \
- sha3sum "/home/checkHealth.sh" | grep -Eq '^39e59b65162ffb1952f33cda08f1f4a43d5e049a94637949b7b5b868\s' && \
+ sha3sum "/home/checkHealth.sh" | grep -Eq '^38fd8dedff4cffe7fad19eb5b363a86909625026ca406c396a38510d\s' && \
  sh /home/checkHealth.sh 

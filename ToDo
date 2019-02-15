@@ -1,7 +1,3 @@
 # test/ToDo
 
-# Readme:
-# * how to migrate userid / groupid
-# * server.properties don't rm
-#   * just replace variables?
-# * readme using markdown table? https://www.tablesgenerator.com/markdown_tables
+# allow debug option -> just set everytime set -o xtrace

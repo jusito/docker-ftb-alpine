@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ "${DEBUGGING:?}" = "true" ]; then
+	set -o xtrace
+fi
+
 #thanks @ 
 # jamietech@github: https://github.com/jamietech/MinecraftServerPing
 # Valiano@stackoverflow: https://stackoverflow.com/questions/54572688/different-behaviour-of-grep-with-pipe-from-nc-on-alpine-vs-ubuntu

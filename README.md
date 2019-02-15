@@ -127,7 +127,8 @@ This container is using a health check default. It checks every 10s if the serve
 |Name|Default|Description|
 |----|-------|-----------|
 |FORCE\_DOWNLOAD|false|Whether the server should be downloaded every time it is restarted.|
-|ADMIN_NAME||Set here your first admin level 4 name. This will allow you to change config ingame.|
+|ADMIN\_NAME||Set here your first admin level 4 name. This will allow you to change config ingame.|
+|DEBUGGING|false|If true xtrace is set in every script. Very verbose!|
 
 ### Internal Used (don't change please)
 |Name|Default|Description|

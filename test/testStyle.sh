@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ "${DEBUGGING}" = "true" ]; then
+	set -o xtrace
+fi
+
 set -o errexit
 set -o nounset
 set -o pipefail
