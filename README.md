@@ -56,6 +56,7 @@ Example:
 If you want default FTB values: JAVA_PARAMETERS=""
 
 ### Server Properties
+Because you may want to use many environment variables, [you may find --env-file helpful](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file).
 The values of this environment variables are written on every restart. If you don't set them, default value is written.
 
 |Name|Default|Description|
@@ -163,8 +164,11 @@ You can use the ingame command, if you don't like it:
 * bypassesPlayerLimit if unset true
 
 ### Use your existing server.properties
-1. start container one time until done, stop it
-2. docker cp _"Your server.properties"_ _ContainerName_:/home/docker/server.properties
+0. Step 1 & 2 can be done with copyToVolume.sh from tools section on git.
+1. Create a volume where "server.properties" is at root location.
+2. Set uid gid permissions on 10000.
+3. start container with volume and `-e OVERWRITE_PROPERTIES=false`
+
 
 ### persistent files on update
 * banned-ips.json
@@ -175,6 +179,14 @@ You can use the ingame command, if you don't like it:
 * usercache.json
 * usernamecache.json
 * whitelist.json
+
+### migrate server
+You can use copyToVolume.sh from tools section on git. Examples below will result in a ready to go volume named "NewMCVolume". Download copyToVolume.sh, script is ash / bash compatible and only needs docker, no bind mount perm. needed.
+
+|Migration current status|Needed|Command|Result|
+|-|-|-|-|
+|Existing volume with your server files. Files are at VOLUME/server.properties|Name of the volume, MyMCVolume.|`bash copyToVolume.sh MyMCVolume volume NewMCVolume 10000 10000`|NewMCVolume is ready to go|
+|Existing folder at host. Files are at FOLDER/server.properties|Path to the folder, /home/jusito/MCServer/server.properties.|`bash copyToVolume.sh '/home/jusito/MCServer/*' path NewMCVolume 10000 10000`|NewMCVolume is ready to go|
 
 ### Own Scripts
 * /home/docker/config.sh, care because only alpine + busybox, no Bash, no PCRE
