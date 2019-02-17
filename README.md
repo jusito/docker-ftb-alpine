@@ -96,9 +96,9 @@ In general Propertyname = Variablename, just replace "-"&"." with "_".
 |player\_idle\_timeout|0|player-idle-timeout|
 |prevent\_proxy\_connections|false|prevent-proxy-connections|
 |pvp|true|pvp|
-|query\_port|25565|query-port|
-|rcon\_password||rcon-password|
-|rcon\_port|25575|rcon-port|
+|query\_port|25565|query.port|
+|rcon\_password||rcon.password|
+|rcon\_port|25575|rcon.port|
 |resource\_pack||resource-pack|
 |resource\_pack\_sha1||resource-pack-sha1|
 |server\_ip||server-ip|
