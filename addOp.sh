@@ -89,7 +89,7 @@ if [ -e "$file" ]; then
 				echo ",${current}" >> "$tmpFile"
 			fi
 		done
-		existing=$(sed 's/^.//' < "/home/addOpTemp")
+		existing=$( (tr -d '\r\n' | sed 's/^.//') < "$tmpFile")
 		rm "$tmpFile"
 	fi
 fi
