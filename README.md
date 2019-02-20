@@ -33,6 +33,9 @@ docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNam
 [FTB Revelation MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-revelation)
 * FTBRevelation-2.7.0-1.12.2
 
+[FTB Ultimate Reloaded](https://www.feed-the-beast.com/projects/ftb-ultimate-reloaded)
+* FTBUltimateReloaded-1.1.0-1.12.2
+
 [Vanilla MC 1.13.2](https://minecraft.net/de-de/download/server/)
 * Vanilla-1.13.2
 
