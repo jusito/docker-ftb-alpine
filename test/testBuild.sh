@@ -21,7 +21,7 @@ do
 	do
 		echo "[testBuild][INFO]build ${modpack}-${version}"
 		docker rmi "jusito/docker-ftb-alpine:${modpack}-${version}" || true
-		docker build -t "jusito/docker-ftb-alpine:${modpack}-${version}" "${modpack}/${version}"
+		docker build -t "jusito/docker-ftb-alpine:${modpack}-${version}" "${version}/."
 	done
 	)
 done
