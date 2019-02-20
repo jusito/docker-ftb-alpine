@@ -29,8 +29,8 @@ if ! docker run -ti --name "JusitoTesting" --rm -e TEST_MODE=true -e DEBUGGING=$
 	echo "[testRun][ERROR]run test failed for $tag"
 	exit 1
 fi
-docker stop "jusito/docker-ftb-alpine:$tag" || true
-docker rm "jusito/docker-ftb-alpine:$tag" || true
+docker stop "JusitoTesting" || true
+docker rm "JusitoTesting" || true
 
 bash test/testHealth.sh
 bash test/testAddOp.sh
