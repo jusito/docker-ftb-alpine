@@ -42,6 +42,7 @@ if [ "$isZip" = "true" ]; then
 		if [ "$fileExisting" = "true" ] && [ "$wgetRunning" = "false" ]; then
 			running=false
 			echo "[entrypointTestMode][INFO]looks like the jar download is fine..."
+			sleep 5s # workaround for non vanilla testing, better check launchwrapper-1.12.jar
 
 		elif [ "$counter" -gt "$timeout" ]; then
 			running=false

@@ -13,7 +13,7 @@ docker run -d \
  -e DEBUGGING=${DEBUGGING} \
  -e TEST_MODE=true -e JAVA_PARAMETERS="-Xms1G -Xmx1G" \
  -e ADMIN_NAME=terzut \
- "jusito/docker-ftb-alpine:Vanilla-1.13.2"
+ "jusito/docker-ftb-alpine:$DEFAULT_IMAGE"
 
 docker exec JusitoTesting /home/addOp.sh "" Hey_Schnitte "" ""
 

@@ -47,7 +47,7 @@ function await() {
 	done
 	
 	if [ $counter -ge $timeout ]; then
-		echo -en "\r[testHealth][ERROR]TIMEOUT!\n"
+		echo -en "\r[testHealth][ERROR]TIMEOUT! \n"
 		return 1
 	else
 		echo -en "\r[testHealth][INFO]await done\n"
@@ -124,7 +124,7 @@ function printDebug() {
 NAME_HEALTHY="JusitoTesting_VanillaHealthy"
 NAME_UNHEALTHY="JusitoTesting_VanillaUnhealthy"
 NAME_UNHEALTHY2="JusitoTesting_VanillaFromHealthyToUnhealthy"
-IMAGE="jusito/docker-ftb-alpine:Vanilla-1.13.2"
+IMAGE="jusito/docker-ftb-alpine:$DEFAULT_IMAGE"
 
 if [ -n "$MODE" ]; then
 	set +e
@@ -136,7 +136,7 @@ docker stop "$NAME_HEALTHY" "$NAME_UNHEALTHY" "$NAME_UNHEALTHY2" 2>/dev/null 1>/
 echo "[testHealth][INFO]starting container Healthy"
 # shellcheck disable=SC2086
 docker run -d --rm --name "$NAME_HEALTHY" -e DEBUGGING=${DEBUGGING} -e JAVA_PARAMETERS="-Xms1G -Xmx1G" $HEALTH "$IMAGE" 1>/dev/null
-await "$NAME_HEALTHY" "/home/docker/logs/latest.log" "[Server thread/INFO]: Done"
+await "$NAME_HEALTHY" "/home/docker/logs/latest.log" "]: Done ("
 ret=$?
 if [ $ret = 0 ]; then
 	echo "[testHealth][INFO]$NAME_HEALTHY starting done"
@@ -164,7 +164,7 @@ docker stop $NAME_HEALTHY 1>/dev/null || true
 echo "[testHealth][INFO]starting Unhealthy"
 # shellcheck disable=SC2086
 docker run -d --rm --name "$NAME_UNHEALTHY" -e DEBUGGING=${DEBUGGING} -e JAVA_PARAMETERS="-Xms1G -Xmx1G" -e HEALTH_PORT="20" $HEALTH "$IMAGE" 1>/dev/null
-await "$NAME_UNHEALTHY" "/home/docker/logs/latest.log" "[Server thread/INFO]: Done"
+await "$NAME_UNHEALTHY" "/home/docker/logs/latest.log" "]: Done ("
 ret=$?
 if [ "$ret" = "0" ]; then
 	isHealthy "$NAME_UNHEALTHY" false
@@ -202,7 +202,7 @@ echo "newLine" >> MyFile
 chmod a=rwx MyFile
 docker cp MyFile $NAME_UNHEALTHY2:/home/checkHealth.sh
 echo "[testHealth][INFO]should be unhealthy"
-await "$NAME_UNHEALTHY2" "/home/docker/logs/latest.log" "[Server thread/INFO]: Done"
+await "$NAME_UNHEALTHY2" "/home/docker/logs/latest.log" "]: Done ("
 ret=$?
 if [ "$ret" = "0" ]; then
 	isHealthy "$NAME_UNHEALTHY2" false
