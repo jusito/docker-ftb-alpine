@@ -5,11 +5,11 @@ This repository contains servers for: [Feed The Beast](https://www.feed-the-beas
 **By using this container you agree to the** [Minecraft Eula](https://help.mojang.com/customer/en/portal/articles/1590522-minecraft-commercial-use)
 
 ## Getting Started
-1. Which server you want? Which version you want? Choose you _Tag_ below
-2. Which Port? -p 25566:25565 means 25566 from internet, 25565 from inside of container
+1. Which server you want? Which version you want? Choose you _Tag_ below like `FTBPresentsSkyfactory3-3.0.15-1.10.2`
+2. Which Port? `-p 25566:25565` means 25566 from internet, 25565 from inside of container
 3. Do you want reddit jvm args? Yes go next, no see _Environment Variables_
 4. Should I enter an operator level 4? He would be also whitelisted. No go next, yes use `-e ADMIN_NAME="YourNameHere"`
-5. Do you want your own server.properties? No go next, yes see use Environmental Variables _server.properties_ or see _Additional Informations_
+5. Do you want your own server.properties? No go next, yes see _Environmental Variables_, _server.properties_ or see _Additional Informations_
 
 ### Example Skyfactor: 
 
@@ -203,7 +203,7 @@ You can use copyToVolume.sh from tools section on git. Examples below will resul
 https://github.com/jusito/
 
 ## Contributing / Requesting
-Git issue or comment here, I don't check everytime for newer version but I can easily push a new tag
+Create a git issue or see maintainer label, I don't check everytime for newer version but I can easily push a new tag
 
 ## Acknowledgments
 * [Feed The Beast Project](https://www.feed-the-beast.com "Feed The Beast Project")
