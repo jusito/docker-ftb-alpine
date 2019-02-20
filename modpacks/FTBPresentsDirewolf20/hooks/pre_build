@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# take care, that FTBBase is build before this
-docker build -t "jusito/docker-ftb-alpine:FTBBase" ../../.
