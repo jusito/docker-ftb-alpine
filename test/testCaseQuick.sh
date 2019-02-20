@@ -11,7 +11,7 @@ set -o pipefail
 
 bash test/testStyle.sh
 
-tag=Vanilla
+tag="Vanilla-1.13.2"
 echo "build FTBBase"
 docker build -t "jusito/docker-ftb-alpine:FTBBase" .
 echo "[testBuild][INFO]build modpacks/$tag"

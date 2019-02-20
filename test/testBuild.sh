@@ -11,10 +11,15 @@ set -o pipefail
 echo "build FTBBase"
 docker build -t "jusito/docker-ftb-alpine:FTBBase" .
 
-# shellcheck disable=SC2045
-for tag in $(ls modpacks) #ls is fragile
+for modpack in modpacks/*
 do
-	echo "[testBuild][INFO]build modpacks/$tag"
-	docker rmi "jusito/docker-ftb-alpine:$tag" || true
-	docker build -t "jusito/docker-ftb-alpine:$tag" "modpacks/$tag"
+	(
+	cd "$modpack"
+	for version in *
+	do
+		echo "[testBuild][INFO]build ${modpack}-${version}"
+		docker rmi "jusito/docker-ftb-alpine:${modpack}-${version}" || true
+		docker build -t "jusito/docker-ftb-alpine:${modpack}-${version}" "${modpack}/${version}"
+	done
+	)
 done

@@ -124,7 +124,7 @@ function printDebug() {
 NAME_HEALTHY="JusitoTesting_VanillaHealthy"
 NAME_UNHEALTHY="JusitoTesting_VanillaUnhealthy"
 NAME_UNHEALTHY2="JusitoTesting_VanillaFromHealthyToUnhealthy"
-IMAGE="jusito/docker-ftb-alpine:Vanilla"
+IMAGE="jusito/docker-ftb-alpine:Vanilla-1.13.2"
 
 if [ -n "$MODE" ]; then
 	set +e
