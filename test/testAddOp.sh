@@ -19,3 +19,6 @@ docker exec JusitoTesting /home/addOp.sh "" Hey_Schnitte "" ""
 
 docker restart JusitoTesting
 docker attach JusitoTesting
+
+docker stop JusitoTesting || true
+docker rm JusitoTesting || true
