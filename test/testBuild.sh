@@ -11,7 +11,9 @@ set -o pipefail
 echo "build FTBBase"
 docker build -t "jusito/docker-ftb-alpine:FTBBase" .
 
-for modpack in modpacks/*
+(
+cd "modpacks"
+for modpack in *
 do
 	(
 	cd "$modpack"
@@ -23,3 +25,4 @@ do
 	done
 	)
 done
+)

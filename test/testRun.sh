@@ -8,7 +8,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-for modpack in modpacks/*
+(
+cd "modpacks"
+for modpack in *
 do
 	(
 	cd "$modpack"
@@ -25,3 +27,4 @@ do
 	done
 	)
 done
+)
