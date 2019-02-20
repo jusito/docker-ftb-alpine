@@ -14,7 +14,7 @@ do
 		docker build -t "$DOCKER_REPO:${modpack}-${version}" "$version/."
 		docker push "$DOCKER_REPO:${modpack}-${version}"
 		#maybe more modpacks/version = to much size used
-		docker rm "$DOCKER_REPO:${modpack}-${version}"
+		docker rmi "$DOCKER_REPO:${modpack}-${version}"
 	done
 	)
 done
