@@ -10,5 +10,5 @@ before_install:
   - sudo apt-get install -y libdigest-sha3-perl
 
 script:
-  - bash test/testCaseAll.sh
+  - bash test/testCaseQuick.sh
   
