@@ -19,25 +19,28 @@ docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNam
 
 ## Tags
 [FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved) 
-* FTBInfinity-3.0.2-1.7.10
+* FTBInfinity-3.1.0-1.7.10
 
 [FTB Presents SkyFactory 3 MC 1.10.2](https://www.feed-the-beast.com/projects/ftb-presents-skyfactory-3) 
 * FTBPresentsSkyfactory3-3.0.15-1.10.2
 
 [FTB Presents Direwolf20 MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-presents-direwolf20-1-12) 
-* FTBPresentsDirewolf20-2.4.0-1.12.2
+* FTBPresentsDirewolf20-2.5.0-1.12.2
 
 [FTB Continuum MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-continuum) 
 * FTBContinuum-1.6.0-1.12.2
 
 [FTB Revelation MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-revelation)
-* FTBRevelation-2.7.0-1.12.2
+* FTBRevelation-3.0.1-1.12.2
 
 [FTB Ultimate Reloaded](https://www.feed-the-beast.com/projects/ftb-ultimate-reloaded)
-* FTBUltimateReloaded-1.1.0-1.12.2
+* FTBUltimateReloaded-1.7.1-1.12.2
 
-[Vanilla MC 1.13.2](https://minecraft.net/de-de/download/server/)
-* Vanilla-1.13.2
+[FTB Presents Stoneblock 2](https://www.feed-the-beast.com/projects/ftb-presents-stoneblock-2)
+* FTBPresentsStoneblock2-1.14.0-1.12.2
+
+[Vanilla Minecraft](https://minecraft.net/de-de/download/server/)
+* Vanilla-1.14.3
 
 ### no Tag found?
 * Tag: FTBBase
@@ -201,6 +204,16 @@ You can use copyToVolume.sh from tools section on git. Examples below will resul
 * [MOTD colors](https://www.minecraftforum.net/forums/support/server-support-and/1940468-how-to-add-colour-to-your-server-motd)
 * [Whitelist usage ingame](https://minecraft.gamepedia.com/Commands/whitelist)
 * [Op usage ingame](https://minecraft.gamepedia.com/Commands/op)
+
+## Is this working?
+The label at the top of this document updates every week. If you want to test it on your own:
+1. Clone Repository
+2. Navigate to root dir
+3. [Optional] Create Dockerfile for your modpack, just copy another FTB Dockerfile (if jar see vanilla, if zip see others), replace download & md5
+4. bash test/testCaseQuick.sh or bash test/testCaseAll.sh
+5. [Optional] If you want more details, modify first line "export DEBUGGING=false" to true (xtrace activated everywhere)
+
+Hint: If you want to test Modpack A in Version B, Dockerfile should be at "modpacks/A/B/Dockerfile" and you can test it with `bash test/testCaseQuick.sh "A-B"`. For A:=Vanilla and B:=1.14.3 this would be "modpacks/Vanilla/1.14.3/Dockerfile" and image name used for testing  "Vanilla-1.14.3".
 
 ## Find Me
 https://github.com/jusito/
