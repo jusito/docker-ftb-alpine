@@ -21,7 +21,7 @@ function await() {
 		
 	isRunning=true
 	counter=0
-	timeout=120
+	timeout=300
 	step=1
 	while [ $isRunning = true ]; do
 		counter=$((counter+1))
