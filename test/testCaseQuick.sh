@@ -5,7 +5,7 @@ export DEBUGGING=false
 if [ -n "$1" ]; then
 	export DEFAULT_IMAGE="$1"
 else
-	export DEFAULT_IMAGE="Vanilla-1.13.2"
+	export DEFAULT_IMAGE="Vanilla-1.14.3"
 fi
 
 if [ "${DEBUGGING}" = "true" ]; then
