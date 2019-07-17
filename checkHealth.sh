@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#TODO handle to early connection after done: 
+#Server is still starting! Please wait before reconnecting.
 if [ "${DEBUGGING:?}" = "true" ]; then
 	set -o xtrace
 fi
@@ -130,30 +132,40 @@ debugMsg "[checkHealth][DEBUG]Handshake: $handshake($handshakeLength = $handshak
 request="${handshakeLengthHex}${handshake}\x01\x00"
 echo "[checkHealth][INFO]Request: $request"
 
-set -e
-# convert request, send, binary-to-text
-# shellcheck disable=SC2039
-recv=$(echo -e "${request}" | nc  "$host" "$port" | od -a -A n | tr -d '\n ')
-# shellcheck disable=SC2039
-debugMsg "$(echo -e "${request}")"
-# shellcheck disable=SC2039
-debugMsg "$(echo -e "${request}" | wc -c)"
-# shellcheck disable=SC2039
-debugMsg "$(echo -e "${request}" | nc -v "$host" "$port" || echo $?)"
-# shellcheck disable=SC2039
-debugMsg "$(echo -e "${request}" | nc -v "$host" "$port" | wc -c)"
-# shellcheck disable=SC2039
-debugMsg "$(echo -e "${request}" | nc -v "$host" "$port" | od -a -A n || echo $?)"
-# shellcheck disable=SC2039
-debugMsg "$(echo -e "${request}" | nc -v "$host" "$port" | od -a -A n | wc -c)"
-# shellcheck disable=SC2039
-debugMsg "$(echo -e "${request}" | nc -v "$host" "$port" | od -a -A n | tr -d '\n ' || echo $?)"
-# shellcheck disable=SC2039
-debugMsg "$(echo -e "${request}" | nc -v "$host" "$port" | od -a -A n | tr -d '\n ' | wc -c)"
-debugMsg "$recv"
+serverIsStillStarting="true"
+while [ "$serverIsStillStarting" = "true" ];
+do
+	# convert request, send, binary-to-text
+	# shellcheck disable=SC2039
+	recv=$(echo -e "${request}" | nc  "$host" "$port" | od -a -A n | tr -d '\n ')
+	# shellcheck disable=SC2039
+	debugMsg "$(echo -e "${request}")"
+	# shellcheck disable=SC2039
+	debugMsg "$(echo -e "${request}" | wc -c)"
+	# shellcheck disable=SC2039
+	debugMsg "$(echo -e "${request}" | nc "$host" "$port" || echo $?)"
+	# shellcheck disable=SC2039
+	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | wc -c)"
+	# shellcheck disable=SC2039
+	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | od -a -A n || echo $?)"
+	# shellcheck disable=SC2039
+	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | od -a -A n | wc -c)"
+	# shellcheck disable=SC2039
+	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | od -a -A n | tr -d '\n ' || echo $?)"
+	# shellcheck disable=SC2039
+	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | od -a -A n | tr -d '\n ' | wc -c)"
+	debugMsg "$recv"
+	
+	#Wait if server is still starting
+	if echo "$recv" | grep -Fqo 'Server is still starting! Please wait before reconnecting.'; then
+		sleep 1s
+	else
+		serverIsStillStarting="false"
+	fi
+done
 
 # check
-if [ "$(echo "$recv" | grep -Fco '"players":')" != 0 ]; then
+if echo "$recv" | grep -Fqo '"players":'; then
 	echo "[checkHealth][INFO]Status valid"
 	exit 0
 else

@@ -91,7 +91,7 @@ USER "${MY_USER_ID}:${MY_GROUP_ID}"
 # check integrity of checkHealth.sh
 # execute sh
 HEALTHCHECK --interval=10s --timeout=610s CMD \
- sha3sum "/home/checkHealth.sh" | grep -Eq '^38fd8dedff4cffe7fad19eb5b363a86909625026ca406c396a38510d\s' && \
+ sha3sum "/home/checkHealth.sh" | grep -Eq '^3c9b55e8afc047aa080046f65f174c522b8b3e4d3f01d9d399fe6aec\s' && \
  sh /home/checkHealth.sh 
 
 LABEL com.github.jusito.docker-ftb-alpine.version="1.0.0" \
