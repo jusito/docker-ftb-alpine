@@ -303,6 +303,10 @@ doRestore "whitelist.json"
 doRestore "config.sh"
 
 ## apply config
+if [ -f "/home/ServerStart.sh" ]; then
+	echo "[entrypoint][INFO]Found custom ServerStart.sh"
+	cp -f "/home/ServerStart.sh" "${MY_VOLUME}/ServerStart.sh"
+fi
 writeServerProperties
 writeOp
 if [ "$isZip" = "true" ]; then
