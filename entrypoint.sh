@@ -196,6 +196,9 @@ writeJVMArguments() {
 			# shellcheck disable=SC2016
 			startup=$(grep -Eoi -e '"\$JAVACMD" -server .+' "${MY_VOLUME}/ServerStart.sh")
 			startupEnd=$(echo "${startup}" | grep -Eoi -e '-jar .+')
+			#escape characters for sed
+			startup=$(echo "$startup" | sed 's/\//\\\//g')
+			startupEnd=$(echo "$startupEnd" | sed 's/\//\\\//g')
 			# shellcheck disable=SC2016
 			replaceStart='"$JAVACMD" -server '
 			sed -i "s/${startup}/${replaceStart} ${JAVA_PARAMETERS} ${startupEnd}/g" "${MY_VOLUME}/ServerStart.sh"
@@ -305,7 +308,7 @@ doRestore "config.sh"
 ## apply config
 if [ -f "/home/ServerStart.sh" ]; then
 	echo "[entrypoint][INFO]Found custom ServerStart.sh"
-	cp -f "/home/ServerStart.sh" "${MY_VOLUME}/ServerStart.sh"
+	cp -vf "/home/ServerStart.sh" "${MY_VOLUME}/ServerStart.sh"
 fi
 writeServerProperties
 writeOp
