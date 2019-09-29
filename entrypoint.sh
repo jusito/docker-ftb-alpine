@@ -5,7 +5,8 @@ if [ "${DEBUGGING:?}" = "true" ]; then
 fi
 
 set -o errexit
-set -o pipefail
+#set -o pipefail
+
 
 # get arguments
 export MY_SERVER=$1

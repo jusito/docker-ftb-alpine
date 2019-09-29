@@ -6,7 +6,7 @@ fi
 
 set -o errexit
 set -o nounset
-set -o pipefail
+#set -o pipefail
 
 
 isZip=$1
@@ -108,12 +108,12 @@ traceMsg "loop ending"
 
 if [ "$foundLogEntry" = "true" ]; then
 	echo "[entrypointTestMode][INFO]Test ok! Needed sleeps: ${counter}/${timeout}"
-	pkill -15 'java'
+	kill -15 "$(pidof java)"
 	exit 0
 	
 elif [ "$counter" -gt "$timeout" ]; then
 	echo "[entrypointTestMode][ERROR]Test failed, timeout reached."
-	pkill -15 'java'
+	kill -15 "$(pidof java)"
 	exit 4
 	
 else
