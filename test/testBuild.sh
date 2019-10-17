@@ -9,7 +9,7 @@ set -o nounset
 set -o pipefail
 
 echo "build FTBBase"
-docker build -t "jusito/docker-ftb-alpine:FTBBase" .
+docker build -t "jusito/docker-ftb-alpine:FTBBase" "base/"
 
 (
 cd "modpacks"

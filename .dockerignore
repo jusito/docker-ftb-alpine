@@ -1,8 +1,6 @@
 .git/*
-modpacks/
-test/
+test/*
 .project
 .travis.yml
 LICENSE
 *.md
-ToDo
