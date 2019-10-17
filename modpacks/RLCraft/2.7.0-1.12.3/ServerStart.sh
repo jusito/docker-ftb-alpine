@@ -5,7 +5,7 @@ if [ "${DEBUGGING:?}" = "true" ]; then
 fi
 
 set -o errexit
-#set -o pipefail
+set -o pipefail
 set -o nounset
 
 MCVER="1.12.2"

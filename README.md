@@ -30,17 +30,23 @@ docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNam
 [FTB Continuum MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-continuum) 
 * FTBContinuum-1.6.0-1.12.2
 
-[FTB Revelation MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-revelation)
-* FTBRevelation-3.0.1-1.12.2
+[FTB Revelation MC 1.12.3](https://www.feed-the-beast.com/projects/ftb-revelation)
+* FTBRevelation-3.2.0-1.12.2
 
 [FTB Ultimate Reloaded](https://www.feed-the-beast.com/projects/ftb-ultimate-reloaded)
-* FTBUltimateReloaded-1.7.1-1.12.2
+* FTBUltimateReloaded-1.9.0-1.12.2
 
 [FTB Presents Stoneblock 2](https://www.feed-the-beast.com/projects/ftb-presents-stoneblock-2)
-* FTBPresentsStoneblock2-1.14.0-1.12.2
+* FTBPresentsStoneblock2-1.16.0-1.12.2
+
+### Non FTB Tags
 
 [Vanilla Minecraft](https://minecraft.net/de-de/download/server/)
 * Vanilla-1.14.3
+
+[RLCraft](https://www.curseforge.com/minecraft/modpacks/rlcraft)
+* RLCraft-2.7.0-1.12.3
+* RLCraft-2.6.3-1.12.3
 
 ### no Tag found?
 * Tag: FTBBase
@@ -204,6 +210,12 @@ You can use copyToVolume.sh from tools section on git. Examples below will resul
 * [MOTD colors](https://www.minecraftforum.net/forums/support/server-support-and/1940468-how-to-add-colour-to-your-server-motd)
 * [Whitelist usage ingame](https://minecraft.gamepedia.com/Commands/whitelist)
 * [Op usage ingame](https://minecraft.gamepedia.com/Commands/op)
+
+### Resources needed / Problem resolve
+4GB RAM and 4 CPUs with lower priority should be enough on a small server. In general you should set a container limit for CPU / RAM. `--memory="4096m" --cpu-shares=1024 --cpus=4 --blkio-weight 125` If you use this, with the help of OpenJDK you can replace options like `-Xmx4G -XX:ParallelGCThreads=5 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10` with `-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap` [OpenJDK Make JVM respect CPU and RAM limits](https://hub.docker.com/_/openjdk) OpenJDK will then make optimal use of the resources.
+
+To understand whats wrong with your performance, you should know that the Garbage Collector (GC) in Java 8 stops everything if working. Thats because the default GC is for throughput not low latency, the default one in Java 8 is using only one thread for this. For example if you see lags ingame, like Mobs stopping for a second and are instant at your location, your problem is the GC. [Java Low Latency](https://themindstorms.wordpress.com/2009/01/21/advanced-jvm-tuning-for-low-pause/) If the lag occures like every second, you need more RAM `-Xms -Xmx`. If the lag isn't every second but very long, you want better multithreading for GC `-XX:+UseParNewGC` (FTB recommends this) or `-XX:+UseG1GC` (Oracle recommends this [Oracle](https://docs.oracle.com/cd/E40972_01/doc.70/e40973/cnf_jvmgc.htm#autoId2)). This is basic stuff ofc there is a lot more, just search for "jvm low latency".
+
 
 ## Is this working?
 The label at the top of this document updates every week. If you want to test it on your own:
