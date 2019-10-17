@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-alpine
+FROM alpine:3.10
 
 EXPOSE 25565/tcp
 
@@ -70,7 +70,7 @@ ENV MY_GROUP_ID=10000 \
 COPY ["entrypoint.sh", "checkHealth.sh", "entrypointTestMode.sh", "addOp.sh", "/home/" ]
 
 RUN apk update && \
-	apk add --no-cache ca-certificates && \
+	apk add --no-cache ca-certificates openjdk8-jre && \
 # create user
 	addgroup -g "${MY_GROUP_ID}" "${MY_NAME}" && \
 	adduser -h "${MY_HOME}" -g "" -s "/bin/false" -G "${MY_NAME}" -D -u "${MY_USER_ID}" "${MY_NAME}" && \
