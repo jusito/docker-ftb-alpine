@@ -10,13 +10,9 @@ set -o pipefail
 
 # test sha3sums
 
-if ! printf '%s  %s' "$(grep -Eo "grep -Eq '\^[^\\]+" base/alpine/Dockerfile | sed 's/...........//')" "checkHealth.sh" | sha3sum -c ; then
-	echo "[testStyle][ERROR]Sha3sum of checkHealth.sh in base/alpine/Dockerfile invalid"
+if ! printf '%s  %s' "$(grep -Eo "grep -Eq '\^[^\\]+" base/Dockerfile | sed 's/...........//')" "base/checkHealth.sh" | sha3sum -c ; then
+	echo "[testStyle][ERROR]Sha3sum of checkHealth.sh in base/Dockerfile invalid"
 	exit 2
-fi
-if ! printf '%s  %s' "$(grep -Eo "grep -Eq '\^[^\\]+" base/debian/Dockerfile | sed 's/...........//')" "checkHealth.sh" | sha3sum -c ; then
-	echo "[testStyle][ERROR]Sha3sum of checkHealth.sh in base/debian/Dockerfile invalid"
-	exit 3
 fi
 
 directory="$PWD"

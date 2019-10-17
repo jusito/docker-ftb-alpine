@@ -20,8 +20,8 @@ bash test/testStyle.sh
 
 tag="$DEFAULT_IMAGE"
 echo "build FTBBase"
-docker build -t "jusito/docker-ftb-alpine:FTBBase" -f base/alpine/Dockerfile .
-docker build -t "jusito/docker-ftb-alpine:FTBBase-debian" -f base/debian/Dockerfile .
+docker build -t "jusito/docker-ftb-alpine:FTBBase" "base/"
+
 echo "[testBuild][INFO]build modpacks/$tag"
 docker rmi "jusito/docker-ftb-alpine:$tag" || true
 docker build -t "jusito/docker-ftb-alpine:$tag" "modpacks/"$(echo "$tag/." | sed 's/-/\//')
