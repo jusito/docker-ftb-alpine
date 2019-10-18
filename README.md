@@ -227,6 +227,36 @@ The label at the top of this document updates every week. If you want to test it
 
 Hint: If you want to test Modpack A in Version B, Dockerfile should be at "modpacks/A/B/Dockerfile" and you can test it with `bash test/testCaseQuick.sh "A-B"`. For A:=Vanilla and B:=1.14.3 this would be "modpacks/Vanilla/1.14.3/Dockerfile" and image name used for testing  "Vanilla-1.14.3".
 
+## FTP Server
+* If your Volume is `MyMinecraftVolume`
+* If you didn't change UserID / GroupID
+* If you want to connect to ftp://...:123 (ports 122/123 are free on your network)
+
+### For FileZilla
+
+```
+docker run -d \
+ -e MY_NAME="docker" -e MY_PASSWORD="MySecurePW" \
+ -e MY_USER_ID="10000" -e MY_GROUP_ID="10000" \
+ -p 122:20 -p 123:21 -p 10090-10100:10090-10100 \
+ -v MyMinecraftVolume:/home/docker/ \
+ jusito/vsftpd-alpine:simple
+```
+
+### For Windows Network Mount
+* IP of the Host (not container) 1.2.3.4
+* Mount: ftp://1.2.3.4:123
+
+```
+docker run -d \
+ -e MY_NAME="docker" -e MY_PASSWORD="MySecurePW" \
+ -e MY_USER_ID="10000" -e MY_GROUP_ID="10000" \
+ -p 122:20 -p 123:21 -p 10090-10100:10090-10100 \
+ -v MyMinecraftVolume:/home/docker/ \
+ -e pasv_address="1.2.3.4" \
+ jusito/vsftpd-alpine:simple
+```
+
 ## Find Me
 https://github.com/jusito/
 
