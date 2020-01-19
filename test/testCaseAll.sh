@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export DEBUGGING=false
-export DEFAULT_IMAGE="Vanilla-1.14.3"
+export DEFAULT_IMAGE="Vanilla-1.14.4"
 if [ "${DEBUGGING}" = "true" ]; then
 	set -o xtrace
 fi
