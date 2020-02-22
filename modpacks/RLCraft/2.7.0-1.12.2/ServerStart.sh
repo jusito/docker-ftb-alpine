@@ -23,7 +23,7 @@ fi
 
 if [ -f "${MY_VOLUME}"/RLCraft* ]; then
 	echo "[ServerStart]Needing to move server files"
-	mv -f "${MY_VOLUME}"/RLCraft*/* "${MY_VOLUME}"
+	mv -f "${MY_VOLUME}"/RLCraft*/* "${MY_VOLUME}" || true
 	rm -rf "${MY_VOLUME}"/RLCraft*
 fi
 
@@ -38,4 +38,4 @@ if [ ! -f "${MY_VOLUME}/${FORGEJAR}" ] || [ "$REINSTALL" = "true " ]; then
 	rm -f "${MY_VOLUME}/$FORGEINSTALLER"
 fi
 
-"$JAVACMD" -server -Xmx2048 JAVA_PARAMETERS -jar "${MY_VOLUME}/${FORGEJAR}" nogui
+"$JAVACMD" -server JAVA_PARAMETERS -jar "${MY_VOLUME}/${FORGEJAR}" nogui
