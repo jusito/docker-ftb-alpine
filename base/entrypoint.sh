@@ -27,7 +27,14 @@ download() {
 	if [ -e "${cache}" ]; then
 		echo "[entrypoint][INFO]found existing file ${cache}"
 		
-		md5Matches=$(md5sum "/home/$target" | grep -Eco -e "^$md5")
+		# check md5
+		md5current="$(md5sum "/home/$target" | grep -Eo -e '^\S+')"
+		if [ "$md5current" = "$md5" ]; then 
+			md5Matches="true"
+		else
+			md5Matches="false"
+		fi
+		
 		# check user config
 		if [ "$FORCE_DOWNLOAD" = "true" ]; then
 			echo "[entrypoint][INFO]force reload activated"
@@ -35,7 +42,7 @@ download() {
 			skip="false"
 			
 		# check if md5 matches
-		elif [ "$md5Matches" != "0" ]; then
+		elif [ "$md5Matches" = "true" ]; then
 			echo "[entrypoint][INFO]found existing file, no redownload: $md5"
 			skip="true"
 			
@@ -53,8 +60,15 @@ download() {
 		echo "[entrypoint][INFO]downloading..."
 		wget -O "$target" "$source"
 		
-		md5Matches=$(md5sum "$target" | grep -Eco -e "^$md5")
-		if [ "$md5Matches" != "0" ]; then
+		# check md5
+		md5current="$(md5sum "$target" | grep -Eo -e '^\S+')"
+		if [ "$md5current" = "$md5" ]; then 
+			md5Matches="true"
+		else
+			md5Matches="false"
+		fi
+
+		if [ "$md5Matches" = "true" ]; then
 			cp -vf "$target" "$cache"
 			echo "[entrypoint][INFO]MD5 ok!"
 		else
@@ -274,6 +288,12 @@ doBackup "usernamecache.json"
 doBackup "whitelist.json"
 doBackup "config.sh"
 
+# clean existing files, f.e. if mods are removed on update
+# 
+if [ "$isZip" = "true" ] || [ "$isJar" = "true" ]; then
+	echo "[entrypoint][INFO]Cleaning existing folders mods/config/scripts/structures"
+	rm -rf mods/* config/* scripts/* structures/* || true
+fi
 
 # unzip server files
 if [ "$isZip" = "true" ]; then
