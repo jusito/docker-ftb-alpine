@@ -42,13 +42,14 @@ docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNam
 ### Non FTB Tags
 
 [Vanilla Minecraft](https://minecraft.net/de-de/download/server/)
-* Vanilla-1.15.1
+* Vanilla-1.15.2
 * Vanilla-1.14.4
 * Vanilla-1.13.2
 
 [RLCraft](https://www.curseforge.com/minecraft/modpacks/rlcraft)
-* RLCraft-2.7.0-1.12.3
-* RLCraft-2.6.3-1.12.3
+* RLCraft-2.8.1-1.12.2
+* RLCraft-2.7.0-1.12.2
+* RLCraft-2.6.3-1.12.2
 
 ### no Tag found?
 * Tag: FTBBase
