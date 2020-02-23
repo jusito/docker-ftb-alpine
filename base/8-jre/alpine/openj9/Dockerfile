@@ -1,11 +1,5 @@
 FROM adoptopenjdk/openjdk8-openj9:alpine-jre
 
-LABEL build-date="" \
-	name="" \
-	url="" \
-	vcs-ref="" \
-	docker.cmd=""
-	
 EXPOSE 25565/tcp
 
 ENV MY_GROUP_ID=10000 \
@@ -13,7 +7,7 @@ ENV MY_GROUP_ID=10000 \
 	MY_NAME=docker \
 	MY_HOME=/home/docker \
 	MY_VOLUME=/home/docker \
-	MY_FILE="FTBServer.zip" \
+	MY_FILE="Server.zip" \
 	MY_SERVER="" \
 	MY_MD5="" \
 	\
@@ -25,7 +19,7 @@ ENV MY_GROUP_ID=10000 \
 	HEALTH_URL="127.0.0.1" \
 	HEALTH_PORT="" \
 	FORCE_DOWNLOAD="false" \
-	JAVA_PARAMETERS="-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC" \
+	JAVA_PARAMETERS="-Xms4096M -Xmx4096M -Xmns2048M -Xmnx3276M -Xgc:concurrentScavenge -Xgc:dnssExpectedTimeRatioMaximum=3 -Xgc:scvNoAdaptiveTenure -Xdisableexplicitgc -Xtune:virtualized" \
 	OVERWRITE_PROPERTIES="true" \
 	ADMIN_NAME="" \
 	DEBUGGING=false \

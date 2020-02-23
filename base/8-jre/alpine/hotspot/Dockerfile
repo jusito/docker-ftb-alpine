@@ -7,7 +7,7 @@ ENV MY_GROUP_ID=10000 \
 	MY_NAME=docker \
 	MY_HOME=/home/docker \
 	MY_VOLUME=/home/docker \
-	MY_FILE="FTBServer.zip" \
+	MY_FILE="Server.zip" \
 	MY_SERVER="" \
 	MY_MD5="" \
 	\
@@ -19,7 +19,7 @@ ENV MY_GROUP_ID=10000 \
 	HEALTH_URL="127.0.0.1" \
 	HEALTH_PORT="" \
 	FORCE_DOWNLOAD="false" \
-	JAVA_PARAMETERS="-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC" \
+	JAVA_PARAMETERS="-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:-UseBiasedLocking" \
 	OVERWRITE_PROPERTIES="true" \
 	ADMIN_NAME="" \
 	DEBUGGING=false \
