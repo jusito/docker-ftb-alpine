@@ -6,7 +6,7 @@ if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
 echo "[testRun.modpacks][INFO] starting ..."
 
 for modpack in "${MODPACKS[@]}"; do
-	bash testRun.sh "$(getImageTag "$modpack")"
+	bash test/standard/testRun.sh "$(getImageTag "$modpack")"
 done
 
 echo "[testRun.modpacks][INFO] successful!"
