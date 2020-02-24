@@ -29,76 +29,78 @@ set -o nounset
 
 
 
-
-echo -n "[INFO]check preconditions"
+#shellcheck disable=SC2039
+echo -n "[copyToVolume][INFO] check preconditions"
 if [ "$srcType" = "path" ]; then
 	suffix="/*"
 	srcSuffix=""
 	# if only sub-files wanted
 	if test "$src" != "${src%$suffix}"; then
-		echo "[INFO]found suffix \"$suffix\" for directory"
+		echo "[copyToVolume][INFO] found suffix \"$suffix\" for directory"
 		src="${src%$suffix}"
 		srcSuffix="$suffix"
 		srcDir=true
 		
 	# if directory given
 	elif [ -d "$src" ]; then
-		echo "[INFO]looks like directory: $src"
+		echo "[copyToVolume][INFO] looks like directory: $src"
 		srcDir=true
 		
 	# if file given
 	else
-		echo "[INFO]looks like file: $src"
+		echo "[copyToVolume][INFO] looks like file: $src"
 		srcDir=false
 	fi
 	
 	if [ ! -e "$src" ]; then
-		echo "[ERROR] source path \"$src\" no existing."
+		echo "[copyToVolume][ERROR] source path \"$src\" no existing."
 		exit 11
 	elif [ "$(docker volume ls -f "name=^${targetName}$" | wc -l)" = "2" ]; then
-		echo "[ERROR] target volume \"$targetName\" already existing"
+		echo "[copyToVolume][ERROR] target volume \"$targetName\" already existing"
 		exit 12
 	fi
 elif [ "$srcType" = "volume" ]; then
 	if [ "$(docker volume ls -f "name=^${src}$" | wc -l)" = "1" ]; then
-		echo "[ERROR]source volume doesn't exist"
+		echo "[copyToVolume][ERROR] source volume doesn't exist"
 		exit 13
 	elif [ "$(docker volume ls -f "name=^${targetName}$" | wc -l)" = "2" ]; then
-		echo "[ERROR] target volume \"$targetName\" already existing"
+		echo "[copyToVolume][ERROR] target volume \"$targetName\" already existing"
 		exit 14
 	fi
 else
-	echo "[ERROR] srcType: \"$srcType\" not \"path\" or \"volume\""
+	echo "[copyToVolume][ERROR] srcType: \"$srcType\" not \"path\" or \"volume\""
 	exit 10
 fi
-echo -en "\r[INFO]preconditions looks fine\n"
+#shellcheck disable=SC2039
+echo -en "\r[copyToVolume][INFO] preconditions looks fine\n"
 
 
 
 
 
-
-echo -n "[INFO]starting copy..."
+#shellcheck disable=SC2039
+echo -n "[copyToVolume][INFO] starting copy..."
 if [ "$srcType" = "path" ]; then
-	echo -en "\r[INFO]starting copy... \"path\" mode\n"
+	#shellcheck disable=SC2039
+	echo -en "\r[copyToVolume][INFO] starting copy... \"path\" mode\n"
 	docker run -d --rm --name "$containerName" \
 	-v "${targetName}:/home/target:rw" \
 	busybox:latest sleep 365d 1>/dev/null
 	
 	if [ "$srcDir" = "true" ]; then
-		echo "[INFO]source is directory"
+		echo "[copyToVolume][INFO] source is directory"
 		if [ -n "$srcSuffix" ]; then
-			echo "[INFO]sub-files of directory should be copied"
+			echo "[copyToVolume][INFO] sub-files of directory should be copied"
 			for entry in "$src"/*
 			do
 				docker cp "${entry}" "${containerName}:/home/target/"
 			done
 		else
-			echo "[INFO]directory should be copied"
+			echo "[copyToVolume][INFO] directory should be copied"
 			docker cp "${src}" "${containerName}:/home/target/"
 		fi
 	else
-		echo "[INFO]source is NO directory"
+		echo "[copyToVolume][INFO] source is NO directory"
 		docker cp "$src" "${containerName}:/home/target/"
 	fi
 	
@@ -106,17 +108,18 @@ if [ "$srcType" = "path" ]; then
 	docker kill "$containerName"
 	
 elif [ "$srcType" = "volume" ]; then
-	echo -en "\r[INFO]starting copy... \"volume\" mode\n"
+	#shellcheck disable=SC2039
+	echo -en "\r[copyToVolume][INFO] starting copy... \"volume\" mode\n"
 	docker run -it --rm --name "$containerName" \
 	-v "${src}:/home/source:ro" \
 	-v "${targetName}:/home/target:rw" \
 	-w="/home/source/" \
 	busybox:latest sh -c "cp -rfv . /home/target/;chown -vR \"${userId}:${groupId}\" /home/target;"
 else
-	echo "[ERROR] srcType: \"$srcType\" not \"path\" or \"volume\""
+	echo "[copyToVolume][ERROR] srcType: \"$srcType\" not \"path\" or \"volume\""
 	exit 15
 fi
-echo "[INFO]copy done"
+echo "[copyToVolume][INFO] copy done"
 
 
 
@@ -125,5 +128,5 @@ echo "[INFO]copy done"
 
 
 
-echo "[INFO]done"
+echo "[copyToVolume][INFO] done"
 exit 0
