@@ -1,17 +1,23 @@
 #!/bin/bash
 
-export DEBUGGING=false
-export DEFAULT_IMAGE="Vanilla-1.14.4"
-if [ "${DEBUGGING}" = "true" ]; then
-	set -o xtrace
-fi
+if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
+# shellcheck disable=SC1091
+. test/shared/shared.sh
+echo "[testCaseAll] starting..."
 
-set -o errexit
-set -o nounset
-set -o pipefail
+bash test/testCaseStyle.sh
 
-bash test/testStyle.sh
-bash test/testBuild.sh
-bash test/testRun.sh
-bash test/testHealth.sh
-bash test/testAddOp.sh
+echo "[testCaseAll] process standard tests"
+# build base images
+bash test/standard/testBuild.bases.sh
+
+# test modpacks
+bash test/standard/testBuild.modpacks.sh
+bash test/standard/testRun.modpacks.sh
+
+# test features
+echo "[testCaseAll] process feature tests"
+bash test/features/testHealth.sh "$DEFAULT_TAG"
+bash test/features/testAddOp.sh "$DEFAULT_TAG"
+
+echo "[testCaseAll] successful!"

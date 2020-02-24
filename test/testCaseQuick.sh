@@ -1,37 +1,43 @@
 #!/bin/bash
 
-export DEBUGGING=false
+if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
+# shellcheck disable=SC1091
+. test/shared/shared.sh
 
+echo "[testCaseQuick] starting..."
+set +o nounset
 if [ -n "$1" ]; then
-	export DEFAULT_IMAGE="$1"
+	IMAGE_TAG="$1"
 else
-	export DEFAULT_IMAGE="Vanilla-1.14.4"
+	IMAGE_TAG="$DEFAULT_TAG"
 fi
-
-if [ "${DEBUGGING}" = "true" ]; then
-	set -o xtrace
-fi
-
-set -o errexit
 set -o nounset
-set -o pipefail
+echo "[testCaseQuick] tag=${IMAGE_TAG}"
 
-bash test/testStyle.sh
-
-tag="$DEFAULT_IMAGE"
-echo "build FTBBase"
-docker build -t "jusito/docker-ftb-alpine:FTBBase" "base/"
-
-echo "[testBuild][INFO]build modpacks/$tag"
-docker rmi "jusito/docker-ftb-alpine:$tag" || true
-docker build -t "jusito/docker-ftb-alpine:$tag" "modpacks/"$(echo "$tag/." | sed 's/-/\//')
-echo "[testRun][INFO]running $tag"
-if ! docker run -ti --name "JusitoTesting" --rm -e TEST_MODE=true -e DEBUGGING=${DEBUGGING} -e JAVA_PARAMETERS="-Xms1G -Xmx2G" "jusito/docker-ftb-alpine:$tag"; then
-	echo "[testRun][ERROR]run test failed for $tag"
-	exit 1
+set +o nounset
+if [ "$2" != "skipStyle" ]; then
+	bash test/testCaseStyle.sh
 fi
-docker stop "JusitoTesting" || true
-docker rm "JusitoTesting" || true
+if [ "$3" != "skipBase" ]; then
+	echo "[testCaseQuick] build bases"
+	bash test/standard/testBuild.bases.sh
+fi
+set -o nounset
 
-bash test/testHealth.sh
-bash test/testAddOp.sh
+
+echo "[testCaseQuick][INFO] build modpacks/${IMAGE_TAG}"
+docker rmi "${REPO}:${IMAGE_TAG}" || true
+bash test/standard/testBuild.sh "${IMAGE_TAG}" "$(echo "${IMAGE_TAG}/." | sed 's/-/\//')" "modpacks"
+echo "[testCaseQuick][INFO] running ${IMAGE_TAG}"
+bash test/standard/testRun.sh "${IMAGE_TAG}"
+docker stop "${TEST_CONTAINER}" || true
+docker rm "${TEST_CONTAINER}" || true
+
+set +o nounset
+if [ "$4" != "skipFeatures" ]; then
+	bash test/features/testHealth.sh "$IMAGE_TAG"
+	bash test/features/testAddOp.sh "$IMAGE_TAG"
+fi
+set -o nounset
+
+echo "[testCaseQuick] tag=${IMAGE_TAG} successful!"

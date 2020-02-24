@@ -1,6 +1,19 @@
 #!/bin/bash
 
-bash test/testCaseQuick.sh "Vanilla-1.14.4"
-bash test/testCaseQuick.sh "FTBInfinity-3.1.0-1.7.10"
-bash test/testCaseQuick.sh "FTBPresentsSkyfactory3-3.0.15-1.10.2"
-bash test/testCaseQuick.sh "FTBRevelation-3.0.1-1.12.2"
+if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
+# shellcheck disable=SC1091
+. test/shared/shared.sh
+echo "[testCaseMedium] starting..."
+
+# check style first
+bash test/testCaseStyle.sh
+
+# build base images
+bash test/standard/testBuild.bases.sh
+
+bash test/testCaseQuick.sh "$DEFAULT_TAG" "skipStyle" "skipBase"
+bash test/testCaseQuick.sh "FTBInfinity-3.1.0-1.7.10" "skipStyle" "skipBase"
+bash test/testCaseQuick.sh "FTBPresentsSkyfactory3-3.0.15-1.10.2" "skipStyle" "skipBase"
+bash test/testCaseQuick.sh "FTBRevelation-3.0.1-1.12.2" "skipStyle" "skipBase"
+
+echo "[testCaseMedium] successful!"
