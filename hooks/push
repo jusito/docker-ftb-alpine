@@ -6,12 +6,12 @@ if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
 echo "[docker.hook.push][INFO] starting..."
 
 echo "[docker.hook.push][INFO] push base images"
-for baseImage in "${BASE_IMAGES[*]}"; do
+for baseImage in "${BASE_IMAGES[@]}"; do
 	docker push "$DOCKER_REPO:$(getImageTag "$baseImage")"
 done
 
 echo "[docker.hook.push][INFO] push modpack images"
-for modpack in "${MODPACKS[*]}"; do
+for modpack in "${MODPACKS[@]}"; do
 	docker push "$DOCKER_REPO:$(getImageTag "$modpack")"
 done
 
