@@ -222,13 +222,13 @@ To understand whats wrong with your performance, you should know that the Garbag
 
 ## Is this working?
 The label at the top of this document updates every week. If you want to test it on your own:
-1. Clone Repository
-2. Navigate to root dir
-3. [Optional] Create Dockerfile for your modpack, just copy another FTB Dockerfile (if jar see vanilla, if zip see others), replace download & md5
-4. bash test/testCaseQuick.sh or bash test/testCaseAll.sh
-5. [Optional] If you want more details, modify first line "export DEBUGGING=false" to true (xtrace activated everywhere)
+1. Clone Repository & install shellcheck
+2. Navigate to root dir of repo
+3. [Optional] Create Dockerfile for your modpack, just copy another FTB Dockerfile (if jar see vanilla, if zip see others, twitch forge see RLCraft), replace download & md5
+4. bash test/testCaseQuick.sh "Vanilla-1.15.2" or bash test/testCaseAll.sh
+5. [Optional] If you want more details, `export DEBUGGING=true` (xtrace activated everywhere)
 
-Hint: If you want to test Modpack A in Version B, Dockerfile should be at "modpacks/A/B/Dockerfile" and you can test it with `bash test/testCaseQuick.sh "A-B"`. For A:=Vanilla and B:=1.14.3 this would be "modpacks/Vanilla/1.14.3/Dockerfile" and image name used for testing  "Vanilla-1.14.3".
+Hint: If you want to test Modpack A in Version B, Dockerfile should be at "modpacks/A/B/Dockerfile" and you can test it with `bash test/testCaseQuick.sh "A-B"`. For A:=Vanilla and B:=1.15.2 this would be "modpacks/Vanilla/1.15.2/Dockerfile" and image name used for testing  "Vanilla-1.15.2".
 
 ## FTP Server
 * If your Volume is `MyMinecraftVolume`
