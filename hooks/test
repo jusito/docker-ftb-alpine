@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
+# shellcheck disable=SC1091
+. test/shared/shared.sh
+echo "[docker.hook.test][INFO] starting..."
+
+echo "[docker.hook.test][INFO] check style"
+bash test/testCaseStyle.sh
+
+echo "[docker.hook.test][INFO] successful!"

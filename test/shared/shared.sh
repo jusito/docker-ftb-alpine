@@ -1,7 +1,12 @@
 #!/bin/bash
 
 export DEFAULT_TAG="Vanilla-1.15.2"
-export REPO="jusito/docker-ftb-alpine"
+if [ -z "$DOCKER_REPO" ]; then
+	export REPO="jusito/docker-ftb-alpine"
+else
+	export REPO="$DOCKER_REPO"
+fi
+
 export TEST_CONTAINER="JusitoTesting"
 if [ "${DEBUGGING}" = "true" ]; then
 	set -o xtrace
