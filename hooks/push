@@ -10,9 +10,9 @@ for baseImage in "${BASE_IMAGES[@]}"; do
 	docker push "$DOCKER_REPO:$(getImageTag "$baseImage")"
 done
 
-echo "[docker.hook.push][INFO] push modpack images"
-for modpack in "${MODPACKS[@]}"; do
-	docker push "$DOCKER_REPO:$(getImageTag "$modpack")"
-done
+#echo "[docker.hook.push][INFO] push modpack images"
+#for modpack in "${MODPACKS[@]}"; do
+#	docker push "$DOCKER_REPO:$(getImageTag "$modpack")"
+#done
 
 echo "[docker.hook.push][INFO] successful!"
