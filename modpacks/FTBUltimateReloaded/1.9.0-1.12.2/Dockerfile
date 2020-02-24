@@ -1,3 +1,3 @@
-FROM jusito/docker-ftb-alpine:FTBBase
+FROM jusito/docker-ftb-alpine:8jre-alpine-openj9
 
 CMD ["https://media.forgecdn.net/files/2778/970/FTBUltimateReloadedServer_1.9.0.zip", "add2832ba8d46b1d5759b92e196d057e"]
