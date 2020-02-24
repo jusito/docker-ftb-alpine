@@ -67,7 +67,7 @@ ENV MY_GROUP_ID=10000 \
 	view_distance=10 \
 	white_list=false
 		
-COPY ["entrypoint.sh", "checkHealth.sh", "entrypointTestMode.sh", "addOp.sh", "/home/" ]
+COPY ["8jre/alpine/entrypoint.sh", "8jre/alpine/checkHealth.sh", "8jre/alpine/entrypointTestMode.sh", "8jre/alpine/addOp.sh", "/home/" ]
 
 RUN apk update && \
 	apk add --no-cache ca-certificates && \

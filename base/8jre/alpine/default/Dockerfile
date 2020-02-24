@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk8-openj9:alpine-jre
+FROM alpine:3.11
 
 EXPOSE 25565/tcp
 
@@ -19,7 +19,7 @@ ENV MY_GROUP_ID=10000 \
 	HEALTH_URL="127.0.0.1" \
 	HEALTH_PORT="" \
 	FORCE_DOWNLOAD="false" \
-	JAVA_PARAMETERS="-Xms4096M -Xmx4096M -Xmns2048M -Xmnx3276M -Xgc:concurrentScavenge -Xgc:dnssExpectedTimeRatioMaximum=3 -Xgc:scvNoAdaptiveTenure -Xdisableexplicitgc -Xtune:virtualized" \
+	JAVA_PARAMETERS="-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+UseCGroupMemoryLimitForHeap -XX:ParallelGCThreads=4 -Dsun.rmi.dgc.server.gcInterval=3600000 -XX:MaxGCPauseMillis=50" \
 	OVERWRITE_PROPERTIES="true" \
 	ADMIN_NAME="" \
 	DEBUGGING=false \
@@ -67,10 +67,10 @@ ENV MY_GROUP_ID=10000 \
 	view_distance=10 \
 	white_list=false
 		
-COPY ["entrypoint.sh", "checkHealth.sh", "entrypointTestMode.sh", "addOp.sh", "/home/" ]
+COPY ["8jre/alpine/entrypoint.sh", "8jre/alpine/checkHealth.sh", "8jre/alpine/entrypointTestMode.sh", "8jre/alpine/addOp.sh", "/home/" ]
 
 RUN apk update && \
-	apk add --no-cache ca-certificates && \
+	apk add --no-cache ca-certificates openjdk8-jre && \
 # create user
 	addgroup -g "${MY_GROUP_ID}" "${MY_NAME}" && \
 	adduser -h "${MY_HOME}" -g "" -s "/bin/false" -G "${MY_NAME}" -D -u "${MY_USER_ID}" "${MY_NAME}" && \
