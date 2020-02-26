@@ -20,52 +20,52 @@ readonly uuidResolve="https://api.mojang.com/users/profiles/minecraft/"
 
 # check entrys given
 if [ -z "$name" ]; then
-	echo "[addOp][ERROR]The given name is empty, this isn't valid."
+	echo "[addOp][ERROR] The given name is empty, this isn't valid."
 	exit 10
 fi
 if [ -z "$level" ]; then
 	level=4
-	echo "[addOp][WARN]The given level is empty, using $level."
+	echo "[addOp][WARN] The given level is empty, using $level."
 fi
 if [ -z "$bypassesPlayerLimit" ]; then
 	bypassesPlayerLimit=true
-	echo "[addOp][WARN]The given value for bypass player limit is empty, using $bypassesPlayerLimit."
+	echo "[addOp][WARN] The given value for bypass player limit is empty, using $bypassesPlayerLimit."
 fi
 # https://minecraft-de.gamepedia.com/UUID
 if [ -z "$uuid" ]; then
-	echo "[addOp][INFO]resolving uuid from mojang"
+	echo "[addOp][INFO] resolving uuid from mojang"
 	set +o errexit
 	uuid=$(wget -O - "${uuidResolve}${name}" | grep -Eo -e '"id":"[^"]+' | grep -Eo -e '[^"]+$')
 	if [ -z "$uuid" ]; then
-		echo "[addOp][ERROR]couldn't resolve uuid, given name maybe invalid."
+		echo "[addOp][ERROR] couldn't resolve uuid, given name maybe invalid."
 		exit 14
 	fi
 	set -o errexit
 fi
-echo "[addOp][INFO]checking uuid $uuid"
+echo "[addOp][INFO] checking uuid $uuid"
 uuidLength="${#uuid}"
 if [ "$uuidLength" = "32" ]; then
-	echo "[addOp][INFO]uuid is short form"
+	echo "[addOp][INFO] uuid is short form"
 	if echo "$uuid" | grep -q -E -e '^[0-9a-fA-F]{32}$'; then
-		echo "[addOp][INFO]converting to long form"
+		echo "[addOp][INFO] converting to long form"
 		uuid=$(echo "$uuid" | sed -E 's/^(.{8})(.{4})(.{4})(.{4})(.{12})$/\1-\2-\3-\4-\5/')
 	else
-		echo "[addOp][ERROR]uuid contains invalid characters, only 0-9a-fA-F valid."
+		echo "[addOp][ERROR] uuid contains invalid characters, only 0-9a-fA-F valid."
 		exit 12
 	fi
 elif [ "$uuidLength" = "36" ]; then
-	echo"[addOp][INFO]uuid is long form"
+	echo"[addOp][INFO] uuid is long form"
 	if ! echo "$uuid" | grep -q -E -e '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'; then
-		echo "[addOp][ERROR]Given uuid is invalid, used regex: [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12"
+		echo "[addOp][ERROR] Given uuid is invalid, used regex: [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12"
 		exit 13
 	else
-		echo "[addOp][INFO]uuid looks valid"
+		echo "[addOp][INFO] uuid looks valid"
 	fi
 else
-	echo "[addOp][ERROR]Current uuid is invalid, not of length 33 or 37"
+	echo "[addOp][ERROR] Current uuid is invalid, not of length 33 or 37"
 	exit 11
 fi
-echo "[addOp][INFO]Using uuid: $uuid"
+echo "[addOp][INFO] Using uuid: $uuid"
 
 # read existing entrys
 existing=""
@@ -84,7 +84,7 @@ if [ -e "$file" ]; then
 		while read -r current
 		do
 			if echo "$current" | grep -Eq -e "\"name\"\s*:\s*\"$name\""; then
-				echo "[addOp][INFO]uuid is already in, replacing with new values"
+				echo "[addOp][INFO] uuid is already in, replacing with new values"
 			else
 				echo ",${current}" >> "$tmpFile"
 			fi
@@ -105,6 +105,6 @@ if [ -n "$existing" ]; then
 fi
 echo "[${existing}{\"uuid\": \"$uuid\",\"name\": \"$name\",\"level\": $level,\"bypassesPlayerLimit\": $bypassesPlayerLimit}]" > "$file"
 
-echo "[addOp][INFO]printing $file"
+echo "[addOp][INFO] printing $file"
 cat "$file"
 exit 0
