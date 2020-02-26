@@ -322,19 +322,19 @@ writeOp
 if [ -e "config.sh" ]; then sh config.sh; fi
 
 
-## main decision
+
+# register SIGTERM trap => exit server securely
+trap 'stopServer' 15
+# create named pipe for query communication
+if [ -e "$SERVER_QUERY_PIPE" ]; then rm "$SERVER_QUERY_PIPE"; fi
+mkfifo "$SERVER_QUERY_PIPE"
+# run and wait
+# shellcheck disable=SC2086 #dont "$TARGET_JAR" because * in it for forge....jar and -universal.jar(v1.12.2 e.g.)
+java -server $JAVA_PARAMETERS -jar $TARGET_JAR <> "$SERVER_QUERY_PIPE" &
 if [ "$TEST_MODE" = "true" ]; then
-	sh /home/entrypointTestMode.sh $isZip $isJar
+	. /home/entrypointTestMode.sh $isZip $isJar
 	exit $?
 
 else
-	# register SIGTERM trap => exit server securely
-	trap 'stopServer' 15 
-	# create named pipe for query communication
-	if [ -e "$SERVER_QUERY_PIPE" ]; then rm "$SERVER_QUERY_PIPE"; fi
-	mkfifo "$SERVER_QUERY_PIPE"
-	# run and wait
-	# shellcheck disable=SC2086
-	java -server $JAVA_PARAMETERS -jar "$TARGET_JAR" <> "$SERVER_QUERY_PIPE" &
 	wait $!
 fi
