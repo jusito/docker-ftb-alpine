@@ -85,7 +85,8 @@ RUN apk update && \
 	apk del --quiet --no-cache --progress --purge && \
 	rm -rf /var/cache/apk/* && \
 # create symlinks for easy usage
-	ln -s "/home/serverQuery.sh" "/usr/local/bin/query"
+	ln -s "/home/serverQuery.sh" "/usr/local/bin/query" && \
+	ln -s "/home/addOp.sh" "/usr/local/bin/addop"
 
 VOLUME "$MY_HOME"
 
@@ -97,7 +98,7 @@ USER "${MY_USER_ID}:${MY_GROUP_ID}"
 # check integrity of checkHealth.sh
 # execute sh
 HEALTHCHECK --interval=10s --timeout=610s CMD \
- sha3sum "/home/checkHealth.sh" | grep -Eq '^3c9b55e8afc047aa080046f65f174c522b8b3e4d3f01d9d399fe6aec\s' && \
+ sha3sum "/home/checkHealth.sh" | grep -Eq '^8651544c223472875e8f1e4ab336b51711d0638b8d2dfb5b46514a02\s' && \
  sh /home/checkHealth.sh 
 
 LABEL com.github.jusito.docker-ftb-alpine.version="2.0.0" \
