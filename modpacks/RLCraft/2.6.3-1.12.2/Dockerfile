@@ -6,7 +6,7 @@ ENV allow_flight=true \
 	view_distance=6 \
 	\
 	MY_FILE="Twitch.zip" \
-	ROOT_IN_MODPACK_ZIP="" \
+	ROOT_IN_MODPACK_ZIP="RLCraft Server Pack 1.12.2 - Beta v2.6.3" \
 	MINECRAFT_VERSION="1.12.2" \
 	FORGE_VERSION="14.23.5.2847"
 
