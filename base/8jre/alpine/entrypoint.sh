@@ -328,8 +328,8 @@ trap 'stopServer' 15
 # create named pipe for query communication
 if [ -e "$SERVER_QUERY_PIPE" ]; then rm "$SERVER_QUERY_PIPE"; fi
 mkfifo "$SERVER_QUERY_PIPE"
-# run and wait
-# shellcheck disable=SC2086 #dont "$TARGET_JAR" because * in it for forge....jar and -universal.jar(v1.12.2 e.g.)
+# run and wait #dont "$TARGET_JAR" because * in it for forge....jar and -universal.jar(v1.12.2 e.g.)
+# shellcheck disable=SC2086
 java -server $JAVA_PARAMETERS -jar $TARGET_JAR <> "$SERVER_QUERY_PIPE" &
 if [ "$TEST_MODE" = "true" ]; then
 	. /home/entrypointTestMode.sh $isZip $isJar
