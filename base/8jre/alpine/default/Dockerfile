@@ -24,6 +24,9 @@ ENV MY_GROUP_ID=10000 \
 	OVERWRITE_PROPERTIES="true" \
 	ADMIN_NAME="" \
 	DEBUGGING=false \
+	ROOT_IN_MODPACK_ZIP="" \
+	MINECRAFT_VERSION="" \
+	FORGE_VERSION="" \
 	\
 # server.properties
 	allow_flight=false \
