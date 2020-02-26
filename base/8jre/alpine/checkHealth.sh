@@ -46,7 +46,7 @@ delayCheck() {
 	startupTimeout="${STARTUP_TIMEOUT:?}"
 	startupCounter=0
 	if [ -e "$stateFile" ]; then
-		echo "[checkHealth][INFO]Looks like server was already up"
+		echo "[checkHealth][INFO] Looks like server was already up"
 	else
 		waiting="true"
 		
@@ -78,10 +78,10 @@ delayCheck() {
 		done
 		
 		if [ "$startupCounter" -gt "$startupTimeout" ]; then
-			echo "[checkHealth][ERROR]Timeout reached, server needed to much time to boot"
+			echo "[checkHealth][ERROR] Timeout reached, server needed to much time to boot"
 			exit 2
 		else
-			echo "[checkHealth][INFO]Server reported startup done"
+			echo "[checkHealth][INFO] Server reported startup done"
 			touch "$stateFile"
 		fi
 	fi
@@ -97,18 +97,18 @@ PROPERTIES=$(find "$MY_HOME" -maxdepth 1 -type f -iname 'server.properties')
 # userdefined port?
 set +e
 if [ -z "$port" ]; then
-	debugMsg "[checkHealth][DEBUG]no HEALTH_PORT given"
+	debugMsg "[checkHealth][DEBUG] no HEALTH_PORT given"
 	#try to find in props
 	port=$(grep -Eio -e 'server-port=.+' "$PROPERTIES" | grep -o -e '[^=]*$')
 	#if not in, its default
 	if [ -z "$port" ]; then
-		debugMsg "[checkHealth][DEBUG]couldn't extract server port from $PROPERTIES, fallback to default"
+		debugMsg "[checkHealth][DEBUG] couldn't extract server port from $PROPERTIES, fallback to default"
 		port=25565
 	else
-		debugMsg "[checkHealth][DEBUG]could extract server port: $port"
+		debugMsg "[checkHealth][DEBUG] could extract server port: $port"
 	fi
 else
-	debugMsg "[checkHealth][DEBUG]HEALTH_PORT given"
+	debugMsg "[checkHealth][DEBUG] HEALTH_PORT given"
 fi
 set -e
 
@@ -116,21 +116,21 @@ set -e
 hostHex=$(stringToHex "$host")
 hostLength=$(getLength "$host")
 hostLengthHex=$(intToHex "$hostLength")
-debugMsg "[checkHealth][DEBUG]Host: $host($hostLength = $hostLengthHex) = $hostHex"
+debugMsg "[checkHealth][DEBUG] Host: $host($hostLength = $hostLengthHex) = $hostHex"
 
 # process port
 portHex=$(intToHex $port)
-debugMsg "[checkHealth][DEBUG]Port: $port = $portHex"
+debugMsg "[checkHealth][DEBUG] Port: $port = $portHex"
 
 # create handshake
 handshake="\x00\x04${hostLengthHex}${hostHex}${portHex}\x01"
 handshakeLength=$(getLength "$handshake") # side effect, hex->byte before count
 handshakeLengthHex=$(intToHex "$handshakeLength")
-debugMsg "[checkHealth][DEBUG]Handshake: $handshake($handshakeLength = $handshakeLengthHex)"
+debugMsg "[checkHealth][DEBUG] Handshake: $handshake($handshakeLength = $handshakeLengthHex)"
 
 # create request
 request="${handshakeLengthHex}${handshake}\x01\x00"
-echo "[checkHealth][INFO]Request: $request"
+echo "[checkHealth][INFO] Request: $request"
 
 serverIsStillStarting="true"
 while [ "$serverIsStillStarting" = "true" ];
@@ -138,23 +138,6 @@ do
 	# convert request, send, binary-to-text
 	# shellcheck disable=SC2039
 	recv=$(echo -e "${request}" | nc  "$host" "$port" | od -a -A n | tr -d '\n ')
-	# shellcheck disable=SC2039
-	debugMsg "$(echo -e "${request}")"
-	# shellcheck disable=SC2039
-	debugMsg "$(echo -e "${request}" | wc -c)"
-	# shellcheck disable=SC2039
-	debugMsg "$(echo -e "${request}" | nc "$host" "$port" || echo $?)"
-	# shellcheck disable=SC2039
-	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | wc -c)"
-	# shellcheck disable=SC2039
-	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | od -a -A n || echo $?)"
-	# shellcheck disable=SC2039
-	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | od -a -A n | wc -c)"
-	# shellcheck disable=SC2039
-	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | od -a -A n | tr -d '\n ' || echo $?)"
-	# shellcheck disable=SC2039
-	debugMsg "$(echo -e "${request}" | nc "$host" "$port" | od -a -A n | tr -d '\n ' | wc -c)"
-	debugMsg "$recv"
 	
 	#Wait if server is still starting
 	if echo "$recv" | grep -Fqo 'Server is still starting! Please wait before reconnecting.'; then
@@ -166,9 +149,9 @@ done
 
 # check
 if echo "$recv" | grep -Fqo '"players":'; then
-	echo "[checkHealth][INFO]Status valid"
+	echo "[checkHealth][INFO] Status valid"
 	exit 0
 else
-	echo "[checkHealth][ERROR]Status invalid"
+	echo "[checkHealth][ERROR] Status invalid"
 	exit 1
 fi
