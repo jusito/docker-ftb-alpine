@@ -8,51 +8,6 @@ echo "[testHealth][INFO] starting..."
 IMAGE="${REPO}:$1"
 HEALTH=" " #default should be fine
 
-function await() {
-	container=$1
-	file=$2
-	waitFor=$3
-	#minTime=$((30))
-		
-	isRunning=true
-	counter=0
-	timeout=300
-	step=1
-	while [ $isRunning = true ]; do
-		counter=$((counter+1))
-		
-		if [ "$step" = "1" ]; then
-			echo -en "\r[testHealth][INFO] waiting[-]..."
-		elif [ "$step" = "2" ]; then
-			echo -en "\r[testHealth][INFO] waiting[\\]..."
-		else
-			echo -en "\r[testHealth][INFO] waiting[/]..."
-			step=0
-		fi
-		step=$((step+1))
-		
-		if docker exec "$container" grep -Fq -e "$waitFor" "$file" 2>/dev/null; then
-			isRunning=false
-			timeout=$((timeout+1))
-		elif [ $counter -ge $timeout ]; then
-			isRunning=false			
-		fi
-		
-		sleep 1s
-	done
-	
-	if [ $counter -ge $timeout ]; then
-		echo -en "\r[testHealth][ERROR] TIMEOUT! \n"
-		return 1
-	else
-		echo -en "\r[testHealth][INFO] await done\n"
-		#if [ $counter -lt $minTime ]; then
-		#	sleep $((minTime-counter))s
-		#fi
-		return 0
-	fi
-}
-
 function isHealthy() {
 	container=$1
 	healthy=$2
@@ -72,21 +27,21 @@ function isHealthy() {
 		step=1
 		while docker ps | grep -F -e "$container" | grep -Fq -e '(health: starting)'; do
 			if [ "$step" = "1" ]; then
-				echo -en "\r[testHealth][INFO] health starting[-]..."
+				echo -en "\r[testHealth][INFO] health is starting[-]..."
 			elif [ "$step" = "2" ]; then
-				echo -en "\r[testHealth][INFO] health starting[\\]..."
+				echo -en "\r[testHealth][INFO] health is starting[\\]..."
 			else
-				echo -en "\r[testHealth][INFO] health starting[/]..."
+				echo -en "\r[testHealth][INFO] health is starting[/]..."
 				step=0
 			fi
 			step=$((step+1))
 			sleep 1s
 		done
-		echo -en "\r[testHealth][INFO] health starting... done!\n"
+		echo -en "\r[testHealth][INFO] health is starting... done!\n"
 		info=$(docker ps | grep -F -e "$container")
 	fi
 	
-	if echo "$info" | grep -Fq -e "$state"; then
+	if echo "$info" | grep -Fq -e "(healthy)"; then
 		echo "[testHealth][INFO] $container health state $state"
 		return 0
 	else
