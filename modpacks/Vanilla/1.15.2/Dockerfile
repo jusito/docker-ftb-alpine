@@ -1,4 +1,4 @@
-FROM jusito/docker-ftb-alpine:FTBBase
+FROM jusito/docker-ftb-alpine:8jre-alpine-default
 
 ENV MY_FILE="Server.jar"
 
