@@ -8,12 +8,22 @@ set -o errexit
 #set -o pipefail
 
 # get arguments
-export MY_SERVER=$1
-export MY_MD5=$2
 cacheOnly=$3
 set -o nounset #3 not always given
+export MY_SERVER=$1
+export MY_MD5=$2
 
-# define functions
+# set local vars
+FORGE_INSTALLER="forge-${MINECRAFT_VERSION}-${FORGE_VERSION}-installer.jar"
+FORGE_JAR="forge-${MINECRAFT_VERSION}-${FORGE_VERSION}*.jar"
+FORGE_URL="http://files.minecraftforge.net/maven/net/minecraftforge/forge/${MINECRAFT_VERSION}-${FORGE_VERSION}/${FORGE_INSTALLER}"
+TARGET_JAR="$MY_FILE"
+
+
+
+
+
+#region functions
 download() {
 	# using env $FORCE_DOWNLOAD
 	target=$1
@@ -24,7 +34,7 @@ download() {
 	
 	# check if file already exists
 	if [ -e "${cache}" ]; then
-		echo "[entrypoint][INFO]found existing file ${cache}"
+		echo "[entrypoint][INFO] found existing file ${cache}"
 		
 		# check md5
 		md5current="$(md5sum "/home/$target" | grep -Eo -e '^\S+')"
@@ -36,27 +46,27 @@ download() {
 		
 		# check user config
 		if [ "$FORCE_DOWNLOAD" = "true" ]; then
-			echo "[entrypoint][INFO]force reload activated"
+			echo "[entrypoint][INFO] force reload activated"
 			rm "$cache"
 			skip="false"
 			
 		# check if md5 matches
 		elif [ "$md5Matches" = "true" ]; then
-			echo "[entrypoint][INFO]found existing file, no redownload: $md5"
+			echo "[entrypoint][INFO] found existing file, no redownload: $md5"
 			skip="true"
 			
 		# if md5 doesn't match
 		else
-			echo "[entrypoint][WARN]file doesn't match md5, redownloading: $md5"
+			echo "[entrypoint][WARN] file doesn't match md5, redownloading: $md5"
 			rm "$cache"
 			skip="false"
 		fi
 	else
-		echo "[entrypoint][INFO]found no cached download"
+		echo "[entrypoint][INFO] found no cached download"
 	fi
 	
 	if [ "$skip" = "false" ]; then
-		echo "[entrypoint][INFO]downloading..."
+		echo "[entrypoint][INFO] downloading..."
 		wget -O "$target" "$source"
 		
 		# check md5
@@ -69,15 +79,15 @@ download() {
 
 		if [ "$md5Matches" = "true" ]; then
 			cp -vf "$target" "$cache"
-			echo "[entrypoint][INFO]MD5 ok!"
+			echo "[entrypoint][INFO] MD5 ok!"
 		else
 			rm -f "$target"
-			echo "[entrypoint][ERROR]MD5 failed!"
+			echo "[entrypoint][ERROR] MD5 failed!"
 			exit 5
 		fi
 
 	else
-		echo "[entrypoint][INFO]download skipped, cp"
+		echo "[entrypoint][INFO] download skipped, cp"
 		cp -vf "${cache}" "$target"
 	fi
 }
@@ -87,9 +97,9 @@ doBackup() {
 	cd "${MY_VOLUME}"
 
 	if [ -z "$file" ]; then
-		echo "[entrypoint][ERROR]can't backup empty filename"
+		echo "[entrypoint][ERROR] can't backup empty filename"
 	elif [ ! -e "$file" ]; then
-		echo "[entrypoint][INFO]can't backup file which doesn't exists: $file"
+		echo "[entrypoint][INFO] can't backup file which doesn't exists: $file"
 	else
 		mv -fv "$file" "/home/$file"
 	fi
@@ -100,9 +110,9 @@ doRestore() {
 	cd "${MY_VOLUME}"
 	
 	if [ -z "$file" ]; then
-		echo "[entrypoint][ERROR]can't restore empty filename"
+		echo "[entrypoint][ERROR] can't restore empty filename"
 	elif [ ! -e "/home/$file" ]; then
-		echo "[entrypoint][INFO]can't restore file which doesn't exists: /home/$file"
+		echo "[entrypoint][INFO] can't restore file which doesn't exists: /home/$file"
 	else
 		mv -fv "/home/$file" "$file"
 	fi
@@ -120,14 +130,14 @@ writeServerProperty() {
 	error=$?
 	set -e
 	if [ "1" = "$error" ]; then
-		echo "[entrypoint][WARN]illegal value($value) for $name, fallback to ($default), used regex pattern $pattern"
+		echo "[entrypoint][WARN] illegal value($value) for $name, fallback to ($default), used regex pattern $pattern"
 		value="$default"
 	fi
 	
 	if [ "$value" = "$default" ]; then
-		echo "[entrypoint][INFO]Property: $name=$value (Default)"
+		echo "[entrypoint][INFO] Property: $name=$value (Default)"
 	else
-		echo "[entrypoint][INFO]Property: $name=$value"
+		echo "[entrypoint][INFO] Property: $name=$value"
 	fi
 	echo "$name=$value" >> "$target"
 }
@@ -135,7 +145,7 @@ writeServerProperty() {
 writeServerProperties() {
 	
 	if [ "$OVERWRITE_PROPERTIES" = "true" ]; then
-		echo "[entrypoint][INFO]OVERWRITE_PROPERTIES activated (default) overwriting properties."
+		echo "[entrypoint][INFO] OVERWRITE_PROPERTIES activated (default) overwriting properties."
 		
 		# prepare server.properties
 		target="${MY_VOLUME}/server.properties"
@@ -201,171 +211,130 @@ writeServerProperties() {
 	fi
 }
 
-writeJVMArguments() {
-	if [ -n "${JAVA_PARAMETERS:?}" ]; then
-		echo "[entrypoint][INFO]found custom jvm args (${JAVA_PARAMETERS:?})"
-		if [ -e "${MY_VOLUME}/ServerStart.sh" ]; then
-			echo "[entrypoint][INFO]ServerStart.sh file found"
-			
-			# shellcheck disable=SC2016
-			startup=$(grep -Eoi -e '"\$JAVACMD" -server .+' "${MY_VOLUME}/ServerStart.sh")
-			startupEnd=$(echo "${startup}" | grep -Eoi -e '-jar .+')
-			#escape characters for sed
-			startup=$(echo "$startup" | sed 's/\//\\\//g')
-			startupEnd=$(echo "$startupEnd" | sed 's/\//\\\//g')
-			# shellcheck disable=SC2016
-			replaceStart='"$JAVACMD" -server '
-			sed -i "s/${startup}/${replaceStart} ${JAVA_PARAMETERS} ${startupEnd}/g" "${MY_VOLUME}/ServerStart.sh"
-			
-			# shellcheck disable=SC2016,2086
-			echo "[entrypoint][DEBUG]current line: ""$(grep -Eoi -e 'JAVACMD.+' "${MY_VOLUME}/ServerStart.sh")"
-		else
-			echo "[entrypoint][ERROR]ServerStart.sh file NOT found"
-		fi
-		
-	else
-		echo "[entrypoint][INFO]found NO custom jvm args"
-	fi	
-}
 writeOp() {
 	if [ -z "$ADMIN_NAME" ]; then
-		echo "[entrypoint][WARN]ADMIN_NAME unset, are you sure?"
+		echo "[entrypoint][WARN] ADMIN_NAME unset, are you sure?"
 	else
-		echo "[entrypoint][INFO]ADMIN_NAME set, writing..."
+		echo "[entrypoint][INFO] ADMIN_NAME set, writing..."
 		sh "/home/addOp.sh" "" "$ADMIN_NAME" "" ""
 	fi
 }
 
+stopServer() {
+	echo "[entrypoint][INFO] received SIGTERM"
+	query stop
+	wait "$(pidof java)"
+	echo "[entrypoint][INFO] all java processes finished"
+}
+#region functions
+
+
+
+
+#region main
 # set workdir to volume
 cd "${MY_VOLUME}"
-
-# main processing:
 download "${MY_FILE}" "${MY_SERVER}" "${MY_MD5}"
 if [ "$cacheOnly" = "true" ]; then
-	echo "[entrypoint][INFO]Cache only activated"
+	echo "[entrypoint][INFO] Cache only activated"
 	rm "${MY_FILE}"
 	exit 0
 fi
 
 # get file ending
-set +e # if grep can't find a match, its an error
-isZip=$(echo "${MY_FILE}" | grep -Ei -e '\.zip$')
-if [ -n "$isZip" ]; then
-	isZip="true"
-else
-	isZip="false"
-fi
-isJar=$(echo "${MY_FILE}" | grep -Ei -e '\.jar$')
-if [ -n "$isJar" ]; then
-	isJar="true"
-else
-	isJar="false"
-fi
-set -e
+fileEnding=$(echo "$MY_FILE" | grep -Eo -e '[^.]+$')
+if [ "$fileEnding" = "zip" ]; then
+	isZip="true"; isJar="false"
 
-# check if we can handle it
-if [ "$isZip" = "true" ]; then
-	echo "[entrypoint][INFO]File looks like zip"
-	if [ "$isJar" = "true" ]; then
-		echo "[entrypoint][WARN]file looks like zip and jar, thats strange I will try it as zip"	
-		isJar="false"
-	fi
-elif [ "$isJar" = "true" ]; then
-	echo "[entrypoint][INFO]File looks like jar"
+elif [ "$fileEnding" = "jar" ]; then
+	isZip="false"; isJar="true"
+
 else
-	echo "[entrypoint][ERROR]File doesn't look like jar / zip, can't handle it"
+	echo "[entrypoint][ERROR] File doesn't look like jar / zip, can't handle it"
 	exit 2
 fi
 
 #backup files
-doBackup "server.properties"
 doBackup "banned-ips.json"
 doBackup "banned-players.json"
+doBackup "config.sh"
 doBackup "ops.json"
 doBackup "usercache.json"
 doBackup "usernamecache.json"
+doBackup "server.properties"
 doBackup "whitelist.json"
-doBackup "config.sh"
 
 # clean existing files, f.e. if mods are removed on update
-# 
 if [ "$isZip" = "true" ] || [ "$isJar" = "true" ]; then
-	echo "[entrypoint][INFO]Cleaning existing folders mods/config/scripts/structures"
+	echo "[entrypoint][INFO] Cleaning existing folders mods/config/scripts/structures"
 	rm -rf mods/* config/* scripts/* structures/* || true
 fi
 
 # unzip server files
 if [ "$isZip" = "true" ]; then
 	unzip -q -o "${MY_FILE}"
-	echo "[entrypoint][INFO]server files extracted"
+	echo "[entrypoint][INFO] server files extracted"
+
+	#move files from zip/xxx/* (volume/xxx/*) to volume/
+	if [ -n "$ROOT_IN_MODPACK_ZIP" ]; then 
+		echo "[entrypoint][INFO] moving all files from \"real\" zip root (zip/${ROOT_IN_MODPACK_ZIP}) to volume"
+		mv -vf "${MY_VOLUME}/${ROOT_IN_MODPACK_ZIP}/"* "${MY_VOLUME}"
+		echo "[entrypoint][INFO] done"
+	fi
 	
 	rm -f "${MY_FILE}"
-elif [ "$isJar" = "true" ]; then
-	echo "[entrypoint][INFO]jar is at correct position"
-else
-	echo "[entrypoint][ERROR]unexpected file type [3]"
-	exit 3
+fi
+
+# install forge (TODO currently only forge?)
+if [ -n "$FORGE_VERSION" ] ; then
+	if [ ! -f "${MY_VOLUME}/${FORGE_JAR}" ]; then
+		#remove existing forge
+		rm -f forge-*.jar || true
+
+		#install forge
+		wget -O "${MY_VOLUME}/$FORGE_INSTALLER" "$FORGE_URL"
+		java -jar "${MY_VOLUME}/$FORGE_INSTALLER" --installServer
+		
+		#cleanup forge installer
+		rm -f "${MY_VOLUME}/$FORGE_INSTALLER"
+	fi
+	TARGET_JAR="$FORGE_JAR"
 fi
 
 # set eula = accepted
-if [ -e 'eula.txt' ]; then
-	sed -i 's/eula=false/eula=true/g' 'eula.txt'
-else
-	echo 'eula=true' > 'eula.txt'
-fi
-echo "[entrypoint][INFO]You accepted the eula of Minecraft."
+echo 'eula=true' > 'eula.txt'
+echo "[entrypoint][INFO] You accepted the eula of Minecraft."
 
 #restore files
-doRestore "server.properties"
 doRestore "banned-ips.json"
 doRestore "banned-players.json"
+doRestore "config.sh"
 doRestore "ops.json"
+doRestore "server.properties"
 doRestore "usercache.json"
 doRestore "usernamecache.json"
 doRestore "whitelist.json"
-doRestore "config.sh"
+
 
 ## apply config
-if [ -f "/home/ServerStart.sh" ]; then
-	echo "[entrypoint][INFO]Found custom ServerStart.sh"
-	cp -vf "/home/ServerStart.sh" "${MY_VOLUME}/ServerStart.sh"
-fi
 writeServerProperties
 writeOp
-if [ "$isZip" = "true" ]; then
-	echo "[entrypoint][INFO]Injecting JVM arguments in FTB"
-	writeJVMArguments
-elif [ "$isJar" = "true" ]; then
-	echo "[entrypoint][INFO]JVM Arguments are ready to go"
-else
-	echo "[entrypoint][ERROR]unexpected file type [4]"
-	exit 4
-fi
-if [ -e "config.sh" ]; then
-	sh config.sh
-fi
+if [ -e "config.sh" ]; then sh config.sh; fi
 
-if [ -n "$TEST_MODE" ]; then
+
+## main decision
+if [ "$TEST_MODE" = "true" ]; then
 	sh /home/entrypointTestMode.sh $isZip $isJar
 	exit $?
 
 else
 	# register SIGTERM trap => exit server securely
-	trap 'pkill -15 java' 15
-		
-	# execute server
-	if [ "$isZip" = "true" ]; then
-		chmod +x ServerStart.sh
-		./ServerStart.sh &
-		
-	elif [ "$isJar" = "true" ]; then
-		#TODO unsafe
-		# shellcheck disable=SC2086
-		java $JAVA_PARAMETERS -jar "${MY_FILE}" &
-		
-	else
-		echo "[entrypoint][ERROR]unexpected file type [5]"
-		exit 5
-	fi
-	wait "$!"
+	trap 'stopServer' 15 
+	# create named pipe for query communication
+	if [ -e "$SERVER_QUERY_PIPE" ]; then rm "$SERVER_QUERY_PIPE"; fi
+	mkfifo "$SERVER_QUERY_PIPE"
+	# run and wait
+	# shellcheck disable=SC2086
+	java -server $JAVA_PARAMETERS -jar "$TARGET_JAR" <> "$SERVER_QUERY_PIPE" &
+	wait $!
 fi
