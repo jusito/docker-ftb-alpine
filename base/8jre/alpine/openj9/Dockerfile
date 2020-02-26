@@ -10,6 +10,7 @@ ENV MY_GROUP_ID=10000 \
 	MY_FILE="Server.zip" \
 	MY_SERVER="" \
 	MY_MD5="" \
+	SERVER_QUERY_PIPE="/home/query.pipe" \
 	\
 # for CI needed
 	TEST_MODE="" \
@@ -67,7 +68,7 @@ ENV MY_GROUP_ID=10000 \
 	view_distance=10 \
 	white_list=false
 		
-COPY ["8jre/alpine/entrypoint.sh", "8jre/alpine/checkHealth.sh", "8jre/alpine/entrypointTestMode.sh", "8jre/alpine/addOp.sh", "/home/" ]
+COPY ["8jre/alpine/entrypoint.sh", "8jre/alpine/checkHealth.sh", "8jre/alpine/entrypointTestMode.sh", "8jre/alpine/addOp.sh", "8jre/alpine/serverQuery.sh", "/home/" ]
 
 RUN apk update && \
 	apk add --no-cache ca-certificates && \
@@ -79,7 +80,9 @@ RUN apk update && \
 	chmod -R u=rwx,go= "/home" && \
 # remove temp files
 	apk del --quiet --no-cache --progress --purge && \
-	rm -rf /var/cache/apk/*
+	rm -rf /var/cache/apk/* && \
+# create symlinks for easy usage
+	ln -s "/home/serverQuery.sh" "/usr/local/bin/query"
 
 VOLUME "$MY_HOME"
 
