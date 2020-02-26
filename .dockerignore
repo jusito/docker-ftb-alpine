@@ -1,6 +1,4 @@
 .git/*
-test/*
-.project
 .travis.yml
 LICENSE
 *.md
