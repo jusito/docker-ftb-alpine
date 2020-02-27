@@ -9,6 +9,12 @@ set -o nounset
 
 readonly USE_LOG="/home/docker/logs/latest.log"
 command="$*"
+if [ "not a tty" = "$(tty)" ]; then
+	interacteShell="false"
+else
+	interacteShell="true"
+fi
+
 
 
 
@@ -64,8 +70,13 @@ while [ "$command" != "end" ]; do
 	
 	tail -n "$linesOut" "$USE_LOG"
 
-    echo "[serverQuery][INFO] insert command, insert end or ctrl+c"
-    read -r command
+	if [ "true" = "$interacteShell" ]; then
+		echo "[serverQuery][INFO] insert command, insert end or ctrl+c"
+    	read -r command
+	else
+		echo "[serverQuery][INFO] no interactive shell, for multiple commands use docker exec -it CONTAINER query"
+		command="end"
+	fi
 done
 
 
