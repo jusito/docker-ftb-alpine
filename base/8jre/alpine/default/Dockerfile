@@ -71,7 +71,7 @@ ENV MY_GROUP_ID=10000 \
 	view_distance=10 \
 	white_list=false
 		
-COPY ["8jre/alpine/entrypoint.sh", "8jre/alpine/checkHealth.sh", "8jre/alpine/entrypointTestMode.sh", "8jre/alpine/addOp.sh", "8jre/alpine/serverQuery.sh", "/home/" ]
+COPY ["base/8jre/alpine/entrypoint.sh", "base/8jre/alpine/checkHealth.sh", "base/8jre/alpine/entrypointTestMode.sh", "base/8jre/alpine/addOp.sh", "base/8jre/alpine/serverQuery.sh", "/home/" ]
 
 RUN apk update && \
 	apk add --no-cache ca-certificates openjdk8-jre && \
