@@ -9,7 +9,7 @@ set -o nounset
 
 readonly USE_LOG="/home/docker/logs/latest.log"
 command="$*"
-if [ "not a tty" = "$(tty)" ]; then
+if [ "not a tty" = "$(tty)" ] || [ "true" = "$TEST_MODE" ]; then
 	interacteShell="false"
 else
 	interacteShell="true"
@@ -34,10 +34,13 @@ trap 'exit 0;' 15
 while [ "$command" != "end" ]; do
 	if [ "$command" = "-h" ] || [ "$command" = "--help" ]; then
 		echo "[serverQuery][HELP] help requested with -h or --help"
-		echo "[serverQuery][HELP] usage: query command [arg1, arg2, ...]"
+		echo "[serverQuery][INFO] docker exec CONTAINER query CMD        - single command"
+		echo "[serverQuery][INFO] docker exec -it CONTAINER query CMD    - interactive mode"
+		echo "[serverQuery][HELP] usage: query command [arg1, arg2, ...] - e.g. query command /fml confirm"
 		echo "[serverQuery][HELP] "
 		echo "[serverQuery][HELP] special commands:"
 		echo "[serverQuery][HELP] end   - end query"
+		echo "[serverQuery][HELP] clear - clear terminal"
 		echo "[serverQuery][HELP] reset - clear terminal"
 		echo "[serverQuery][HELP] show  - show last 50 lines of latest.log"
 		echo "[serverQuery][HELP] "
@@ -45,7 +48,7 @@ while [ "$command" != "end" ]; do
 		echo "[serverQuery][HELP] help  - show all minecraft commands"
 	elif [ "$command" = "show" ]; then
 		linesOut=50
-	elif [ "$command" = "reset" ]; then
+	elif [ "$command" = "reset" ] || [ "$command" = "clear" ]; then
 		reset
 	else
 		linesBefore="$(getLogLines)"
@@ -74,7 +77,6 @@ while [ "$command" != "end" ]; do
 		echo "[serverQuery][INFO] insert command, insert end or ctrl+c"
     	read -r command
 	else
-		echo "[serverQuery][INFO] no interactive shell, for multiple commands use docker exec -it CONTAINER query"
 		command="end"
 	fi
 done
