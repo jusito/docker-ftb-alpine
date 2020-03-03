@@ -6,7 +6,7 @@ if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
 echo "[testBuild.bases][INFO] starting..."
 
 for baseImage in "${BASE_IMAGES[@]}"; do
-	bash test/standard/testBuild.sh "$(getImageTag "$baseImage")" "$(getImagePath "$baseImage")" "base"
+	bash test/standard/testBuild.sh "$(getImageTag "$baseImage")" "base/$(getImagePath "$baseImage")" "."
 done
 
 echo "[testBuild.bases][INFO] successful!"

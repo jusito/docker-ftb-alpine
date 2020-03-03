@@ -8,7 +8,7 @@ echo "[testStyle.docker][INFO] starting..."
 readonly PATH_DOCKERFILE="$1/Dockerfile"
 readonly PATH_CHECK_HEALTH="$(grep -Eo 'COPY.+checkHealth.sh' "base/${PATH_DOCKERFILE}" | grep -Eo '[^"]+$')"
 
-if ! printf '%s  %s' "$(grep -Eo "grep -Eq '\^[^\\]+" "base/${PATH_DOCKERFILE}" | sed 's/...........//')" "base/${PATH_CHECK_HEALTH}" | sha3sum -c ; then
+if ! printf '%s  %s' "$(grep -Eo "grep -Eq '\^[^\\]+" "base/${PATH_DOCKERFILE}" | sed 's/...........//')" "${PATH_CHECK_HEALTH}" | sha3sum -c ; then
 	echo "[testStyle.Docker][ERROR] Sha3sum of ${PATH_CHECK_HEALTH} in base/${PATH_DOCKERFILE} invalid"
 	exit 2
 fi
