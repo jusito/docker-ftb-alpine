@@ -15,9 +15,10 @@ export MY_MD5=$2
 
 # set local vars
 FORGE_INSTALLER="forge-${MINECRAFT_VERSION}-${FORGE_VERSION}-installer.jar"
+FORGE_INSTALLER_LEGACY="forge-${MINECRAFT_VERSION}-${FORGE_VERSION}-${MINECRAFT_VERSION}-installer.jar"
 FORGE_JAR="forge-${MINECRAFT_VERSION}-${FORGE_VERSION}*.jar"
-FORGE_URL="http://files.minecraftforge.net/maven/net/minecraftforge/forge/${MINECRAFT_VERSION}-${FORGE_VERSION}/${FORGE_INSTALLER}"
-TARGET_JAR="$MY_FILE"
+FORGE_URL="https://files.minecraftforge.net/maven/net/minecraftforge/forge/${MINECRAFT_VERSION}-${FORGE_VERSION}/${FORGE_INSTALLER}"
+FORGE_URL_LEGACY="https://files.minecraftforge.net/maven/net/minecraftforge/forge/${MINECRAFT_VERSION}-${FORGE_VERSION}-${MINECRAFT_VERSION}/${FORGE_INSTALLER_LEGACY}"
 
 
 
@@ -292,13 +293,27 @@ if [ -n "$FORGE_VERSION" ] ; then
 		rm -f forge-*.jar || true
 
 		#install forge
-		wget -O "${MY_VOLUME}/$FORGE_INSTALLER" "$FORGE_URL"
+		if wget -q --spider "$FORGE_URL"; then
+			wget -O "${MY_VOLUME}/$FORGE_INSTALLER" "$FORGE_URL"
+
+		# needed for e.g. 1.7.10
+		elif wget -q --spider "$FORGE_URL_LEGACY"; then
+			wget -O "${MY_VOLUME}/$FORGE_INSTALLER" "$FORGE_URL_LEGACY"
+		else
+			echo "[entrypoint][ERROR] Couldn't download forge installer"
+			exit 3
+		fi
+		
 		java -jar "${MY_VOLUME}/$FORGE_INSTALLER" --installServer
 		
 		#cleanup forge installer
 		rm -f "${MY_VOLUME}/$FORGE_INSTALLER"
 	fi
 	TARGET_JAR="$FORGE_JAR"
+
+else
+	echo "[entrypoint][INFO] no forge version configured, expecting MY_FILE is TARGET_JAR"
+	TARGET_JAR="$MY_FILE"
 fi
 
 # set eula = accepted
@@ -332,7 +347,7 @@ mkfifo "$SERVER_QUERY_PIPE"
 # shellcheck disable=SC2086
 java -server $JAVA_PARAMETERS -jar $TARGET_JAR <> "$SERVER_QUERY_PIPE" &
 if [ "$TEST_MODE" = "true" ]; then
-	. /home/entrypointTestMode.sh $isZip $isJar
+	sh /home/entrypointTestMode.sh
 	exit $?
 
 else
