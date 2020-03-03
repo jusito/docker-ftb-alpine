@@ -41,7 +41,7 @@ function isHealthy() {
 		info=$(docker ps | grep -F -e "$container")
 	fi
 	
-	if echo "$info" | grep -Fq -e "(healthy)"; then
+	if echo "$info" | grep -Fq -e "$state"; then
 		echo "[testHealth][INFO] $container health state $state"
 		return 0
 	else
