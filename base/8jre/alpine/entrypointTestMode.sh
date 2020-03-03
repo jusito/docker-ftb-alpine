@@ -66,7 +66,8 @@ traceMsg "loop ending"
 
 if [ "$foundLogEntry" = "true" ]; then
 	echo "[entrypointTestMode][INFO]Test ok! Needed sleeps: ${counter}/${timeout}"
-	kill -15 "$(pidof java)"
+	query stop
+	#kill -15 "$(pidof java)"
 	exit 0
 	
 elif [ "$counter" -gt "$timeout" ]; then
