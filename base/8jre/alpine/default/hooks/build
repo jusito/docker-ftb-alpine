@@ -9,6 +9,6 @@ echo "[docker.hook.build][INFO] build base images"
 bash test/standard/testBuild.bases.sh
 
 echo "[docker.hook.build][INFO] build modpack images"
-bash test/standard/testBuild.modpacks.sh
+#bash test/standard/testBuild.modpacks.sh
 
 echo "[docker.hook.build][INFO] successful!"
