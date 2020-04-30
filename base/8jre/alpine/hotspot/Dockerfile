@@ -29,6 +29,7 @@ ENV MY_GROUP_ID=10000 \
 	FORGE_VERSION="" \
 	\
 # server.properties
+	IGNORE_PROPERTY_ERRORS=false \
 	allow_flight=false \
 	allow_nether=true \
 	broadcast_console_to_ops=true \
