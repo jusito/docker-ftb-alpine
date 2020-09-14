@@ -304,7 +304,7 @@ if [ -n "$FORGE_VERSION" ] ; then
 		elif wget -q --spider "$FORGE_URL_LEGACY"; then
 			wget -O "${MY_VOLUME}/$FORGE_INSTALLER" "$FORGE_URL_LEGACY"
 		else
-			echo "[entrypoint][ERROR] Couldn't download forge installer"
+			echo "[entrypoint][ERROR] Couldn't download forge installer tried: $FORGE_URL and $FORGE_URL_LEGACY"
 			exit 3
 		fi
 		

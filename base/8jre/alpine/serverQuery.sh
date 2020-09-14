@@ -74,7 +74,7 @@ while [ "$command" != "end" ]; do
 	tail -n "$linesOut" "$USE_LOG"
 
 	if [ "true" = "$interacteShell" ]; then
-		echo "[serverQuery][INFO] insert command, insert end or ctrl+c"
+		echo "[serverQuery][INFO] insert query command, special commands end/clear/reset/show"
     	read -r command
 	else
 		command="end"
