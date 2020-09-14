@@ -108,5 +108,5 @@ HEALTHCHECK --interval=10s --timeout=610s CMD \
  sha3sum "/home/checkHealth.sh" | grep -Eq '^8651544c223472875e8f1e4ab336b51711d0638b8d2dfb5b46514a02\s' && \
  sh /home/checkHealth.sh 
 
-LABEL com.github.jusito.docker-ftb-alpine.version="2.0.0" \
-	com.github.jusito.docker-ftb-alpine.maintainer="docker@jusito.de"
+LABEL version="2.0.0" \
+	maintainer="docker@jusito.de"
