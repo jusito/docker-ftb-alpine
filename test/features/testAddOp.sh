@@ -5,7 +5,7 @@ if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
 . test/shared/shared.sh
 
 readonly admin1="terzut"
-readonly admin2="Hey_Schnitte"
+readonly admin2="drunkenmonkey"
 readonly tag=$1
 echo "[testAddOp][INFO] starting tag=$tag"
 
