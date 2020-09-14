@@ -9,4 +9,4 @@ ENV allow_flight=true \
 	MINECRAFT_VERSION="1.12.2" \
 	FORGE_VERSION="14.23.5.2838"
 
-CMD ["https://media.forgecdn.net/files/2836/138/RLCraft+Server+Pack+1.12.2+-+Beta+v2.8.1.zip", "aa06ffab9829705842d8f2c57d6935c0"]
+CMD ["https://media.forgecdn.net/files/2935/323/RLCraft+Server+Pack+1.12.2+-+Beta+v2.8.2.zip", "950d632e5805b1ddce64ab01109dce18"]
