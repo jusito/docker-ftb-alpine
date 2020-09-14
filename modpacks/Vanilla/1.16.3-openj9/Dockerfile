@@ -1,4 +1,4 @@
-FROM jusito/docker-ftb-alpine:8jre-alpine-hotspot
+FROM jusito/docker-ftb-alpine:8jre-alpine-openj9
 
 ENV MY_FILE="Server.jar"
 
