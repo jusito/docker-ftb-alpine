@@ -1,4 +1,4 @@
-FROM jusito/docker-ftb-alpine:8jre-alpine-openj9
+FROM jusito/docker-ftb-alpine:8jre-alpine-hotspot
 
 ENV MINECRAFT_VERSION="1.7.10" \
 	FORGE_VERSION="10.13.4.1614"
