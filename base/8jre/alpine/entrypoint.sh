@@ -167,11 +167,15 @@ writeServerProperties() {
 		writeServerProperty "allow-nether" "${allow_nether:?}" "$patternBoolean" "true"
 		writeServerProperty "broadcast-console-to-ops" "${broadcast_console_to_ops:?}" "$patternBoolean" "true"
 		writeServerProperty "difficulty" "${difficulty:?}" "^([0-3]|peaceful|easy|normal|hard)$" "1"
+		writeServerProperty "enable-command-block" "${enable_command_block:?}" "$patternBoolean" "false"
+		writeServerProperty "enable-jmx-monitoring" "${enable_jmx_monitoring:?}" "$patternBoolean" "false"
 		writeServerProperty "enable-query" "${enable_query:?}" "$patternBoolean" "false"
 		writeServerProperty "enable-rcon" "${enable_rcon:?}" "$patternBoolean" "false"
-		writeServerProperty "enable-command-block" "${enable_command_block:?}" "$patternBoolean" "false"
+		writeServerProperty "enable-status" "${enable_status:?}" "$patternBoolean" "true"
+		writeServerProperty "entity-broadcast-range-percentage" "${entity_broadcast_range-percentage:?}" "^([0-9]|[1-9][0-9]|[1-4][0-9][0-9]|500)$" "false"
 		writeServerProperty "enforce-whitelist" "${enforce_whitelist:?}" "$patternBoolean" "false"
 		writeServerProperty "force-gamemode" "${force_gamemode:?}" "$patternBoolean" "false"
+		writeServerProperty "function-permission-level" "${function_permission_level:?}" "^[1-4]$" "2"
 		writeServerProperty "gamemode" "${gamemode:?}" "^([0-3]|survival|creative|adventure|spectator)$" "0"
 		writeServerProperty "generate-structures" "${generate_structures:?}" "$patternBoolean" "true"
 		# shellcheck disable=SC2154
@@ -194,6 +198,7 @@ writeServerProperties() {
 		writeServerProperty "prevent-proxy-connections" "${prevent_proxy_connections:?}" "$patternBoolean" "false"
 		writeServerProperty "pvp" "${pvp:?}" "$patternBoolean" "true"
 		writeServerProperty "query.port" "${query_port:?}" "^[1-9][0-9]*$" "25565"
+		writeServerProperty "rate-limit" "${rate_limit}" "^\d+$" ""
 		# shellcheck disable=SC2154
 		writeServerProperty "rcon.password" "${rcon_password}" "^.*$" ""
 		writeServerProperty "rcon.port" "${rcon_port:?}" "^[1-9][0-9]*$" "25575"
@@ -209,6 +214,7 @@ writeServerProperties() {
 		writeServerProperty "spawn-monsters" "${spawn_monsters:?}" "$patternBoolean" "true"
 		writeServerProperty "spawn-npcs" "${spawn_npcs:?}" "$patternBoolean" "true"
 		writeServerProperty "spawn-protection" "${spawn_protection:?}" "^[0-9]+$" "16"
+		writeServerProperty "sync-chunk-writes" "${sync_chunk_writes:?}" "$patternBoolean" "true"
 		writeServerProperty "view-distance" "${view_distance:?}" "^([3-9]|1[0-5])$" "10"
 		writeServerProperty "white-list" "${white_list:?}" "$patternBoolean" "false"
 	else
