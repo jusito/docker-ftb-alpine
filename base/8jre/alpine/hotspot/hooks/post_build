@@ -1,0 +1,24 @@
+#!/bin/bash
+
+me="$(basename "$0")"
+echo "[docker.hook.$me][INFO] starting... $PWD"
+# current workdir is base/8jre/alpine/default
+cd ../../../../
+echo "[docker.hook.$me][INFO] changed workdir to $PWD"
+
+imageSuffix=""
+if [ "$SOURCE_BRANCH" != "master" ]; then
+	imageSuffix="-$SOURCE_BRANCH"
+fi
+
+if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
+# shellcheck disable=SC1091
+. test/shared/shared.sh
+
+echo "[docker.hook.$me][INFO] build base images"
+bash test/standard/testBuild.bases.sh "$imageSuffix"
+
+echo "[docker.hook.$me][INFO] build modpack images"
+#bash test/standard/testBuild.modpacks.sh "$imageSuffix"
+
+echo "[docker.hook.$me][INFO] successful!"

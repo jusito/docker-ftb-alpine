@@ -1,0 +1,24 @@
+#!/bin/bash
+
+me="$(basename "$0")"
+echo "[docker.hook.$me][INFO] starting... $PWD"
+# current workdir is base/8jre/alpine/default
+cd ../../../../
+echo "[docker.hook.$me][INFO] changed workdir to $PWD"
+
+imageSuffix=""
+if [ "$SOURCE_BRANCH" != "master" ]; then
+	imageSuffix="-$SOURCE_BRANCH"
+fi
+
+echo "[docker.hook.$me][INFO] push base images"
+for baseImage in "${BASE_IMAGES[@]}"; do
+	docker push "$DOCKER_REPO:$(getImageTag "$baseImage")$imageSuffix"
+done
+
+echo "[docker.hook.$me][INFO] push modpack images"
+for modpack in "${MODPACKS[@]}"; do
+	docker push "$DOCKER_REPO:$(getImageTag "$modpack")$imageSuffix"
+done
+
+echo "[docker.hook.$me][INFO] successful!"
