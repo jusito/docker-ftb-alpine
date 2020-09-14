@@ -198,7 +198,7 @@ writeServerProperties() {
 		writeServerProperty "prevent-proxy-connections" "${prevent_proxy_connections:?}" "$patternBoolean" "false"
 		writeServerProperty "pvp" "${pvp:?}" "$patternBoolean" "true"
 		writeServerProperty "query.port" "${query_port:?}" "^[1-9][0-9]*$" "25565"
-		writeServerProperty "rate-limit" "${rate_limit}" "^\d+$" ""
+		writeServerProperty "rate-limit" "${rate_limit:?}" "^\d+$" ""
 		# shellcheck disable=SC2154
 		writeServerProperty "rcon.password" "${rcon_password}" "^.*$" ""
 		writeServerProperty "rcon.port" "${rcon_port:?}" "^[1-9][0-9]*$" "25575"
