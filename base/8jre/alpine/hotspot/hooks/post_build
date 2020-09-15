@@ -19,7 +19,7 @@ echo "[docker.hook.$me][INFO] build base images"
 bash test/standard/testBuild.bases.sh "$imageSuffix"
 
 echo "[docker.hook.$me][INFO] build modpack images"
-#bash test/standard/testBuild.modpacks.sh "$imageSuffix"
+bash test/standard/testBuild.modpacks.sh "$imageSuffix"
 
 echo "[docker.hook.$me][INFO] push base images"
 for baseImage in "${BASE_IMAGES[@]}"; do
