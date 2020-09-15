@@ -1,4 +1,5 @@
-FROM adoptopenjdk/openjdk8:alpine-jre
+FROM adoptopenjdk:8-jre-hotspot
+# arm64v8/adoptopenjdk:8-jre-hotspot
 
 EXPOSE 25565/tcp
 
@@ -80,17 +81,19 @@ ENV MY_GROUP_ID=10000 \
 		
 COPY ["base/8jre/entrypoint.sh", "base/8jre/checkHealth.sh", "base/8jre/entrypointTestMode.sh", "base/8jre/addOp.sh", "base/8jre/serverQuery.sh", "/home/" ]
 
-RUN apk update && \
-	apk add --no-cache ca-certificates && \
+RUN apt-get update -y && \
+	apt-get install -y ca-certificates busybox && \
+	ln -s /bin/busybox /usr/local/bin/nc && \
+	ln -s /bin/busybox /usr/local/bin/wget && \
+	ln -s /bin/busybox /usr/local/bin/dc && \
 # create user
-	addgroup -g "${MY_GROUP_ID}" "${MY_NAME}" && \
-	adduser -h "${MY_HOME}" -g "" -s "/bin/false" -G "${MY_NAME}" -D -u "${MY_USER_ID}" "${MY_NAME}" && \
+	addgroup --gid "${MY_GROUP_ID}" "${MY_NAME}" && \
+	adduser --home "${MY_HOME}" --gecos "" --shell "/bin/false" --ingroup "${MY_NAME}" --disabled-login --uid "${MY_USER_ID}" "${MY_NAME}" && \
 # add permissions to all in /home
 	chown -R "${MY_NAME}:${MY_NAME}" "/home" && \
 	chmod -R u=rwx,go= "/home" && \
 # remove temp files
-	apk del --quiet --no-cache --progress --purge && \
-	rm -rf /var/cache/apk/* && \
+	rm -rf /var/lib/apt/lists/* && \
 # create symlinks for easy usage
 	ln -s "/home/serverQuery.sh" "/usr/local/bin/query" && \
 	ln -s "/home/addOp.sh" "/usr/local/bin/addop"

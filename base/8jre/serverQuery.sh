@@ -20,7 +20,7 @@ fi
 
 
 getLogLines() {
-	wc -l "$USE_LOG" | grep -Eo '^\d+'
+	wc -l "$USE_LOG" | grep -Eo '^[0-9]+'
 }
 querySend() {
     echo "$@" > "$SERVER_QUERY_PIPE"
@@ -56,7 +56,7 @@ while [ "$command" != "end" ]; do
 		timeout=5
 		current=1
 		while [ "$current" -lt "$timeout" ] && [ "$(getLogLines)" = "$linesBefore" ]; do
-			usleep 100000 #100ms
+			sleep 0.1s #100ms
 			current=$(( current + 1 ))
 		done
 		if [ "$current" -ge "$timeout" ]; then
