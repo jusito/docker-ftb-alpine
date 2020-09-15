@@ -19,7 +19,7 @@ docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNam
 
 ## Tags
 
-There are two different base images which provides different java virtual machine. The alpine images are amd64/x86 with Hotspot jvm as default (like expected) and openj9 is an option, multiarch isn't supported. I test every modpack with openj9 but if it doesn't even start the server, I will not push a tag with it. Every tag is tested before push but this tags are more example configurations of the base images. Every provided tag will use the recommended server properties and forge version from modpack creator - if not its a bug and please report it.
+There are two different base images which provides different java virtual machine. The alpine images are amd64/x86 with Hotspot jvm as default (like expected) and openj9 is an option, multiarch isn't supported. I test every modpack with openj9 but if it doesn't even start the server, I will not push a tag with it. Every tag is tested before push but this tags are more example configurations of the base images. Every provided tag will use the recommended server properties and forge version from modpack creator - if not its a bug and please report it. If you want to use the nightly images append "-develop" to the tag.
 
 ### most recent
 * [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2` `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2-multiarch`
