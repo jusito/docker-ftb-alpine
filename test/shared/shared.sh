@@ -2,7 +2,7 @@
 
 export DEFAULT_TAG="Vanilla-1.16.3"
 if [ -z "$DOCKER_REPO" ]; then
-	export REPO="jusito/docker-ftb-alpine"
+	export REPO="docker.io/jusito/docker-ftb-alpine"
 else
 	export REPO="$DOCKER_REPO"
 fi
