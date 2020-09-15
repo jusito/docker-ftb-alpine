@@ -11,7 +11,7 @@ if [ "$SOURCE_BRANCH" != "master" ]; then
 	imageSuffix="-$SOURCE_BRANCH"
 fi
 
-if [ -z "$DOCKER_REPO" ]; then
+if [ -n "$DOCKER_REPO" ]; then
 	export DOCKER_REPO="jusito/docker-ftb-alpine"
 fi
 
