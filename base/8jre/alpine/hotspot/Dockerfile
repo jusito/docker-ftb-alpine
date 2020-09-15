@@ -1,6 +1,4 @@
-ARG imageSuffix=""
-
-FROM "adoptopenjdk/openjdk8:alpine-jre${imageSuffix}"
+FROM adoptopenjdk/openjdk8:alpine-jre
 
 EXPOSE 25565/tcp
 

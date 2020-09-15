@@ -1,4 +1,6 @@
-FROM jusito/docker-ftb-alpine:8jre-alpine-hotspot
+ARG imageSuffix=""
+
+FROM "jusito/docker-ftb-alpine:8jre-alpine-hotspot$imageSuffix"
 
 ENV motd="\u00A7d\u00A7oSky Factory\: 3 Server\u00A7r - \u00A74v3.0.21" \
 	\

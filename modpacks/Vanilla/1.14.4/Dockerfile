@@ -1,4 +1,6 @@
-FROM jusito/docker-ftb-alpine:8jre-alpine-hotspot
+ARG imageSuffix=""
+
+FROM "jusito/docker-ftb-alpine:8jre-alpine-hotspot$imageSuffix"
 
 ENV MY_FILE="Server.jar"
 

@@ -1,4 +1,6 @@
-FROM jusito/docker-ftb-alpine:8jre-alpine-hotspot
+ARG imageSuffix=""
+
+FROM "jusito/docker-ftb-alpine:8jre-alpine-hotspot$imageSuffix"
 
 ENV MINECRAFT_VERSION="1.7.10" \
 	FORGE_VERSION="10.13.4.1614"

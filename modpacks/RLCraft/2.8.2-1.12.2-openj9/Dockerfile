@@ -1,4 +1,6 @@
-FROM jusito/docker-ftb-alpine:8jre-alpine-openj9
+ARG imageSuffix=""
+
+FROM "jusito/docker-ftb-alpine:8jre-alpine-openj9$imageSuffix"
 
 ENV allow_flight=true \
 	difficulty=3 \
