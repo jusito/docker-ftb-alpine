@@ -185,7 +185,7 @@ writeServerProperties() {
 		# shellcheck disable=SC2154
 		writeServerProperty "level-seed" "${level_seed}" "^.*$" ""
 		writeServerProperty "level-type" "${level_type:?}" "^.+$" "DEFAULT" # not matching mod types: (DEFAULT|FLAT|LARGEBIOMES|AMPLIFIED|BUFFET)
-		writeServerProperty "max-build-height" "${max_build_height:?}" "^\d+$" "256"
+		writeServerProperty "max-build-height" "${max_build_height:?}" "^[0-9]+$" "256"
 		writeServerProperty "max-players" "${max_players:?}" "^[1-9][0-9]*$" "20"
 		writeServerProperty "max-tick-time" "${max_tick_time:?}" "^(-1|[0-9]+)$" "60000"
 		writeServerProperty "max-world-size" "${max_world_size:?}" "^[0-9]+$" "29999984"
@@ -198,7 +198,7 @@ writeServerProperties() {
 		writeServerProperty "prevent-proxy-connections" "${prevent_proxy_connections:?}" "$patternBoolean" "false"
 		writeServerProperty "pvp" "${pvp:?}" "$patternBoolean" "true"
 		writeServerProperty "query.port" "${query_port:?}" "^[1-9][0-9]*$" "25565"
-		writeServerProperty "rate-limit" "${rate_limit:?}" "^\d+$" ""
+		writeServerProperty "rate-limit" "${rate_limit:?}" "^[0-9]+$" ""
 		# shellcheck disable=SC2154
 		writeServerProperty "rcon.password" "${rcon_password}" "^.*$" ""
 		writeServerProperty "rcon.port" "${rcon_port:?}" "^[1-9][0-9]*$" "25575"
