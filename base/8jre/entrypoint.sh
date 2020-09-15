@@ -172,7 +172,7 @@ writeServerProperties() {
 		writeServerProperty "enable-query" "${enable_query:?}" "$patternBoolean" "false"
 		writeServerProperty "enable-rcon" "${enable_rcon:?}" "$patternBoolean" "false"
 		writeServerProperty "enable-status" "${enable_status:?}" "$patternBoolean" "true"
-		writeServerProperty "entity-broadcast-range-percentage" "${entity_broadcast_range-percentage:?}" "^([0-9]|[1-9][0-9]|[1-4][0-9][0-9]|500)$" "100"
+		writeServerProperty "entity-broadcast-range-percentage" "${entity_broadcast_range_percentage:?}" "^([0-9]|[1-9][0-9]|[1-4][0-9][0-9]|500)$" "100"
 		writeServerProperty "enforce-whitelist" "${enforce_whitelist:?}" "$patternBoolean" "false"
 		writeServerProperty "force-gamemode" "${force_gamemode:?}" "$patternBoolean" "false"
 		writeServerProperty "function-permission-level" "${function_permission_level:?}" "^[1-4]$" "2"
