@@ -11,9 +11,7 @@ if [ "$SOURCE_BRANCH" != "master" ]; then
 	imageSuffix="-$SOURCE_BRANCH"
 fi
 
-if [ -n "$DOCKER_REPO" ]; then
-	export DOCKER_REPO="jusito/docker-ftb-alpine"
-fi
+export DOCKER_REPO="jusito/docker-ftb-alpine"
 
 if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
 # shellcheck disable=SC1091
