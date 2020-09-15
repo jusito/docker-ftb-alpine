@@ -21,4 +21,18 @@ bash test/standard/testBuild.bases.sh "$imageSuffix"
 echo "[docker.hook.$me][INFO] build modpack images"
 #bash test/standard/testBuild.modpacks.sh "$imageSuffix"
 
+echo "[docker.hook.$me][INFO] push base images"
+for baseImage in "${BASE_IMAGES[@]}"; do
+	image="$DOCKER_REPO:$(getImageTag "$baseImage")$imageSuffix"
+	echo "push $image"
+	docker push "$image"
+done
+
+echo "[docker.hook.$me][INFO] push modpack images"
+for modpack in "${MODPACKS[@]}"; do
+	image="$DOCKER_REPO:$(getImageTag "$modpack")$imageSuffix"
+	echo "push $image"
+	docker push "$image"
+done
+
 echo "[docker.hook.$me][INFO] successful!"
