@@ -7,68 +7,61 @@ This repository contains servers for: [Feed The Beast](https://www.feed-the-beas
 ## Getting Started
 1. Which server you want? Which version you want? Choose you _Tag_ below like `FTBPresentsSkyfactory3-3.0.15-1.10.2`
 2. Which Port? `-p 25566:25565` means 25566 from internet, 25565 from inside of container
-3. Do you want reddit jvm args? Yes go next, no see _Environment Variables_
+3. Do you want default jvm arguments / RAM usage and so on? Yes go next, no see _Environment Variables_
 4. Should I enter an operator level 4? He would be also whitelisted. No go next, yes use `-e ADMIN_NAME="YourNameHere"`
 5. Do you want your own server.properties? No go next, yes see _Environmental Variables_, _server.properties_ or see _Additional Informations_
 
 ### Example Skyfactor: 
 
 ```
-docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNameHere" -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.15-1.10.2
+docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNameHere" -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.21-1.10.2
 ```
 
 ## Tags
-[FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved) 
-* FTBInfinity-3.1.0-1.7.10
 
-[FTB Presents SkyFactory 3 MC 1.10.2](https://www.feed-the-beast.com/projects/ftb-presents-skyfactory-3) 
-* FTBPresentsSkyfactory3-3.0.15-1.10.2
+There are three different base images which provides different java virtual machine. The alpine images are amd64/x86 Hotspot is the default (like expected) and openj9 is an option, for multiarch like arm(rpi) use the ubuntu base(-multiarch suffix). I test every modpack with openj9 but if it doesn't event start the server, i will not push a tag with it. Every tag is tested before push but this tags are more example configurations of the base images. Every provided tag will use the recommended server properties and forge version.
 
-[FTB Presents Direwolf20 MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-presents-direwolf20-1-12) 
-* FTBPresentsDirewolf20-2.5.0-1.12.2
+### most recent
+* [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2` `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2-multiarch`
+* [Vanilla Minecraft](https://minecraft.net/de-de/download/server/) `Vanilla-1.16.3` `Vanilla-1.16.3-multiarch`
+* [RLCraft](https://www.curseforge.com/minecraft/modpacks/rlcraft) `RLCraft-2.8.2-1.12.2` `RLCraft-2.8.2-1.12.2-openj9` `RLCraft-2.8.2-1.12.2-multiarch`
+* [RoguelikeAdventuresAndDungeons MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/roguelike-adventures-and-dungeons) `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2` `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2-openj9` `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2-multiarch`
+* [SevTechAges MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/sevtech-ages) `SevTechAges-3.1.7-1.12.2` `SevTechAges-3.1.7-1.12.2-multiarch`
 
-[FTB Continuum MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-continuum) 
-* FTBContinuum-1.6.0-1.12.2
+ ### all
+* [FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved) `FTBInfinity-3.1.0-1.7.10` `FTBInfinity-3.1.0-1.7.10-openj9` `FTBInfinity-3.1.0-1.7.10-multiarch`
+* [FTB Presents SkyFactory 3 MC 1.10.2](https://www.feed-the-beast.com/projects/ftb-presents-skyfactory-3)  `FTBPresentsSkyfactory3-3.0.21-1.10.2` `FTBPresentsSkyfactory3-3.0.21-1.10.2-openj9` `FTBPresentsSkyfactory3-3.0.21-1.10.2-multiarch`
+* [FTB Presents Direwolf20 MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-presents-direwolf20-1-12)  `FTBPresentsDirewolf20-2.5.0-1.12.2` `FTBPresentsDirewolf20-2.5.0-1.12.2-openj9` `FTBPresentsDirewolf20-2.5.0-1.12.2-multiarch`
+* [FTB Continuum MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-continuum) `FTBContinuum-1.6.0-1.12.2` `FTBContinuum-1.6.0-1.12.2-openj9` `FTBContinuum-1.6.0-1.12.2-multiarch`
+* [FTB Revelation MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-revelation) `FTBRevelation-3.2.0-1.12.2` `FTBRevelation-3.2.0-1.12.2-openj9` `FTBRevelation-3.2.0-1.12.2-multiarch`
+* [FTB Ultimate Reloaded](https://www.feed-the-beast.com/projects/ftb-ultimate-reloaded) `FTBUltimateReloaded-1.9.0-1.12.2` `FTBUltimateReloaded-1.9.0-1.12.2-openj9` `FTBUltimateReloaded-1.9.0-1.12.2-multiarch`
+* [FTB Presents Stoneblock 2](https://www.feed-the-beast.com/projects/ftb-presents-stoneblock-2) `FTBPresentsStoneblock2-1.16.0-1.12.2` `FTBPresentsStoneblock2-1.16.0-1.12.2-openj9` `FTBPresentsStoneblock2-1.16.0-1.12.2-multiarch`
+* [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2` `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2-multiarch`
+* [Vanilla MC x](https://minecraft.net/de-de/download/server/) `Vanilla-1.16.3` `Vanilla-1.16.3-openj9` `Vanilla-1.15.2` `Vanilla-1.14.4` `Vanilla-1.13.2` `Vanilla-1.16.3-multiarch`
+* [RLCraft MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/rlcraft) `RLCraft-2.8.2-1.12.2` `RLCraft-2.8.2-1.12.2-openj9` `RLCraft-2.8.2-1.12.2-multiarch`
+* [RoguelikeAdventuresAndDungeons MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/roguelike-adventures-and-dungeons) `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2` `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2-openj9` `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2-multiarch`
+* [SevTechAges MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/sevtech-ages) `SevTechAges-3.1.7-1.12.2` `SevTechAges-3.1.7-1.12.2-multiarch`
 
-[FTB Revelation MC 1.12.3](https://www.feed-the-beast.com/projects/ftb-revelation)
-* FTBRevelation-3.2.0-1.12.2
 
-[FTB Ultimate Reloaded](https://www.feed-the-beast.com/projects/ftb-ultimate-reloaded)
-* FTBUltimateReloaded-1.9.0-1.12.2
-
-[FTB Presents Stoneblock 2](https://www.feed-the-beast.com/projects/ftb-presents-stoneblock-2)
-* FTBPresentsStoneblock2-1.16.0-1.12.2
-
-### Non FTB Tags
-
-[Vanilla Minecraft](https://minecraft.net/de-de/download/server/)
-* Vanilla-1.15.2
-* Vanilla-1.14.4
-* Vanilla-1.13.2
-
-[RLCraft](https://www.curseforge.com/minecraft/modpacks/rlcraft)
-* RLCraft-2.8.1-1.12.2
-* RLCraft-2.7.0-1.12.2
-* RLCraft-2.6.3-1.12.2
 
 ### no Tag found?
-* Tag: FTBBase
+* Tag: 8jre-alpine-hotspot or 8jre-alpine-openj9 (unsure -> pick hotspot!)
 * First argument: Link to server download
 * Second argument: MD5 of server download
 * You are done
 
 Example:
-`docker run [...] jusito/docker-ftb-alpine:FTBBase "https://media.forgecdn.net...server.zip" "*md5 of server*"`
+`docker run [...] jusito/docker-ftb-alpine:8jre-alpine-hotspot "https://media.forgecdn.net...server.zip" "*md5 of server*"`
 
 ## Environment Variables
 Example:
 `docker [...] -e JAVA_PARAMETERS="-Xms4G -Xmx4G" [...] jusito/docker-ftb-alpine:*TAG*`
 
 ### JAVA_PARAMETERS (JVM Arguments, Performance)
-[Default value in container:](https://www.reddit.com/r/feedthebeast/comments/5jhuk9/modded_mc_and_memory_usage_a_history_with_a/ "Modded MC and memory usage, a history with a crappy graph") 
-`-XX:+UseG1GC -Xmx4G -Xms4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M`
+* default for hotspot `-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+UseCGroupMemoryLimitForHeap`
+* default for openj9 `-Xms4096M -Xmx4096M -Xmns2048M -Xmnx3276M -Xgc:concurrentScavenge -Xgc:dnssExpectedTimeRatioMaximum=3 -Xgc:scvNoAdaptiveTenure -Xdisableexplicitgc -Xtune:virtualized`
+* [reddit suggestion:](https://www.reddit.com/r/feedthebeast/comments/5jhuk9/modded_mc_and_memory_usage_a_history_with_a/)  `-XX:+UseG1GC -Xmx4G -Xms4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M`
 
-If you want default FTB values: JAVA_PARAMETERS=""
 
 ### Server Properties
 Because you may want to use many environment variables, [you may find --env-file helpful](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file).
@@ -88,11 +81,15 @@ In general Propertyname = Variablename, just replace "-"&"." with "_".
 |allow\_nether|true|allow-nether|
 |broadcast\_console\_to\_ops|true|broadcast-console-to-ops|
 |difficulty|1|difficulty|
+|enable\_command\_block|false|enable-command-block|
+|enable\_jmx\_monitoring|false|enable-jmx-monitoring=false|
 |enable\_query|false|enable-query|
 |enable\_rcon|false|enable-rcon|
-|enable\_command\_block|false|enable-command-block|
+|enable\_status|true|enable-status|
 |enforce\_whitelist|false|enforce-whitelist|
+|entity\_broadcast\_range\_percentage|100|entity-broadcast-range-percentage|
 |force\_gamemode|false|force-gamemode|
+|function\_permission\_level|2|function-permission-level|
 |gamemode|0|gamemode|
 |generate\_structures|true|generate-structures|
 |generator\_settings||generator-settings|
@@ -112,6 +109,7 @@ In general Propertyname = Variablename, just replace "-"&"." with "_".
 |prevent\_proxy\_connections|false|prevent-proxy-connections|
 |pvp|true|pvp|
 |query\_port|25565|query.port|
+|rate\_limit|0|rate-limit|
 |rcon\_password||rcon.password|
 |rcon\_port|25575|rcon.port|
 |resource\_pack||resource-pack|
@@ -123,11 +121,20 @@ In general Propertyname = Variablename, just replace "-"&"." with "_".
 |spawn\_monsters|true|spawn-monsters|
 |spawn\_npcs|true|spawn-npcs|
 |spawn\_protection|16|spawn-protection|
+|sync\_chunk\_writes|true|sync-chunk-writes|
 |view\_distance|10|view-distance|
 |white\_list|false|white-list|
 
 </p>
 </details>
+
+### access server console
+`docker exec -it CONTAINER query`
+* show - view last 50 log lines
+* end - end query
+* help - call help in serverquery
+* stop - call stop in serverquery
+* \*every other serverquery command\*
 
 ### Healthcheck
 This container is using a health check default. It checks every 10s if the server status is available. If you don't want this use: `--no-healthcheck`
@@ -144,6 +151,7 @@ This container is using a health check default. It checks every 10s if the serve
 |FORCE\_DOWNLOAD|false|Whether the server should be downloaded every time it is restarted.|
 |ADMIN\_NAME||Set here your first admin level 4 name. This will allow you to change config ingame.|
 |DEBUGGING|false|If true xtrace is set in every script. Very verbose!|
+|FORGE_VERSION||Force forge version because this images always ignore the shipped forge jars (if not exact vesion configured for the image).|
 
 ### Internal Used (don't change please)
 |Name|Default|Description|
@@ -196,6 +204,12 @@ You can use the ingame command, if you don't like it:
 * usercache.json
 * usernamecache.json
 * whitelist.json
+
+### cleared on update
+* mods/\*
+* config/\*
+* scripts/\*
+* structures/\*
 
 ### migrate server
 You can use copyToVolume.sh from tools section on git. Examples below will result in a ready to go volume named "NewMCVolume". Download copyToVolume.sh, script is ash / bash compatible and only needs docker, no bind mount perm. needed.
