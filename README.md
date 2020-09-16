@@ -5,16 +5,16 @@ This repository contains servers for: [Feed The Beast](https://www.feed-the-beas
 **By using this container you agree to the** [Minecraft Eula](https://help.mojang.com/customer/en/portal/articles/1590522-minecraft-commercial-use)
 
 ## Getting Started
-1. Which server you want? Which version you want? Choose you _Tag_ below like `FTBPresentsSkyfactory3-3.0.15-1.10.2`
+1. Which server you want? Which version you want? Choose you _Tag_ below like `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2`
 2. Which Port? `-p 25566:25565` means 25566 from internet, 25565 from inside of container
 3. Do you want default jvm arguments / RAM usage and so on? Yes go next, no see _Environment Variables_
 4. Should I enter an operator level 4? He would be also whitelisted. No go next, yes use `-e ADMIN_NAME="YourNameHere"`
 5. Do you want your own server.properties? No go next, yes see _Environmental Variables_, _server.properties_ or see _Additional Informations_
 
-### Example Skyfactor: 
+### Example Dungeons Dragons And Space Shuttles: 
 
 ```
-docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNameHere" -e motd="Hello Docker" jusito/docker-ftb-alpine:FTBPresentsSkyfactory3-3.0.21-1.10.2
+docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNameHere" -e motd="Hello Docker" jusito/docker-ftb-alpine:DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2
 ```
 
 ## Tags
