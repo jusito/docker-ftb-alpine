@@ -19,30 +19,25 @@ docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNam
 
 ## Tags
 
-There are two different base images which provides different java virtual machine. The alpine images are amd64/x86 with Hotspot jvm as default (like expected) and openj9 is an option, multiarch isn't supported. I test every modpack with openj9 but if it doesn't even start the server, I will not push a tag with it. Every tag is tested before push but this tags are more example configurations of the base images. Every provided tag will use the recommended server properties and forge version from modpack creator - if not its a bug and please report it. If you want to use the nightly images append "-develop" to the tag.
+There are two different base images which provides different java virtual machine. The alpine images are amd64/x86 with Hotspot jvm as default (like expected) and openj9 is an option, multiarch isn't supported. I test every modpack with openj9 but if it doesn't even start the server, I will not push a tag with it. (forge with 1.15+ will throw unsupported virtual machine for openj9) Every tag is tested before push but this tags are more example configurations of the base images. Every provided tag will use the recommended server properties and forge version from modpack creator - if not its a bug and please report it. If you want to use the nightly images append "-develop" to the tag.
 
 ### most recent
-* [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2` `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2`
+* [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2` `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2` `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2-openj9`
 * [RLCraft](https://www.curseforge.com/minecraft/modpacks/rlcraft) `RLCraft-2.8.2-1.12.2` `RLCraft-2.8.2-1.12.2-openj9`
-* [Vanilla Minecraft](https://minecraft.net/de-de/download/server/) `Vanilla-1.16.4`
 * [RoguelikeAdventuresAndDungeons MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/roguelike-adventures-and-dungeons) `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2` `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2-openj9`
 * [SevTechAges MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/sevtech-ages) `SevTechAges-3.1.7-1.12.2`
+* [SkyFactory 4 MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/skyfactory-4) `SkyFactory4-4.2.2-1.12.2`
 * [Valhelsia 3 MC 1.16.4](https://www.curseforge.com/minecraft/modpacks/valhelsia-3) `Valhelsia3-3.1.1-1.16.4`
+* [Vanilla Minecraft](https://minecraft.net/de-de/download/server/) `Vanilla-1.16.4`
 
- ### all
+ ### other
 * [FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved) `FTBInfinity-3.1.0-1.7.10` `FTBInfinity-3.1.0-1.7.10-openj9`
-* [FTB Presents SkyFactory 3 MC 1.10.2](https://www.feed-the-beast.com/projects/ftb-presents-skyfactory-3)  `FTBPresentsSkyfactory3-3.0.21-1.10.2` `FTBPresentsSkyfactory3-3.0.21-1.10.2-openj9`
-* [FTB Presents Direwolf20 MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-presents-direwolf20-1-12)  `FTBPresentsDirewolf20-2.5.0-1.12.2` `FTBPresentsDirewolf20-2.5.0-1.12.2-openj9`
 * [FTB Continuum MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-continuum) `FTBContinuum-1.6.0-1.12.2` `FTBContinuum-1.6.0-1.12.2-openj9`
+* [FTB Presents Direwolf20 MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-presents-direwolf20-1-12)  `FTBPresentsDirewolf20-2.5.0-1.12.2` `FTBPresentsDirewolf20-2.5.0-1.12.2-openj9`
+* [FTB Presents SkyFactory 3 MC 1.10.2](https://www.feed-the-beast.com/projects/ftb-presents-skyfactory-3)  `FTBPresentsSkyfactory3-3.0.21-1.10.2` `FTBPresentsSkyfactory3-3.0.21-1.10.2-openj9`
+* [FTB Presents Stoneblock 2](https://www.feed-the-beast.com/projects/ftb-presents-stoneblock-2) `FTBPresentsStoneblock2-1.16.0-1.12.2` `FTBPresentsStoneblock2-1.16.0-1.12.2-openj9`
 * [FTB Revelation MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-revelation) `FTBRevelation-3.2.0-1.12.2` `FTBRevelation-3.2.0-1.12.2-openj9`
 * [FTB Ultimate Reloaded](https://www.feed-the-beast.com/projects/ftb-ultimate-reloaded) `FTBUltimateReloaded-1.9.0-1.12.2` `FTBUltimateReloaded-1.9.0-1.12.2-openj9`
-* [FTB Presents Stoneblock 2](https://www.feed-the-beast.com/projects/ftb-presents-stoneblock-2) `FTBPresentsStoneblock2-1.16.0-1.12.2` `FTBPresentsStoneblock2-1.16.0-1.12.2-openj9`
-* [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2` `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2`
-* [Vanilla MC x](https://minecraft.net/de-de/download/server/) `Vanilla-1.16.4` `Vanilla-1.15.2` `Vanilla-1.14.4` `Vanilla-1.13.2`
-* [RLCraft MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/rlcraft) `RLCraft-2.8.2-1.12.2` `RLCraft-2.8.2-1.12.2-openj9` 
-* [RoguelikeAdventuresAndDungeons MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/roguelike-adventures-and-dungeons) `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2` `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2-openj9`
-* [SevTechAges MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/sevtech-ages) `SevTechAges-3.1.7-1.12.2`
-* [Valhelsia 3 MC 1.16.4](https://www.curseforge.com/minecraft/modpacks/valhelsia-3) `Valhelsia3-3.1.1-1.16.4`
 * [Valhelsia 2 MC 1.15.2](https://www.curseforge.com/minecraft/modpacks/valhelsia-3) `Valhelsia2-2.3.1-1.15.2`
 
 
@@ -62,8 +57,9 @@ Example:
 ### JAVA_PARAMETERS (JVM Arguments, Performance)
 * default for hotspot `-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+UseCGroupMemoryLimitForHeap`
 * default for openj9 `-Xms4096M -Xmx4096M -Xmns2048M -Xmnx3276M -Xgc:concurrentScavenge -Xgc:dnssExpectedTimeRatioMaximum=3 -Xgc:scvNoAdaptiveTenure -Xdisableexplicitgc -Xtune:virtualized`
-* [reddit suggestion:](https://www.reddit.com/r/feedthebeast/comments/5jhuk9/modded_mc_and_memory_usage_a_history_with_a/)  `-XX:+UseG1GC -Xmx4G -Xms4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M`
-
+* [reddit suggestion, good for clients](https://www.reddit.com/r/feedthebeast/comments/5jhuk9/modded_mc_and_memory_usage_a_history_with_a/)  `-XX:+UseG1GC -Xmx4G -Xms4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M`
+* aikar suggestion: [link](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/)
+* Iam using for DDSS server: `-Xms8192M -Xmx8192M -XX:+UseStringDeduplication -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=40 -XX:G1MaxNewSizePercent=50 -XX:G1HeapRegionSize=16M -XX:G1ReservePercent=15 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=20 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true`
 
 ### Server Properties
 Because you may want to use many environment variables, [you may find --env-file helpful](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file).
