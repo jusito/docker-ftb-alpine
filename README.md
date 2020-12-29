@@ -286,7 +286,7 @@ docker run -d \
 Create a git issue or see maintainer label, I don't check everytime for newer version but I can easily push a new tag
 
 ## Acknowledgments
-* [Feed The Beast Project](https://www.feed-the-beast.com "Feed The Beast Project")
 * [PurpleBooth@github Docker Template](https://gist.github.com/PurpleBooth/ea518ae68a49029bae95 "Template-README-for-containers.md")
 * [jamietech@github MC server status](https://github.com/jamietech/MinecraftServerPing)
 * [Valiano@stackoverflow ash grep behaviour](https://stackoverflow.com/questions/54572688/different-behaviour-of-grep-with-pipe-from-nc-on-alpine-vs-ubuntu)
+* Every mod / modpack creator, you sacrifice a lot of free time for our free time, thank you! Especially DDSS hooked me.
