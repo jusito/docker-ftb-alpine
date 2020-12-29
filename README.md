@@ -1,5 +1,5 @@
-# Minecraft FTB meets alpine
-This repository contains servers for: [Feed The Beast](https://www.feed-the-beast.com/)
+# Minecraft modpacks meet alpine
+This repository contains servers for minecraft modpacks like FTB:
 [![Build Status](https://travis-ci.org/jusito/docker-ftb-alpine.svg?branch=master)](https://travis-ci.org/jusito/docker-ftb-alpine)
 
 **By using this container you agree to the** [Minecraft Eula](https://help.mojang.com/customer/en/portal/articles/1590522-minecraft-commercial-use)
@@ -73,7 +73,7 @@ The values of this environment variables are written on every restart. If you do
 |----|-------|-----------|
 |OVERWRITE\_PROPERTIES|true|server.properties are deleted and rewritten at each restart. Unused variables remain on default. Unknown properties are deleted.|
 
-In general Propertyname = Variablename, just replace "-"&"." with "_".
+In general Propertyname = Variablename, lowercase and replace "-"&"." with "_". See below for details.
 <details><summary>All Available Properties (click me)</summary>
 <p>
 
@@ -156,6 +156,9 @@ This container is using a health check default. It checks every 10s if the serve
 |FORGE_VERSION||Force forge version because this images always ignore the shipped forge jars (if not exact vesion configured for the image).|
 
 ### Internal Used (don't change please)
+<details><summary>(click me)</summary>
+<p>
+
 |Name|Default|Description|
 |-|-|-|
 |MY\_USER_ID|10000||
@@ -168,6 +171,9 @@ This container is using a health check default. It checks every 10s if the serve
 |MY\_MD5|_*TagDependency*_|MD5 of Download.|
 |TEST\_MODE||used for CI|
 |STARTUP\_TIMEOUT|600|timeout for TEST\_MODE|
+
+</p>
+</details>
 
 ## Additional Informations
 ### Volumes
