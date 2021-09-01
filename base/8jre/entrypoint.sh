@@ -310,7 +310,10 @@ if [ -n "$FORGE_VERSION" ] ; then
 			exit 3
 		fi
 		
-		java -jar "${MY_VOLUME}/$FORGE_INSTALLER" --installServer
+		if ! java -jar "${MY_VOLUME}/$FORGE_INSTALLER" --installServer; then
+      echo "[entrypoint][WARN] failed online forge installation, trying offline"
+      java -jar "${MY_VOLUME}/$FORGE_INSTALLER" --installServer --offline
+		fi
 		
 		#cleanup forge installer
 		rm -f "${MY_VOLUME}/$FORGE_INSTALLER"
