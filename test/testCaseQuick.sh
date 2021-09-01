@@ -4,25 +4,25 @@ if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
 # shellcheck disable=SC1091
 . test/shared/shared.sh
 
-echo "[testCaseQuick] starting..."
 set +o nounset
-if [ -n "$1" ]; then
-	IMAGE_TAG="$1"
-else
-	IMAGE_TAG="$DEFAULT_TAG"
-fi
+readonly IMAGE_TAG="$([ -n "$1" ] && echo "$1" || echo "$DEFAULT_TAG")"
+readonly CHECK_STYLE="$(grep -q 'skipStyle' <<< "$@" && echo "false" || echo "true")"
+readonly BUILD_BASES="$(grep -q 'skipBase' <<< "$@" && echo "false" || echo "true")"
+readonly TEST_FEATURES="$(grep -q 'skipFeatures' <<< "$@" && echo "false" || echo "true")"
 set -o nounset
 echo "[testCaseQuick] tag=${IMAGE_TAG}"
+echo "[testCaseQuick] shellcheck_enabled=${CHECK_STYLE}"
+echo "[testCaseQuick] build_base_images=${BUILD_BASES}"
+echo "[testCaseQuick] test_features=${TEST_FEATURES}"
+echo "[testCaseQuick] starting..."
 
-set +o nounset
-if [ "$2" != "skipStyle" ]; then
+if "$CHECK_STYLE"; then
 	bash test/testCaseStyle.sh
 fi
-if [ "$3" != "skipBase" ]; then
+if "$BUILD_BASES"; then
 	echo "[testCaseQuick] build bases"
 	bash test/standard/testBuild.bases.sh
 fi
-set -o nounset
 
 
 echo "[testCaseQuick][INFO] build modpacks/${IMAGE_TAG}"
@@ -33,11 +33,9 @@ bash test/standard/testRun.sh "${IMAGE_TAG}"
 docker stop "${TEST_CONTAINER}" || true
 docker rm "${TEST_CONTAINER}" || true
 
-set +o nounset
-if [ "$4" != "skipFeatures" ]; then
+if "$TEST_FEATURES"; then
 	bash test/features/testHealth.sh "$IMAGE_TAG"
 	bash test/features/testAddOp.sh "$IMAGE_TAG"
 fi
-set -o nounset
 
 echo "[testCaseQuick] tag=${IMAGE_TAG} successful!"
