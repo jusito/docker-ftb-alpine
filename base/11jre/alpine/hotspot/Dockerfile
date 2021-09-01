@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk8-openj9:alpine-jre
+FROM adoptopenjdk/openjdk11:alpine-jre
 
 EXPOSE 25565/tcp
 
@@ -20,7 +20,7 @@ ENV MY_GROUP_ID=10000 \
 	HEALTH_URL="127.0.0.1" \
 	HEALTH_PORT="" \
 	FORCE_DOWNLOAD="false" \
-	JAVA_PARAMETERS="-Xms4096M -Xmx4096M -Xmns2048M -Xmnx3276M -Xgc:concurrentScavenge -Xgc:dnssExpectedTimeRatioMaximum=3 -Xgc:scvNoAdaptiveTenure -Xdisableexplicitgc -Xtune:virtualized" \
+	JAVA_PARAMETERS="-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+UseCGroupMemoryLimitForHeap" \
 	OVERWRITE_PROPERTIES="true" \
 	ADMIN_NAME="" \
 	DEBUGGING=false \

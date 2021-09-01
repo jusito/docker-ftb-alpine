@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk8-openj9:alpine-jre
+FROM adoptopenjdk/openjdk11-openj9:alpine-jre
 
 EXPOSE 25565/tcp
 

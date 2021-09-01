@@ -22,13 +22,14 @@ docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNam
 There are two different base images which provides different java virtual machine. The alpine images are amd64/x86 with Hotspot jvm as default (like expected) and openj9 is an option, multiarch isn't supported. I test every modpack with openj9 but if it doesn't even start the server, I will not push a tag with it. (forge with 1.15+ will throw unsupported virtual machine for openj9) Every tag is tested before push but this tags are more example configurations of the base images. Every provided tag will use the recommended server properties and forge version from modpack creator - if not its a bug and please report it. If you want to use the nightly images append "-develop" to the tag.
 
 ### most recent
-* [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-7.4a-1.12.2` `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2` `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2-openj9`
-* [RLCraft](https://www.curseforge.com/minecraft/modpacks/rlcraft) `RLCraft-2.8.2-1.12.2` `RLCraft-2.8.2-1.12.2-openj9`
-* [RoguelikeAdventuresAndDungeons MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/roguelike-adventures-and-dungeons) `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2` `RoguelikeAdventuresAndDungeons-1.3.9-1.12.2-openj9`
-* [SevTechAges MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/sevtech-ages) `SevTechAges-3.1.7-1.12.2`
-* [SkyFactory 4 MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/skyfactory-4) `SkyFactory4-4.2.2-1.12.2`
-* [Valhelsia 3 MC 1.16.4](https://www.curseforge.com/minecraft/modpacks/valhelsia-3) `Valhelsia3-3.1.1-1.16.4`
-* [Vanilla Minecraft](https://minecraft.net/de-de/download/server/) `Vanilla-1.16.4`
+* [Explorico 1.16.5](https://www.curseforge.com/minecraft/modpacks/explorico-1-16-5) `Explorico-3.2-1.16.5`
+* [MC Eternal MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/minecraft-eternal) `MCEternal-1.4.4-1.12.2`
+* [RoguelikeAdventuresAndDungeons MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/roguelike-adventures-and-dungeons) `RoguelikeAdventuresAndDungeons-1.46a-1.12.2`
+* [SevTechAges MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/sevtech-ages) `SevTechAges-3.2.1-1.12.2`
+* [Valhelsia 2 MC 1.15.2](https://www.curseforge.com/minecraft/modpacks/valhelsia-2) `Valhelsia2-2.3.3-1.15.2`
+* [Valhelsia 3 MC 1.16.5](https://www.curseforge.com/minecraft/modpacks/valhelsia-3) `Valhelsia3-3.4.2a-1.16.5`
+* [Vanilla Minecraft](https://minecraft.net/de-de/download/server/) `Vanilla-1.17.1`
+* [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2`
 
  ### other
 * [FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved) `FTBInfinity-3.1.0-1.7.10` `FTBInfinity-3.1.0-1.7.10-openj9`
@@ -38,7 +39,8 @@ There are two different base images which provides different java virtual machin
 * [FTB Presents Stoneblock 2](https://www.feed-the-beast.com/projects/ftb-presents-stoneblock-2) `FTBPresentsStoneblock2-1.16.0-1.12.2` `FTBPresentsStoneblock2-1.16.0-1.12.2-openj9`
 * [FTB Revelation MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-revelation) `FTBRevelation-3.2.0-1.12.2` `FTBRevelation-3.2.0-1.12.2-openj9`
 * [FTB Ultimate Reloaded](https://www.feed-the-beast.com/projects/ftb-ultimate-reloaded) `FTBUltimateReloaded-1.9.0-1.12.2` `FTBUltimateReloaded-1.9.0-1.12.2-openj9`
-* [Valhelsia 2 MC 1.15.2](https://www.curseforge.com/minecraft/modpacks/valhelsia-3) `Valhelsia2-2.3.1-1.15.2`
+* [RLCraft](https://www.curseforge.com/minecraft/modpacks/rlcraft) `RLCraft-2.8.2-1.12.2` `RLCraft-2.8.2-1.12.2-openj9`
+* [SkyFactory 4 MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/skyfactory-4) `SkyFactory4-4.2.2-1.12.2`
 
 
 ### no Tag found?

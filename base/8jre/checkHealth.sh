@@ -24,12 +24,13 @@ debugMsg() {
 # Get length of first arg
 getLength() {
 	# echo without \n, count
-	# shellcheck disable=SC2039
+	# shellcheck disable=SC2039,SC3037
 	echo -e "$1\c" | wc -c
 }
 
 intToHex() {
 	# int to hex,, separate bytes 2 each line, add at beginning \x, delete whitespaces, delete \x\n or \n
+	# shellcheck disable=SC3037
 	echo "16o $1 p" | dc | od -w2 -c -A n | sed 's/^/\\x/' | tr -d '\n ' | sed -E 's/(\\x)?\\n//'
 }
 
@@ -136,7 +137,7 @@ serverIsStillStarting="true"
 while [ "$serverIsStillStarting" = "true" ];
 do
 	# convert request, send, binary-to-text
-	# shellcheck disable=SC2039
+	# shellcheck disable=SC2039,SC3037
 	recv=$(echo -e "${request}" | nc  "$host" "$port" | od -a -A n | tr -d '\n ')
 	
 	#Wait if server is still starting

@@ -27,6 +27,8 @@ ENV MY_GROUP_ID=10000 \
 	ROOT_IN_MODPACK_ZIP="" \
 	MINECRAFT_VERSION="" \
 	FORGE_VERSION="" \
+	CLEANUP_PATHS="mods config scripts structures libraries resources" \
+	PERSISTENT_PATHS="banned-ips.json banned-players.json config.sh ops.json server.properties usercache.json usernamecache.json whitelist.json" \
 	\
 # server.properties
 	IGNORE_PROPERTY_ERRORS=false \
@@ -105,7 +107,7 @@ USER "${MY_USER_ID}:${MY_GROUP_ID}"
 # check integrity of checkHealth.sh
 # execute sh
 HEALTHCHECK --interval=10s --timeout=610s CMD \
- sha3sum "/home/checkHealth.sh" | grep -Eq '^8651544c223472875e8f1e4ab336b51711d0638b8d2dfb5b46514a02\s' && \
+ sha3sum "/home/checkHealth.sh" | grep -Eq '^54492d1bcb582c0247fa8f8fafa9d2d0bfe04c837e978d2f99d645e0\s' && \
  sh /home/checkHealth.sh 
 
 LABEL version="2.0.0" \

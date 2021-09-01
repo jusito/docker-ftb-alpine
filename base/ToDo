@@ -1,4 +1,0 @@
-- need more base images jvm/distro
-- generate image? f.e. different jvm images need different FROM instruction, but the same RUN / Health-Check aso
-- More generic needed https://github.com/opencontainers/image-spec
-- labels needed

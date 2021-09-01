@@ -266,19 +266,15 @@ else
 fi
 
 #backup files
-doBackup "banned-ips.json"
-doBackup "banned-players.json"
-doBackup "config.sh"
-doBackup "ops.json"
-doBackup "usercache.json"
-doBackup "usernamecache.json"
-doBackup "server.properties"
-doBackup "whitelist.json"
+for path in $PERSISTENT_PATHS; do
+	doBackup "$path"
+done
 
 # clean existing files, f.e. if mods are removed on update
 if [ "$isZip" = "true" ] || [ "$isJar" = "true" ]; then
 	echo "[entrypoint][INFO] Cleaning existing folders mods/config/scripts/structures"
-	rm -rf mods/* config/* scripts/* structures/* || true
+	# shellcheck disable=SC2086
+	rm -rf $CLEANUP_PATHS || true
 fi
 
 # unzip server files
@@ -331,14 +327,9 @@ echo 'eula=true' > 'eula.txt'
 echo "[entrypoint][INFO] You accepted the eula of Minecraft."
 
 #restore files
-doRestore "banned-ips.json"
-doRestore "banned-players.json"
-doRestore "config.sh"
-doRestore "ops.json"
-doRestore "server.properties"
-doRestore "usercache.json"
-doRestore "usernamecache.json"
-doRestore "whitelist.json"
+for path in $PERSISTENT_PATHS; do
+	doRestore "$path"
+done
 
 
 ## apply config

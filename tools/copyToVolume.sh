@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # shellcheck disable=SC2039
 
 set -o errexit
@@ -30,7 +30,7 @@ set -o nounset
 
 
 #shellcheck disable=SC2039
-echo -n "[copyToVolume][INFO] check preconditions"
+echo "[copyToVolume][INFO] check preconditions"
 if [ "$srcType" = "path" ]; then
 	suffix="/*"
 	srcSuffix=""

@@ -9,9 +9,9 @@ echo "[testStyle.shell][INFO] starting workdir=$directory"
 
 check() {
 	file="$1"
-	exclude=""
+	exclude="--exclude=SC2155"
 	if [ -n "$2" ]; then
-		exclude="--exclude=$2"
+		exclude="$exclude,$2"
 	fi
 
 	echo "[testStyle.shell][INFO] processing $file with extra arg: $exclude"

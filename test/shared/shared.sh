@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export DEFAULT_TAG="Vanilla-1.16.4"
+export DEFAULT_TAG="Vanilla-1.17.1"
 if [ -z "$DOCKER_REPO" ]; then
 	export REPO="docker.io/jusito/docker-ftb-alpine"
 else
