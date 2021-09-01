@@ -1,6 +1,6 @@
 # Minecraft modpacks meet alpine
 This repository contains servers for minecraft modpacks like FTB:
-[![Build Status](https://travis-ci.org/jusito/docker-ftb-alpine.svg?branch=master)](https://travis-ci.org/jusito/docker-ftb-alpine)
+[![Build Status](https://travis-ci.com/jusito/docker-ftb-alpine.svg?branch=master)](https://travis-ci.com/jusito/docker-ftb-alpine)
 
 **By using this container you agree to the** [Minecraft Eula](https://help.mojang.com/customer/en/portal/articles/1590522-minecraft-commercial-use)
 
