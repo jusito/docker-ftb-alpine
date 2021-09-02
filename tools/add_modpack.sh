@@ -8,7 +8,7 @@ set -o nounset
 # sudo apt-get install -y unzip grep
 
 ## prepare section
-readonly download_link="$(realpath "$1")"
+readonly download_link="$([ -f "$1" ] && realpath "$1" || echo "$1")"
 readonly script_location="$(realpath "$(dirname "$0")")"
 readonly VERBOSE=false
 
@@ -24,7 +24,7 @@ function resolveVariable() {
 
   for exe in $(find ./* -maxdepth 0 -iname "*.sh" ) $(find ./* -maxdepth 0 -iname "*.bat" ); do
     if grep -qP "(?<=$var=).*" "$exe"; then
-      grep -oP "(?<=$var=)[^#]*" "$exe" | tr -d '"'"'" | sed -E 's/\s*(\S+)\s*/\1/'
+      grep -oP "(?<=$var=)[^#]*" "$exe" | tr -d '"'"'" | sed -E 's/\s*(.+?)\s*/\1/'
       return 0
     fi
   done
@@ -217,12 +217,12 @@ function getArgumentFromString() {
         # trim whitespaces
         JAVA_CALL="$(sed -E 's/^\s*(.*?)\s*$/\1/' <<< "$JAVA_CALL")"
 
-        "$VERBOSE" && echo "[add_modpack][DEBUG] contains java call with arguments $JAVA_CALL"
+        "$VERBOSE" && echo "[add_modpack][DEBUG] $exe contains java call with arguments $JAVA_CALL"
         if grep -q "^\s*$" <<< "$JAVA_CALL"; then
           JAVA_CALL=""
         fi
       else
-        echo "[add_modpack][WARNING] skipping because JAVA_CALL already set"
+        echo "[add_modpack][WARNING] skipping $exe because JAVA_CALL already set"
       fi
     fi
   done
@@ -306,23 +306,25 @@ function getArgumentFromString() {
       echo "    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot"
       echo "    command: [\"$URL\", \"$MD5\"]"
       echo "    ports:"
-      echo "      - \"25565:25565\""
+      echo "      - 25565:25565"
       echo "    environment:"
-      echo "      - JAVA_PARAMETERS=\"$JAVA_CALL\""
       if [ -n "$ROOT_IN_MODPACK_ZIP" ]; then
-        echo "      - ROOT_IN_MODPACK_ZIP=\"$ROOT_IN_MODPACK_ZIP\""
+        echo "      ROOT_IN_MODPACK_ZIP: '$ROOT_IN_MODPACK_ZIP'"
       fi
+      echo "      MINECRAFT_VERSION: '$MC_VERSION'"
+      echo "      FORGE_VERSION: '$FORGE_VERSION'"
+      echo "      JAVA_PARAMETERS: '$JAVA_CALL'"
+      echo "      ADMIN_NAME: ''"
+
       # TODO custom property support
       #for env in "${SERVER_PROPERTIES_CUSTOM[@]}"; do
       #done
       for env in "${SERVER_PROPERTIES_MINIMAL[@]}"; do
           key="$(grep -Po "^[^= ]*" <<< "$env" | tr '-' '_')"
           value="$(grep -Po "(?<==).*" <<< "$env")"
-          echo "      - $key=\"$value\""
+          echo "      $key: '$value'"
       done
-      echo "      - MINECRAFT_VERSION=\"$MC_VERSION\""
-      echo "      - FORGE_VERSION=\"$FORGE_VERSION\""
-      echo "      - ADMIN_NAME=\"\""
+
       if [ -n "$CONTAINER_MEMORY_LIMIT" ]; then
         echo "    volumes:"
         echo "      - minecraft-server:/home/docker:rw"
@@ -330,6 +332,9 @@ function getArgumentFromString() {
         echo "      resources:"
         echo "        limits:"
         echo "          memory: $CONTAINER_MEMORY_LIMIT"
+        echo ""
+        echo "volumes:"
+        echo "  minecraft-server:"
       fi
 
     } > "$script_location/docker-compose.yml"
