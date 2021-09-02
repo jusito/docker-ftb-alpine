@@ -243,31 +243,33 @@ function getArgumentFromString() {
   if ! grep -qE '^[0-9]+[mMgG]$' <<< "$JAVA_MEM_MIN"; then
     echo "[add_modpack][WARNING] resolving $arg failed"
     JAVA_MEM_MIN=""
-  else
-    JAVA_CALL="${JAVA_CALL//$(getArgumentFromString "$arg" "$JAVA_CALL" "with_arg_value")/}"
   fi
-  echo "[add_modpack][INFO] $arg refers to \"$JAVA_MEM_MIN\""
+  echo "[add_modpack][INFO] $arg refers to $JAVA_MEM_MIN"
 
   # check for max ram
   arg="-xmx"
   JAVA_MEM_MAX="$(getArgumentFromString "$arg" "$JAVA_CALL" "only_arg_value")"
+  CONTAINER_MEMORY_LIMIT=""
   if ! grep -qE '^[0-9]+[mMgG]$' <<< "$JAVA_MEM_MAX"; then
     echo "[add_modpack][WARNING] resolving $arg failed"
     JAVA_MEM_MAX=""
   else
-    JAVA_CALL="${JAVA_CALL//$(getArgumentFromString "$arg" "$JAVA_CALL" "with_arg_value")/}"
+    # container limit should be around 20% higher
+    max_mem="$(grep -Eo '[0-9]+' <<< "$JAVA_MEM_MAX") "
+    mem_overhead="$((max_mem / 5))"
+    if grep -q '[Mm]' <<< "$JAVA_MEM_MAX" && [ "$mem_overhead" -lt "2048" ]; then
+      mem_overhead="2048"
+    elif grep -q '[Gg]' <<< "$JAVA_MEM_MAX" && [ "$mem_overhead" -lt "2" ]; then
+      mem_overhead="2"
+    fi
+    CONTAINER_MEMORY_LIMIT="$((max_mem + mem_overhead))"
   fi
-  echo "[add_modpack][INFO] $arg refers to \"$JAVA_MEM_MAX\""
+  echo "[add_modpack][INFO] $arg refers to $JAVA_MEM_MAX"
+  JAVA_CALL="$(sed -E 's/^\s*(.*?)\s*/\1/' <<< "$JAVA_CALL")"
 
 
 
-  echo "[add_modpack][INFO]"
-  echo "[add_modpack][INFO] overview java arguments"
-  echo "[add_modpack][INFO] -xms refers to $JAVA_MEM_MIN"
-  echo "[add_modpack][INFO] -xmx refers to $JAVA_MEM_MAX"
-  echo "[add_modpack][INFO] JAVA_PARAMETERS = $JAVA_CALL"
-  echo "[add_modpack][INFO] done"
-
+  echo "[add_modpack][INFO] extracting done, generating files"
   {
     echo 'ARG imageSuffix=""'
     echo ''
@@ -315,6 +317,15 @@ function getArgumentFromString() {
       done
       echo "      - MINECRAFT_VERSION=\"$MC_VERSION\""
       echo "      - FORGE_VERSION=\"$FORGE_VERSION\""
+      echo "      - ADMIN_NAME=\"\""
+      if [ -n "$CONTAINER_MEMORY_LIMIT" ]; then
+        echo "    volumes:"
+        echo "      - minecraft-server:/home/docker:rw"
+        echo "    deploy:"
+        echo "      resources:"
+        echo "        limits:"
+        echo "          memory: $CONTAINER_MEMORY_LIMIT"
+      fi
 
     } > "$script_location/docker-compose.yml"
 
