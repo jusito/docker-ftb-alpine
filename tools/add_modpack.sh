@@ -262,7 +262,12 @@ function getArgumentFromString() {
     elif grep -q '[Gg]' <<< "$JAVA_MEM_MAX" && [ "$mem_overhead" -lt "2" ]; then
       mem_overhead="2"
     fi
-    CONTAINER_MEMORY_LIMIT="$((max_mem + mem_overhead))"
+    if grep -q '[Mm]' <<< "$JAVA_MEM_MAX"; then
+      CONTAINER_MEMORY_LIMIT="$((max_mem + mem_overhead))M"
+    else
+      CONTAINER_MEMORY_LIMIT="$((max_mem + mem_overhead))G"
+    fi
+
   fi
   echo "[add_modpack][INFO] $arg refers to $JAVA_MEM_MAX"
   JAVA_CALL="$(sed -E 's/^\s*(.*?)\s*/\1/' <<< "$JAVA_CALL")"
