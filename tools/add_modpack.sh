@@ -310,7 +310,7 @@ function getArgumentFromString() {
       echo "    environment:"
       echo "      - JAVA_PARAMETERS=\"$JAVA_CALL\""
       if [ -n "$ROOT_IN_MODPACK_ZIP" ]; then
-        echo "      - ROOT_IN_MODPACK_ZIP=\"$ROOT_IN_MODPACK_ZIP\"\\"
+        echo "      - ROOT_IN_MODPACK_ZIP=\"$ROOT_IN_MODPACK_ZIP\""
       fi
       # TODO custom property support
       #for env in "${SERVER_PROPERTIES_CUSTOM[@]}"; do
