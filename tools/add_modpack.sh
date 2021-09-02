@@ -318,7 +318,7 @@ function getArgumentFromString() {
       for env in "${SERVER_PROPERTIES_MINIMAL[@]}"; do
           key="$(grep -Po "^[^= ]*" <<< "$env" | tr '-' '_')"
           value="$(grep -Po "(?<==).*" <<< "$env")"
-          echo "      - $key=\"$value\" \\"
+          echo "      - $key=\"$value\""
       done
       echo "      - MINECRAFT_VERSION=\"$MC_VERSION\""
       echo "      - FORGE_VERSION=\"$FORGE_VERSION\""
