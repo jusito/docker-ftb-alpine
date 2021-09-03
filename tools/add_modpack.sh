@@ -74,10 +74,20 @@ function getArgumentFromString() {
   URL=""
   if [ -f "$download_link" ]; then
     cp "$download_link" "server.zip"
+    NAME="$(basename "$download_link")"
   else
     URL="$download_link"
-    wget -O "server.zip" "$download_link"
+    NAME="$(wget "$download_link" 2>&1 | grep -oP '(?<=Saving to: ‘)[^’]*')"
+    mv "$NAME" "server.zip"
   fi
+  echo "[add_modpack][INFO] name=$NAME"
+  if [ "${#NAME}" -le "6" ]; then
+    NAME="minecraft-server"
+  else
+    NAME="${NAME::-4}" # remove zip
+  fi
+  NAME="$(sed -E 's/^[^a-zA-Z0-9]*(.*)$/\1/' <<< "${NAME//[^a-zA-Z0-9_.-]*/_}")" # replace illegal signs with _ and ensure valid start
+  NAME="$(tr '[:upper:]' '[:lower:]' <<< "$NAME")" # all lower case
   echo "[add_modpack][INFO] URL=$URL"
   "$VERBOSE" && echo ""
 
@@ -135,8 +145,11 @@ function getArgumentFromString() {
   echo "[add_modpack][INFO] FORGE_VERSION=$FORGE_VERSION"
   if [ -z "$MC_VERSION" ]; then
     echo "[add_modpack][ERROR] couldn't get mc version"
-  elif [ -z "$FORGE_VERSION" ]; then
+    MC_VERSION="ERROR_FILL_MANUALLY"
+  fi
+  if [ -z "$FORGE_VERSION" ]; then
     echo "[add_modpack][ERROR] couldn't get forge version"
+    FORGE_VERSION="ERROR_FILL_MANUALLY"
   fi
 
 
@@ -222,7 +235,7 @@ function getArgumentFromString() {
           JAVA_CALL=""
         fi
       else
-        echo "[add_modpack][WARNING] skipping $exe because JAVA_CALL already set"
+        "$VERBOSE" && echo "[add_modpack][WARNING] skipping $exe because JAVA_CALL already set"
       fi
     fi
   done
@@ -302,7 +315,7 @@ function getArgumentFromString() {
 
     {
       echo 'services:'
-      echo "  minecraft-server:"
+      echo "  $NAME:"
       echo "    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot"
       echo "    command: [\"$URL\", \"$MD5\"]"
       echo "    ports:"
@@ -327,14 +340,14 @@ function getArgumentFromString() {
 
       if [ -n "$CONTAINER_MEMORY_LIMIT" ]; then
         echo "    volumes:"
-        echo "      - minecraft-server:/home/docker:rw"
+        echo "      - $NAME:/home/docker:rw"
         echo "    deploy:"
         echo "      resources:"
         echo "        limits:"
         echo "          memory: $CONTAINER_MEMORY_LIMIT"
         echo ""
         echo "volumes:"
-        echo "  minecraft-server:"
+        echo "  $NAME:"
       fi
 
     } > "$script_location/docker-compose.yml"
