@@ -86,7 +86,7 @@ function getArgumentFromString() {
   else
     NAME="${NAME::-4}" # remove zip
   fi
-  NAME="$(sed -E 's/^[^a-zA-Z0-9]*(.*)$/\1/' <<< "${NAME//[^a-zA-Z0-9_.-]*/_}")" # replace illegal signs with _ and ensure valid start
+  NAME="$(sed -E 's/^[^a-zA-Z0-9]*(.*)$/\1/' <<< "${NAME//[^a-zA-Z0-9_.-]/_}")" # replace illegal signs with _ and ensure valid start
   NAME="$(tr '[:upper:]' '[:lower:]' <<< "$NAME")" # all lower case
   echo "[add_modpack][INFO] URL=$URL"
   "$VERBOSE" && echo ""
@@ -162,7 +162,7 @@ function getArgumentFromString() {
   elif [ -f "server.properties" ]; then
     echo "[add_modpack][INFO] found server.properties"
 
-    if command eval "setServerProperties_$MC_VERSION"; then
+    if command eval "setServerProperties_$MC_VERSION" || command eval "setServerProperties_1.12.2"; then # 1.12.2 fallback
       echo "[add_modpack][INFO] loading properties $properties_config"
 
       readServerPropertiesToVariable "server.properties"
@@ -182,73 +182,93 @@ function getArgumentFromString() {
 
   ## preprocessor, try to remove variables
   for exe in $(find ./* -maxdepth 0 -iname "*.sh" ) $(find ./* -maxdepth 0 -iname "*.bat" ); do
-    "$VERBOSE" && echo "[add_modpack][DEBUG] checking $exe"
+    echo "[add_modpack][DEBUG] checking $exe"
     for var in $(grep -Po '((?<!\\)\$[a-zA-Z0-9_]+|(?<!\\)\$\{[^}]+\}|(?<!%)%[a-zA-Z0-9_]+%)' "$exe" | sort | uniq); do
+      cat "$exe"
+      echo -e '\n\n\n'
       s_var="$(tr -d '${}%' <<< "$var")"
-      "$VERBOSE" && echo "[add_modpack][DEBUG] resolving $var / $s_var"
+      echo "[add_modpack][DEBUG] resolving $var / $s_var"
       replace="$(resolveVariable "$s_var")"
       if [ -n "$replace" ]; then
-        # sed sanitize
+        # sanitize
+        var="${var//\//\\\/}"
+        var="${var//\$/\\\$}"
         replace="${replace//\//\\\/}"
         replace="${replace//\$/\\\$}"
-        "$VERBOSE" && echo "[add_modpack][DEBUG] variable: $var -> $replace"
-        sed -i "s/$var/$replace/g" "$exe"
+        echo "[add_modpack][DEBUG] variable: $var -> $replace"
+        sed -i "s/${var}/$replace/g" "$exe"
+
       else
         echo "[add_modpack][WARNING] variable: $var unresolved"
       fi
+      cat "$exe"
+      exit 100
     done
   done
 
 
   # extract JVM args
-  JAVA_PARAMETERS=""
+  #JAVA_PARAMETERS=""
   JAVA_CALL=""
   for exe in $(find ./* -maxdepth 0 -iname "*.sh" ) $(find ./* -maxdepth 0 -iname "*.bat" ); do
     "$VERBOSE" && echo -en "\n\n\n"
     "$VERBOSE" && echo "[add_modpack][DEBUG] checking $exe"
 
     # check for java parameters
-    if grep -q 'JAVA_PARAMETERS=["'\'']' "$exe"; then
-      if [ -z "$JAVA_PARAMETERS" ]; then
-        JAVA_PARAMETERS="$(grep -Po '(?<=JAVA_PARAMETERS=["'\''])[^"'\'']*' "$exe")"
-        JAVA_PARAMETERS="${JAVA_PARAMETERS//#*/}"
-        "$VERBOSE" && echo "[add_modpack][DEBUG] contains JAVA_PARAMETERS=$JAVA_PARAMETERS"
-      else
-        echo "[add_modpack][WARNING] skipping because JAVA_PARAMETERS already set"
-      fi
-    fi
+    #if grep -q 'JAVA_PARAMETERS=["'\'']' "$exe"; then
+    #  if [ -z "$JAVA_PARAMETERS" ]; then
+    #    JAVA_PARAMETERS="$(grep -Po '(?<=JAVA_PARAMETERS=["'\''])[^"'\'']*' "$exe")"
+    #    JAVA_PARAMETERS="${JAVA_PARAMETERS//#*/}"
+    #    "$VERBOSE" && echo "[add_modpack][DEBUG] contains JAVA_PARAMETERS=$JAVA_PARAMETERS"
+    #  else
+    #    echo "[add_modpack][WARNING] skipping because JAVA_PARAMETERS already set"
+    #  fi
+    #fi
 
     # check for java ... -jar invocations
-    if grep -qP 'java[^#]*-jar' "$exe"; then
-      if [ -z "$JAVA_CALL" ]; then
-        # get java ... -jar line
-        JAVA_CALL="$(grep -Eo '^.*java[^#]*-jar' "$exe")"
-        # extract line between java ... -jar
-        JAVA_CALL="$(sed -E 's/^[^#]*java\S*\s+([^#]*)-jar/\1/' <<< "$JAVA_CALL")"
-        # remove -server
-        JAVA_CALL="$(sed -E 's/^(\s?)-server(\s)/\1\2/g' <<< "$JAVA_CALL")"
-        # trim whitespaces
-        JAVA_CALL="$(sed -E 's/^\s*(.*?)\s*$/\1/' <<< "$JAVA_CALL")"
+    #IFS=$'\n' mapfile -t JAVA_INVOCATIONS < <(grep -P 'java[^#]*-jar' "$exe")
+    IFS=$'\n'$'\r' read -r -a JAVA_INVOCATIONS <<< "$(grep -P 'java[^#]*-jar' "$exe")"
+    for java_invocation in "${JAVA_INVOCATIONS[@]}"; do
+      echo ">$exe $java_invocation"
+      # skip forge invocations
+      if ! grep -q -e '--installServer' "$exe"; then
+        echo "setting"
+        if [ -z "$JAVA_CALL" ]; then
+          # get java ... -jar line
+          JAVA_CALL="$(grep -Eo '^.*java[^#]*-jar' "$exe")"
+          # extract line between java ...
+          JAVA_CALL="$(sed -E 's/^[^#]*java\S*\s+([^#]*)/\1/' <<< "$JAVA_CALL")"
+          # remove -jar
+          JAVA_CALL="$(sed -E 's/^(\s?)-jar(\s?)/\1\2/g' <<< "$JAVA_CALL")"
+          # remove jar file
+          JAVA_CALL="$(sed -E 's/^(\s?)\S*\.jar(\s)/\1\2/g' <<< "$JAVA_CALL")"
+          # remove -server
+          JAVA_CALL="$(sed -E 's/^(\s?)-server(\s)/\1\2/g' <<< "$JAVA_CALL")"
+          # remove unresolved variables
+          JAVA_CALL="$(sed -E 's/\S*[$%][{}a-zA-Z0-9_%]*//g' <<< "$JAVA_CALL")"
+          # trim whitespaces
+          JAVA_CALL="$(sed -E 's/^\s*//' <<< "$JAVA_CALL" | sed -E 's/\s*$//')"
 
-        "$VERBOSE" && echo "[add_modpack][DEBUG] $exe contains java call with arguments $JAVA_CALL"
-        if grep -q "^\s*$" <<< "$JAVA_CALL"; then
-          JAVA_CALL=""
+          "$VERBOSE" && echo "[add_modpack][DEBUG] $exe contains java call with arguments $JAVA_CALL"
+          if grep -q "^\s*$" <<< "$JAVA_CALL"; then
+            JAVA_CALL=""
+          fi
+        else
+          "$VERBOSE" && echo "[add_modpack][WARNING] skipping $exe because JAVA_CALL already set"
         fi
-      else
-        "$VERBOSE" && echo "[add_modpack][WARNING] skipping $exe because JAVA_CALL already set"
       fi
-    fi
+    done
   done
-  JAVA_PARAMETERS="$(resolveVariablesInString "$JAVA_PARAMETERS")"
-  echo "[add_modpack][INFO] resolved variables in $JAVA_PARAMETERS"
+  #JAVA_PARAMETERS="$(resolveVariablesInString "$JAVA_PARAMETERS")"
+  #echo "[add_modpack][INFO] resolved variables in $JAVA_PARAMETERS"
   JAVA_CALL="$(resolveVariablesInString "$JAVA_CALL")"
   echo "[add_modpack][INFO] resolved variables in $JAVA_CALL"
-  if grep -Fq "$JAVA_PARAMETERS" <<< "$JAVA_CALL" &>> /dev/null; then
-    echo "[add_modpack][INFO] parameters aren't part of call -> injecting"
-    JAVA_CALL="$JAVA_CALL $JAVA_PARAMETERS"
-  else
-    echo "[add_modpack][INFO] parameters are already part of call"
-  fi
+  #if grep -Fq "$JAVA_PARAMETERS" <<< "$JAVA_CALL" &>> /dev/null; then
+  #  echo "[add_modpack][INFO] parameters aren't part of call -> injecting"
+  #  JAVA_CALL="$JAVA_CALL $JAVA_PARAMETERS"
+  #else
+  #  echo "[add_modpack][INFO] parameters are already part of call"
+  #fi
 
   # check for min ram
   arg="-xms"
