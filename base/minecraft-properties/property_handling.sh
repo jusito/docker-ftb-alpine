@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# shellcheck disable=SC2155
 #TODO add file description
 
 
@@ -76,11 +76,66 @@ function isPropertyValueValid() {
 
 
 
+function overwritePropertyConfig() {
+    local property="$1"
+    local pattern="$2"
+    local default="$3"
+
+    for property_index in $(seq 0 3 "$((${#SERVER_PROPERTIES_CONFIG[@]}-1))"); do
+      if [ "${SERVER_PROPERTIES_CONFIG["$property_index"]}" == "$property" ]; then
+        SERVER_PROPERTIES_CONFIG["$((property_index+1))"]="$pattern"
+        SERVER_PROPERTIES_CONFIG["$((property_index+2))"]="$default"
+      fi
+    done
+}
+
+
+function addPropertyConfig() {
+    local property="$1"
+    local pattern="$2"
+    local default="$3"
+    if isOriginalProperty "$property"; then
+      overwritePropertyConfig "$property" "$pattern" "$default"
+    else
+      SERVER_PROPERTIES_CONFIG+=("$property" "$pattern" "$default")
+    fi
+}
+
+function addProperty() {
+    local property="$1"
+    local value="$2"
+
+    local overwritten=false
+    for property_index in $(seq 0 1 "$((${#SERVER_PROPERTIES[@]}-1))"); do
+      local property_line="${SERVER_PROPERTIES["$property_index"]}"
+      if [ "$property" == "${property_line//=*/}" ]; then
+        overwritten=true
+        SERVER_PROPERTIES["$property_index"]="$value"
+        break
+      fi
+    done
+
+    if ! "$overwritten"; then
+      SERVER_PROPERTIES+=("$property=$value")
+    fi
+}
+
+
+
+function getOriginalPropertyKeys() {
+  for property_index in $(seq 0 3 "$((${#SERVER_PROPERTIES_CONFIG[@]}-1))"); do
+    echo "${SERVER_PROPERTIES_CONFIG["$property_index"]}"
+  done
+}
+
+
+
 SERVER_PROPERTIES=()
 # WRITING global SERVER_PROPERTIES
-function readServerPropertiesToVariable() {
+function readServerProperties_fromFile_toVariable() {
   local file="$1"
 
+  echo "[property_handling][INFO] reading from \"$file\""
   # shellcheck disable=SC2207
   IFS=$'\r\n' SERVER_PROPERTIES_new=($(cat "$file"))
 
@@ -90,7 +145,42 @@ function readServerPropertiesToVariable() {
       SERVER_PROPERTIES+=("$property")
     fi
   done
+
+  sortServerProperties
 }
+
+
+# WRITING global SERVER_PROPERTIES
+function readServerProperties_fromEnvironment_toVariable() {
+  local env_var=""
+
+  for property_index in $(seq 0 3 "$(("${#SERVER_PROPERTIES_CONFIG[@]}" - 1))"); do
+    property="${SERVER_PROPERTIES_CONFIG["$property_index"]}"
+    env_var="${property//-/_}"
+    env_var="${env_var//./_}"
+    # ! dereference env_var name
+    # -"" if unset return empty, else its value
+    SERVER_PROPERTIES+=("$property=${!env_var-}")
+  done
+
+  sortServerProperties
+}
+
+
+
+# e.g. allow-flight -> allow_flight
+function propertyLineToDocker() {
+  local property="$1"
+  local value="$2"
+  local delimiter="$3" # "=" or ": "
+  local stringWrap="$4" # " or '
+
+  property="${property//-/_}"
+  property="${property//./_}"
+
+  echo "${property//(-|\\.)/_}$delimiter$stringWrap$value$stringWrap"
+}
+
 
 
 
@@ -100,7 +190,6 @@ SERVER_PROPERTIES_CUSTOM=()
 # WRITING global SERVER_PROPERTIES, SERVER_PROPERTIES_MINIMAL
 function validateServerPropertiesVariable() {
   local fix_illegal="$(grep -q 'fix-illegal' <<< "$@" && echo "false" || echo "true")"
-  local rm_default="$(grep -q 'rm_default' <<< "$@" && echo "false" || echo "true")"
 
   local RED='\033[0;31m'
   local GREEN='\033[0;32m'
@@ -156,5 +245,72 @@ function validateServerPropertiesVariable() {
     elif [ "$state" != "DEFAULT" ]; then
       SERVER_PROPERTIES_MINIMAL+=("${SERVER_PROPERTIES[$property_index]}")
     fi
+  done
+}
+
+
+
+# WRITING SERVER_PROPERTIES_CONFIG
+function loadServerPropertyConfig() {
+  # shellcheck disable=SC2207
+  IFS=$'\n' local version=( $(grep -o '[0-9]*' <<< "$1" || true) )
+  local fallback_minor=12
+  local fallback_patch=2
+
+  if [ "${#version[@]}" -eq "3" ] && [ "${version[1]}" -ge "$fallback_minor" ]; then
+    local successful=false
+    # check if patch config is there
+    for patch in $(seq "${version[2]}" -1 "0"); do
+      if command eval "setServerProperties_1.${version[1]}.${patch}"; then
+        successful=true
+        break
+      fi
+    done
+    if ! "$successful"; then
+      # check for minor version down to fallback
+      for minor in $(seq "${version[1]}" -1 "$fallback_minor"); do
+        if command eval "setServerProperties_1.${minor}.0"; then
+          break
+        fi
+      done
+    fi
+  else
+    command eval "setServerProperties_1.${fallback_minor}.${fallback_patch}" \
+      || echo "[property_handling][ERROR] loading fallback properties failed"
+  fi
+
+  echo "[property_handling][INFO] loaded $((${#SERVER_PROPERTIES_CONFIG[@]} / 3)) properties"
+  [ "${#SERVER_PROPERTIES_CONFIG[@]}" -gt 0 ] && return 0 || return 1
+}
+
+
+
+
+# WRITING global SERVER_PROPERTIES
+function sortServerProperties() {
+  # sort properties
+  # shellcheck disable=SC2207
+  IFS=$'\n' SERVER_PROPERTIES=( $( printf "%s\n" "${SERVER_PROPERTIES[@]}" | sort | uniq | sed -E 's/^\s*//g' | sed -E 's/\s*$//g' ) )
+}
+
+
+
+
+
+# WRITING global SERVER_PROPERTIES
+function writeServerProperties_toFile() {
+  local file="$1"
+  local ignore_errors="$(grep -q 'ignore-errors' <<< "$@" && echo "false" || echo "true")"
+
+  sortServerProperties
+
+  if ! "$ignore_errors"; then
+    validateServerPropertiesVariable "fix_illegal"
+  fi
+
+  echo "#Minecraft server properties" > "$file"
+  echo "#never booted" >> "$file"
+  for property_line in "${SERVER_PROPERTIES[@]}"; do
+    echo "$property_line" >> "$file"
   done
 }

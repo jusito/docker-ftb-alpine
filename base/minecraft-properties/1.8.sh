@@ -3,7 +3,7 @@
 function setServerProperties_1.8.0() {
   setServerProperties_1.7.10
   #if user is setting this, he knows what he does
-  addProperty "generator-settings" "^.*$" ""
+  addPropertyConfig "generator-settings" "^.*$" ""
 }
 
 function setServerProperties_1.8.1() {

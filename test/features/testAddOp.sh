@@ -14,7 +14,7 @@ docker rm "$TEST_CONTAINER" || true
 docker run -d \
  --name "$TEST_CONTAINER" \
  -e DEBUGGING="${DEBUGGING}" \
- -e JAVA_PARAMETERS="-Xms2G -Xmx2G" \
+ -e JAVA_PARAMETERS="-Xmx2G" \
  -e ADMIN_NAME="$admin1" \
  "${REPO}:$tag"
 

@@ -9,7 +9,7 @@ readonly tag="$1"
 echo "[testRun][INFO] starting tag=$tag"
 docker stop "$TEST_CONTAINER" || true
 docker rm "$TEST_CONTAINER" || true
-if ! docker run -ti --name "$TEST_CONTAINER" --rm -e TEST_MODE=true -e DEBUGGING="${DEBUGGING}" -e JAVA_PARAMETERS="-Xms512M -Xmx8G" "${REPO}:$tag"; then
+if ! docker run -ti --name "$TEST_CONTAINER" --rm -e TEST_MODE=true -e DEBUGGING="${DEBUGGING}" -e JAVA_PARAMETERS="-Xmx8G" "${REPO}:$tag"; then
 	echo "[testRun][ERROR] run test failed for $tag"
 	exit 1
 fi

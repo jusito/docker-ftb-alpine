@@ -2,7 +2,7 @@
 
 function setServerProperties_1.11.0() {
   setServerProperties_1.10.2
-  addProperty "prevent-proxy-connections" "^(true|false)$" "false"
+  addPropertyConfig "prevent-proxy-connections" "^(true|false)$" "false"
 }
 
 function setServerProperties_1.11.1() {

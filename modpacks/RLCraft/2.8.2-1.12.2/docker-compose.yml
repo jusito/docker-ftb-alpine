@@ -1,0 +1,24 @@
+services:
+  rlcraft_server_pack_1.12.2_-_beta_v2.8.2:
+    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
+    command: ["https://media.forgecdn.net/files/3454/411/Medieval+Minecraft+Server+Pack+%5bFORGE%5d+v28.zip", "d1d5148cd9c0b0001065559398307069"]
+    ports:
+      - 25565:25565
+    environment:
+      MINECRAFT_VERSION: '1.12.2'
+      FORGE_VERSION: '14.23.5.2838'
+      JAVA_PARAMETERS: '-Xms8G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true'
+      ADMIN_NAME: ''
+      allow_flight: 'true'
+      difficulty: '3'
+      max_tick_time: '-1'
+      view_distance: '6'
+    volumes:
+      - rlcraft_server_pack_1.12.2_-_beta_v2.8.2:/home/docker:rw
+    deploy:
+      resources:
+        limits:
+          memory: 10G
+
+volumes:
+  rlcraft_server_pack_1.12.2_-_beta_v2.8.2:

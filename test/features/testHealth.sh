@@ -79,7 +79,7 @@ docker stop "$NAME_HEALTHY" "$NAME_UNHEALTHY" "$NAME_UNHEALTHY2" 2>/dev/null 1>/
 
 echo "[testHealth][INFO] starting container Healthy"
 # shellcheck disable=SC2086
-docker run -d --rm --name "$NAME_HEALTHY" -e DEBUGGING=${DEBUGGING} -e JAVA_PARAMETERS="-Xms2G -Xmx2G" $HEALTH "$IMAGE" 1>/dev/null
+docker run -d --rm --name "$NAME_HEALTHY" -e DEBUGGING=${DEBUGGING} -e JAVA_PARAMETERS="-Xmx2G" $HEALTH "$IMAGE" 1>/dev/null
 await "$NAME_HEALTHY" "/home/docker/logs/latest.log" "]: Done ("
 ret=$?
 if [ $ret = 0 ]; then
@@ -107,7 +107,7 @@ docker stop "$NAME_HEALTHY" 1>/dev/null || true
 
 echo "[testHealth][INFO] starting Unhealthy"
 # shellcheck disable=SC2086
-docker run -d --rm --name "$NAME_UNHEALTHY" -e DEBUGGING=${DEBUGGING} -e JAVA_PARAMETERS="-Xms2G -Xmx2G" -e HEALTH_PORT="20" $HEALTH "$IMAGE" 1>/dev/null
+docker run -d --rm --name "$NAME_UNHEALTHY" -e DEBUGGING=${DEBUGGING} -e JAVA_PARAMETERS="-Xmx2G" -e HEALTH_PORT="20" $HEALTH "$IMAGE" 1>/dev/null
 await "$NAME_UNHEALTHY" "/home/docker/logs/latest.log" "]: Done ("
 ret=$?
 if [ "$ret" = "0" ]; then
@@ -133,7 +133,7 @@ docker stop "$NAME_UNHEALTHY" 1>/dev/null || true
 
 echo "[testHealth][INFO] starting Healthy->Unhealthy"
 # shellcheck disable=SC2086
-docker run -d --rm --name "$NAME_UNHEALTHY2" -e DEBUGGING=${DEBUGGING} -e JAVA_PARAMETERS="-Xms2G -Xmx2G" $HEALTH "$IMAGE" 1>/dev/null
+docker run -d --rm --name "$NAME_UNHEALTHY2" -e DEBUGGING=${DEBUGGING} -e JAVA_PARAMETERS="-Xmx2G" $HEALTH "$IMAGE" 1>/dev/null
 
 # make unhealth
 echo "[testHealth][INFO] lets make it unhealthy"

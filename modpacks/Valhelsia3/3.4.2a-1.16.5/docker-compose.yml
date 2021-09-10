@@ -1,0 +1,25 @@
+services:
+  valhelsia_3-3.4.2a-server:
+    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
+    command: ["https://media.forgecdn.net/files/3432/276/Valhelsia+3-3.4.2a-SERVER.zip", "42c133d8c02c67d47506bc4b052cf9e0"]
+    ports:
+      - 25565:25565
+    environment:
+      MINECRAFT_VERSION: '1.16.5'
+      FORGE_VERSION: '36.2.2'
+      JAVA_PARAMETERS: '-Xms4G -Xmx4G -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:MaxGCPauseMillis=100 -XX:+DisableExplicitGC -XX:TargetSurvivorRatio=90 -XX:G1NewSizePercent=50 -XX:G1MaxNewSizePercent=80 -XX:G1MixedGCLiveThresholdPercent=50 -XX:+AlwaysPreTouch'
+      ADMIN_NAME: ''
+      allow_flight: 'true'
+      difficulty: 'normal'
+      gamemode: 'survival'
+      level_type: 'biomesoplenty'
+      motd: 'Valhelsia 3 Server'
+    volumes:
+      - valhelsia_3-3.4.2a-server:/home/docker:rw
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+
+volumes:
+  valhelsia_3-3.4.2a-server:

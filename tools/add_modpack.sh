@@ -16,6 +16,7 @@ VERBOSE=false
 properties_config="$(realpath "$script_location/../base/minecraft-properties/")"
 for script_file in "$properties_config"/*; do
   "$VERBOSE" && echo "[add_modpack][DEBUG] including $script_file"
+  # shellcheck disable=SC1090
   . "$script_file"
 done
 
@@ -78,7 +79,6 @@ function getArgumentFromString() {
   cd "$tmp"
 
 
-
   ## get URL
   URL=""
   if [ -f "$download_link" ]; then
@@ -86,7 +86,8 @@ function getArgumentFromString() {
     NAME="$(basename "$download_link")"
   else
     URL="$download_link"
-    NAME="$(wget "$download_link" 2>&1 | grep -oP '(?<=Saving to: ‘)[^’]*')"
+    NAME="$(wget "$download_link" 2>&1 | grep -oP '(?<=Saving to: .)[a-zA-Z0-9_.%+-\[\]]*')"
+    cp -f "$NAME" "$script_location/"
     mv "$NAME" "server.zip"
   fi
   echo "[add_modpack][INFO] name=$NAME"
@@ -170,24 +171,30 @@ function getArgumentFromString() {
   if [ -z "$MC_VERSION" ]; then
     echo "[add_modpack][ERROR] skipping server.properties because no MC_VERSION"
 
+  elif ! loadServerPropertyConfig "$MC_VERSION"; then
+    echo "[add_modpack][ERROR] failed to load server.property configuration for minecraft version: $MC_VERSION"
+
   elif [ -f "server.properties" ]; then
     echo "[add_modpack][INFO] found server.properties"
 
-    if command eval "setServerProperties_$MC_VERSION" || command eval "setServerProperties_1.12.2"; then # 1.12.2 fallback
-      echo "[add_modpack][INFO] loading properties $properties_config"
-
-      readServerPropertiesToVariable "server.properties"
-      validateServerPropertiesVariable "fix_illegal"
-
-      #for p in "${SERVER_PROPERTIES_MINIMAL[@]}"; do
-      #  echo "> $p"
-      #done
-    else
-      echo "[add_modpack][WARNING] no properties configuration found for given minecraft version"
-    fi
+    readServerProperties_fromFile_toVariable "server.properties"
+    validateServerPropertiesVariable "fix_illegal"
 
   else
-    echo "[add_modpack][WARNING] no server.properties"
+    echo "[add_modpack][WARNING] no server.properties, looking for txt files "
+    # shellcheck disable=SC2207
+    IFS=$'\n' properties=($(getOriginalPropertyKeys))
+    while IFS= read -r -d '' file
+    do
+      for property in "${properties[@]}"; do
+        if grep -qE "^\s*$property=" "$file" &>> /dev/null; then
+
+          match="$(grep --max-count=1 -E "^\s*$property=.*" "$file" | tr -d $'\r'$'\n')"
+          addProperty "$property" "${match//*=/}"
+        fi
+      done
+    done < <(find ./* -maxdepth 0 -type f -iname "*.txt" -print0)
+    validateServerPropertiesVariable "fix_illegal"
   fi
 
 
@@ -196,6 +203,7 @@ function getArgumentFromString() {
     "$VERBOSE" && echo "[add_modpack][DEBUG] checking $exe"
     for var in $(grep -Po '((?<!\\)\$[a-zA-Z0-9_]+|(?<!\\)\$\{[^}]+\}|(?<!%)%[a-zA-Z0-9_]+%)' "$exe" | sort | uniq); do
       "$VERBOSE" && echo -e '\n\n\n'
+      # shellcheck disable=SC2016
       s_var="$(tr -d '${}%' <<< "$var")"
       "$VERBOSE" && echo "[add_modpack][DEBUG] resolving $var / $s_var"
       replace="$(resolveVariable "$s_var")"
@@ -306,28 +314,36 @@ function getArgumentFromString() {
   ###################
   # generating output
   ###################
+
   echo "[add_modpack][INFO] generating files"
   {
+    echo 'ARG imageBase="8jre-alpine-hotspot"'
     echo 'ARG imageSuffix=""'
     echo ''
-    echo 'FROM "jusito/docker-ftb-alpine:8jre-alpine-hotspot$imageSuffix"'
+    # shellcheck disable=SC2016
+    echo 'FROM "jusito/docker-ftb-alpine:$imageBase$imageSuffix"'
     echo ''
-    echo "ENV JAVA_PARAMETERS=\"$JAVA_CALL\" \\"
     if [ -n "$ROOT_IN_MODPACK_ZIP" ]; then
-      echo "	ROOT_IN_MODPACK_ZIP=\"$ROOT_IN_MODPACK_ZIP\"\\"
+      echo "ENV	ROOT_IN_MODPACK_ZIP=\"$ROOT_IN_MODPACK_ZIP\" \\"
+      echo "	MINECRAFT_VERSION=\"$MC_VERSION\" \\"
+    else
+      echo "ENV	MINECRAFT_VERSION=\"$MC_VERSION\" \\"
     fi
-    echo "	\\"
+    printf "%s" "	FORGE_VERSION=\"$FORGE_VERSION\" "
+    if [ -n "$JAVA_CALL" ]; then
+      printf "\\\\\n	%s" "JAVA_PARAMETERS=\"$JAVA_CALL\""
+    fi
+
+    if [ "${#SERVER_PROPERTIES_MINIMAL[@]}" -gt "0" ]; then
+      printf "\\\\\n	%s" ""
+    fi
     # TODO custom property support
     #for env in "${SERVER_PROPERTIES_CUSTOM[@]}"; do
     #done
-    for env in "${SERVER_PROPERTIES_MINIMAL[@]}"; do
-        key="$(grep -Po "^[^= ]*" <<< "$env" | tr '-' '_')"
-        value="$(grep -Po "(?<==).*" <<< "$env")"
-        echo "	$key=\"$value\" \\"
+    for property_line in "${SERVER_PROPERTIES_MINIMAL[@]}"; do
+        printf "\\\\\n %s"  "	$(propertyLineToDocker "${property_line//=*/}" "${property_line//*=/}" "=" "\"")"
     done
-    echo "	\\"
-    echo "	MINECRAFT_VERSION=\"$MC_VERSION\" \\"
-    echo "	FORGE_VERSION=\"$FORGE_VERSION\""
+    echo ''
     echo ''
     echo "CMD [\"$URL\", \"$MD5\"]"
   } > "$script_location/Dockerfile"
@@ -345,29 +361,29 @@ function getArgumentFromString() {
       fi
       echo "      MINECRAFT_VERSION: '$MC_VERSION'"
       echo "      FORGE_VERSION: '$FORGE_VERSION'"
-      echo "      JAVA_PARAMETERS: '$JAVA_CALL'"
+      if [ -n "$JAVA_CALL" ]; then
+        echo "      JAVA_PARAMETERS: '$JAVA_CALL'"
+      fi
       echo "      ADMIN_NAME: ''"
 
       # TODO custom property support
       #for env in "${SERVER_PROPERTIES_CUSTOM[@]}"; do
       #done
-      for env in "${SERVER_PROPERTIES_MINIMAL[@]}"; do
-          key="$(grep -Po "^[^= ]*" <<< "$env" | tr '-' '_')"
-          value="$(grep -Po "(?<==).*" <<< "$env")"
-          echo "      $key: '$value'"
+      for property_line in "${SERVER_PROPERTIES_MINIMAL[@]}"; do
+          echo "      $(propertyLineToDocker "${property_line//=*/}" "${property_line//*=/}" ": " "'")"
       done
 
+      echo "    volumes:"
+      echo "      - $NAME:/home/docker:rw"
       if [ -n "$CONTAINER_MEMORY_LIMIT" ]; then
-        echo "    volumes:"
-        echo "      - $NAME:/home/docker:rw"
         echo "    deploy:"
         echo "      resources:"
         echo "        limits:"
         echo "          memory: $CONTAINER_MEMORY_LIMIT"
-        echo ""
-        echo "volumes:"
-        echo "  $NAME:"
       fi
+      echo ""
+      echo "volumes:"
+      echo "  $NAME:"
 
     } > "$script_location/docker-compose.yml"
 

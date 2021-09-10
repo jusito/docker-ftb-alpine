@@ -2,7 +2,7 @@
 
 function setServerProperties_1.13.0() {
   setServerProperties_1.12.2
-  addProperty "enforce-whitelist" "^(true|false)$" "false"
+  addPropertyConfig "enforce-whitelist" "^(true|false)$" "false"
 }
 
 function setServerProperties_1.13.1() {

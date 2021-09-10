@@ -22,14 +22,15 @@ docker run -d -p 25565:25565 -v minecraft:/home/docker:rw -e ADMIN_NAME="YourNam
 There are two different base images which provides different java virtual machine. The alpine images are amd64/x86 with Hotspot jvm as default (like expected) and openj9 is an option, multiarch isn't supported. I test every modpack with openj9 but if it doesn't even start the server, I will not push a tag with it. (forge with 1.15+ will throw unsupported virtual machine for openj9) Every tag is tested before push but this tags are more example configurations of the base images. Every provided tag will use the recommended server properties and forge version from modpack creator - if not its a bug and please report it. If you want to use the nightly images append "-develop" to the tag.
 
 ### most recent
+* [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2`
 * [Explorico 1.16.5](https://www.curseforge.com/minecraft/modpacks/explorico-1-16-5) `Explorico-3.2-1.16.5`
 * [MC Eternal MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/minecraft-eternal) `MCEternal-1.4.4-1.12.2`
+* [Medieval Minecraft Modpack](https://www.curseforge.com/minecraft/modpacks/medieval-minecraft-modpack) ``MedievalMinecraft-28.hf-1.16.5`
 * [RoguelikeAdventuresAndDungeons MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/roguelike-adventures-and-dungeons) `RoguelikeAdventuresAndDungeons-1.46a-1.12.2`
 * [SevTechAges MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/sevtech-ages) `SevTechAges-3.2.1-1.12.2`
 * [Valhelsia 2 MC 1.15.2](https://www.curseforge.com/minecraft/modpacks/valhelsia-2) `Valhelsia2-2.3.3-1.15.2`
 * [Valhelsia 3 MC 1.16.5](https://www.curseforge.com/minecraft/modpacks/valhelsia-3) `Valhelsia3-3.4.2a-1.16.5`
 * [Vanilla Minecraft](https://minecraft.net/de-de/download/server/) `Vanilla-1.17.1`
-* [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2`
 
  ### other
 * [FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved) `FTBInfinity-3.1.0-1.7.10` `FTBInfinity-3.1.0-1.7.10-openj9`
@@ -54,14 +55,14 @@ Example:
 
 ## Environment Variables
 Example:
-`docker [...] -e JAVA_PARAMETERS="-Xms4G -Xmx4G" [...] jusito/docker-ftb-alpine:*TAG*`
+`docker [...] -e JAVA_PARAMETERS="-Xmx4G" [...] jusito/docker-ftb-alpine:*TAG*`
 
 ### JAVA_PARAMETERS (JVM Arguments, Performance)
-* default for hotspot `-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+UseCGroupMemoryLimitForHeap`
-* default for openj9 `-Xms4096M -Xmx4096M -Xmns2048M -Xmnx3276M -Xgc:concurrentScavenge -Xgc:dnssExpectedTimeRatioMaximum=3 -Xgc:scvNoAdaptiveTenure -Xdisableexplicitgc -Xtune:virtualized`
-* [reddit suggestion, good for clients](https://www.reddit.com/r/feedthebeast/comments/5jhuk9/modded_mc_and_memory_usage_a_history_with_a/)  `-XX:+UseG1GC -Xmx4G -Xms4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M`
+* default for hotspot `-Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+UseCGroupMemoryLimitForHeap`
+* default for openj9 `-Xmx4096M -Xmns2048M -Xmnx3276M -Xgc:concurrentScavenge -Xgc:dnssExpectedTimeRatioMaximum=3 -Xgc:scvNoAdaptiveTenure -Xdisableexplicitgc -Xtune:virtualized`
+* [reddit suggestion, good for clients](https://www.reddit.com/r/feedthebeast/comments/5jhuk9/modded_mc_and_memory_usage_a_history_with_a/)  `-XX:+UseG1GC -Xmx4G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M`
 * aikar suggestion: [link](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/)
-* Iam using for DDSS server: `-Xms8192M -Xmx8192M -XX:+UseStringDeduplication -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=40 -XX:G1MaxNewSizePercent=50 -XX:G1HeapRegionSize=16M -XX:G1ReservePercent=15 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=20 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true`
+* Iam using for DDSS server: `-Xmx8192M -XX:+UseStringDeduplication -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=40 -XX:G1MaxNewSizePercent=50 -XX:G1HeapRegionSize=16M -XX:G1ReservePercent=15 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=20 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true`
 
 ### Server Properties
 Because you may want to use many environment variables, [you may find --env-file helpful](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file).
@@ -237,7 +238,7 @@ You can use copyToVolume.sh from tools section on git. Examples below will resul
 ### Resources needed / Problem resolve
 4GB RAM and 4 CPUs with lower priority should be enough on a small server. In general you should set a container limit for CPU / RAM. `--memory="4096m" --cpu-shares=1024 --cpus=4 --blkio-weight 125` If you use this, with the help of OpenJDK you can replace options like `-Xmx4G -XX:ParallelGCThreads=5 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10` with `-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap` [OpenJDK Make JVM respect CPU and RAM limits](https://hub.docker.com/_/openjdk) OpenJDK will then make optimal use of the resources.
 
-To understand whats wrong with your performance, you should know that the Garbage Collector (GC) in Java 8 stops everything if working. Thats because the default GC is for throughput not low latency, the default one in Java 8 is using only one thread for this. For example if you see lags ingame, like Mobs stopping for a second and are instant at your location, your problem is the GC. [Java Low Latency](https://themindstorms.wordpress.com/2009/01/21/advanced-jvm-tuning-for-low-pause/) If the lag occures like every second, you need more RAM `-Xms -Xmx`. If the lag isn't every second but very long, you want better multithreading for GC `-XX:+UseParNewGC` (FTB recommends this) or `-XX:+UseG1GC` (Oracle recommends this [Oracle](https://docs.oracle.com/cd/E40972_01/doc.70/e40973/cnf_jvmgc.htm#autoId2)). This is basic stuff ofc there is a lot more, just search for "jvm low latency".
+To understand whats wrong with your performance, you should know that the Garbage Collector (GC) in Java 8 stops everything if working. Thats because the default GC is for throughput not low latency, the default one in Java 8 is using only one thread for this. For example if you see lags ingame, like Mobs stopping for a second and are instant at your location, your problem is the GC. [Java Low Latency](https://themindstorms.wordpress.com/2009/01/21/advanced-jvm-tuning-for-low-pause/) If the lag occures like every second, you need more RAM `-Xmx`. If the lag isn't every second but very long, you want better multithreading for GC `-XX:+UseParNewGC` (FTB recommends this) or `-XX:+UseG1GC` (Oracle recommends this [Oracle](https://docs.oracle.com/cd/E40972_01/doc.70/e40973/cnf_jvmgc.htm#autoId2)). This is basic stuff ofc there is a lot more, just search for "jvm low latency".
 
 
 ## Is this working?

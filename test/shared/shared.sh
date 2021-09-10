@@ -87,8 +87,10 @@ function await() {
 		if docker exec "$container" grep -Fq -e "$waitFor" "$file" 2>/dev/null; then
 			isRunning=false
 			timeout=$((timeout+1))
+		elif ! docker exec "$container" echo ""; then
+      isRunning=false
 		elif [ $counter -ge $timeout ]; then
-			isRunning=false			
+			isRunning=false
 		fi
 		
 		sleep 1s

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ "${DEBUGGING:?}" = "true" ]; then
 	set -o xtrace
@@ -20,7 +20,11 @@ FORGE_JAR="forge-${MINECRAFT_VERSION}-${FORGE_VERSION}*.jar"
 FORGE_URL="https://files.minecraftforge.net/maven/net/minecraftforge/forge/${MINECRAFT_VERSION}-${FORGE_VERSION}/${FORGE_INSTALLER}"
 FORGE_URL_LEGACY="https://files.minecraftforge.net/maven/net/minecraftforge/forge/${MINECRAFT_VERSION}-${FORGE_VERSION}-${MINECRAFT_VERSION}/${FORGE_INSTALLER_LEGACY}"
 
-
+# setup server.properties
+for script_file in /home/minecraft-properties/*; do
+  # shellcheck disable=SC1090
+  . "$script_file"
+done
 
 
 
@@ -119,104 +123,14 @@ doRestore() {
 	fi
 }
 
-writeServerProperty() {
-	name="$1"
-	value="$2"
-	pattern="$3"
-	default="$4"
-	target="${MY_VOLUME}/server.properties"
-	
-	set +e
-	echo "$value" | grep -Eiq "$pattern"
-	error=$?
-	set -e
-	if [ "1" = "$error" ]; then
-		if [ "false" = "$IGNORE_PROPERTY_ERRORS" ]; then
-			echo "[entrypoint][WARN] illegal value($value) for $name, fallback to ($default), used regex pattern $pattern"
-			value="$default"
-		else
-			echo "[entrypoint][WARN] illegal value($value) for $name, fallback to ($default) disabled, used regex pattern $pattern"
-		fi
-	fi
-	
-	if [ "$value" = "$default" ]; then
-		echo "[entrypoint][INFO] Property: $name=$value (Default)"
-	else
-		echo "[entrypoint][INFO] Property: $name=$value"
-	fi
-	echo "$name=$value" >> "$target"
-}
-
 writeServerProperties() {
 	
 	if [ "$OVERWRITE_PROPERTIES" = "true" ]; then
 		echo "[entrypoint][INFO] OVERWRITE_PROPERTIES activated (default) overwriting properties."
-		
-		# prepare server.properties
-		target="${MY_VOLUME}/server.properties"
-		if [ -e "${target}" ]; then
-			rm "${target}"
-		fi
-		touch "$target"
-		
-		# define const
-		patternBoolean="^(true|false)$"
-		
-		# write properties
-		writeServerProperty "allow-flight" "${allow_flight:?}" "$patternBoolean" "false"
-		writeServerProperty "allow-nether" "${allow_nether:?}" "$patternBoolean" "true"
-		writeServerProperty "broadcast-console-to-ops" "${broadcast_console_to_ops:?}" "$patternBoolean" "true"
-		writeServerProperty "difficulty" "${difficulty:?}" "^([0-3]|peaceful|easy|normal|hard)$" "1"
-		writeServerProperty "enable-command-block" "${enable_command_block:?}" "$patternBoolean" "false"
-		writeServerProperty "enable-jmx-monitoring" "${enable_jmx_monitoring:?}" "$patternBoolean" "false"
-		writeServerProperty "enable-query" "${enable_query:?}" "$patternBoolean" "false"
-		writeServerProperty "enable-rcon" "${enable_rcon:?}" "$patternBoolean" "false"
-		writeServerProperty "enable-status" "${enable_status:?}" "$patternBoolean" "true"
-		writeServerProperty "entity-broadcast-range-percentage" "${entity_broadcast_range_percentage:?}" "^([0-9]|[1-9][0-9]|[1-4][0-9][0-9]|500)$" "100"
-		writeServerProperty "enforce-whitelist" "${enforce_whitelist:?}" "$patternBoolean" "false"
-		writeServerProperty "force-gamemode" "${force_gamemode:?}" "$patternBoolean" "false"
-		writeServerProperty "function-permission-level" "${function_permission_level:?}" "^[1-4]$" "2"
-		writeServerProperty "gamemode" "${gamemode:?}" "^([0-3]|survival|creative|adventure|spectator)$" "0"
-		writeServerProperty "generate-structures" "${generate_structures:?}" "$patternBoolean" "true"
-		# shellcheck disable=SC2154
-		writeServerProperty "generator-settings" "${generator_settings}" "^.*$" "" #if user is setting this, he knows what he does
-		writeServerProperty "hardcore" "${hardcore:?}" "$patternBoolean" "false"
-		writeServerProperty "level-name" "${level_name:?}" "^[a-zA-Z0-9]([ a-zA-Z0-9]*[a-zA-Z0-9])?$" "world"
-		# shellcheck disable=SC2154
-		writeServerProperty "level-seed" "${level_seed}" "^.*$" ""
-		writeServerProperty "level-type" "${level_type:?}" "^.+$" "DEFAULT" # not matching mod types: (DEFAULT|FLAT|LARGEBIOMES|AMPLIFIED|BUFFET)
-		writeServerProperty "max-build-height" "${max_build_height:?}" "^[0-9]+$" "256"
-		writeServerProperty "max-players" "${max_players:?}" "^[1-9][0-9]*$" "20"
-		writeServerProperty "max-tick-time" "${max_tick_time:?}" "^(-1|[0-9]+)$" "60000"
-		writeServerProperty "max-world-size" "${max_world_size:?}" "^[0-9]+$" "29999984"
-		# shellcheck disable=SC2154
-		writeServerProperty "motd" "${motd}" "^.*$" "A Minecraft Server"
-		writeServerProperty "network-compression-threshold" "${network_compression_threshold:?}" "^(-1|[0-9]+)$" "256"
-		writeServerProperty "online-mode" "${online_mode:?}" "$patternBoolean" "true"
-		writeServerProperty "op-permission-level" "${op_permission_level:?}" "^[1-4]$" "4"
-		writeServerProperty "player-idle-timeout" "${player_idle_timeout:?}" "^[0-9]+$" "0"
-		writeServerProperty "prevent-proxy-connections" "${prevent_proxy_connections:?}" "$patternBoolean" "false"
-		writeServerProperty "pvp" "${pvp:?}" "$patternBoolean" "true"
-		writeServerProperty "query.port" "${query_port:?}" "^[1-9][0-9]*$" "25565"
-		writeServerProperty "rate-limit" "${rate_limit:?}" "^[0-9]+$" ""
-		# shellcheck disable=SC2154
-		writeServerProperty "rcon.password" "${rcon_password}" "^.*$" ""
-		writeServerProperty "rcon.port" "${rcon_port:?}" "^[1-9][0-9]*$" "25575"
-		# shellcheck disable=SC2154
-		writeServerProperty "resource-pack" "${resource_pack}" "^.*$" ""
-		# shellcheck disable=SC2154
-		writeServerProperty "resource-pack-sha1" "${resource_pack_sha1}" "^.*$" "" #TODO correct pattern
-		# shellcheck disable=SC2154
-		writeServerProperty "server-ip" "${server_ip}" "^.*$" "" #TODO correct pattern
-		writeServerProperty "server-port" "${server_port:?}" "^[1-9][0-9]*$" "25565"
-		writeServerProperty "snooper-enabled" "${snooper_enabled:?}" "$patternBoolean" "true"
-		writeServerProperty "spawn-animals" "${spawn_animals:?}" "$patternBoolean" "true"
-		writeServerProperty "spawn-monsters" "${spawn_monsters:?}" "$patternBoolean" "true"
-		writeServerProperty "spawn-npcs" "${spawn_npcs:?}" "$patternBoolean" "true"
-		writeServerProperty "spawn-protection" "${spawn_protection:?}" "^[0-9]+$" "16"
-		writeServerProperty "sync-chunk-writes" "${sync_chunk_writes:?}" "$patternBoolean" "true"
-		writeServerProperty "view-distance" "${view_distance:?}" "^([3-9]|1[0-5])$" "10"
-		writeServerProperty "white-list" "${white_list:?}" "$patternBoolean" "false"
+
+		loadServerPropertyConfig "$MINECRAFT_VERSION"
+		readServerProperties_fromEnvironment_toVariable
+		writeServerProperties_toFile "fix-illegal"
 	else
 		echo "[entrypoint][INFO]OVERWRITE_PROPERTIES deactivated, skipping properties."
 	fi
