@@ -186,9 +186,11 @@ done
 
 # clean existing files, f.e. if mods are removed on update
 if [ "$isZip" = "true" ] || [ "$isJar" = "true" ]; then
-	echo "[entrypoint][INFO] Cleaning existing folders $CLEANUP_PATHS"
-	# shellcheck disable=SC2086
-	rm -rf $CLEANUP_PATHS || true
+  for path in $CLEANUP_PATHS; do
+    	echo "[entrypoint][INFO] Cleaning existing folders $path"
+    	# shellcheck disable=SC2086
+    	rm -rf "$path" || true
+  done
 fi
 
 # unzip server files
