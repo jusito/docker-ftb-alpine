@@ -10,6 +10,7 @@ for modpack in "${MODPACKS[@]}"; do
 
 	# shellcheck disable=SC2044
   for baseImage in $(find "$(getImagePath "$modpack")" -type f -iname "*.base" -exec grep -Po '^.*(?=.base)' \;); do
+    # shellcheck disable=SC2154
     bash test/standard/testRun.sh "$(getImageTag "$modpack")-$baseImage$imageSuffix"
   done
 done
