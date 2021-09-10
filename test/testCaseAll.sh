@@ -6,6 +6,7 @@ if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
 echo "[testCaseAll] starting..."
 
 bash test/testCaseStyle.sh
+bash test/Cleanup.sh
 
 echo "[testCaseAll] process standard tests"
 # build base images

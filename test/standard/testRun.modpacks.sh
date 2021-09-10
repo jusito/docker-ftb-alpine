@@ -7,6 +7,11 @@ echo "[testRun.modpacks][INFO] starting ..."
 
 for modpack in "${MODPACKS[@]}"; do
 	bash test/standard/testRun.sh "$(getImageTag "$modpack")"
+
+	# shellcheck disable=SC2044
+  for baseImage in $(find "$(getImagePath "$modpack")" -type f -iname "*.base" -exec grep -Po '^.*(?=.base)' \;); do
+    bash test/standard/testRun.sh "$(getImageTag "$modpack")-$baseImage$imageSuffix"
+  done
 done
 
 echo "[testRun.modpacks][INFO] successful!"

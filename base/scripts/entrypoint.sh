@@ -186,7 +186,7 @@ done
 
 # clean existing files, f.e. if mods are removed on update
 if [ "$isZip" = "true" ] || [ "$isJar" = "true" ]; then
-	echo "[entrypoint][INFO] Cleaning existing folders mods/config/scripts/structures"
+	echo "[entrypoint][INFO] Cleaning existing folders $CLEANUP_PATHS"
 	# shellcheck disable=SC2086
 	rm -rf $CLEANUP_PATHS || true
 fi
