@@ -167,15 +167,19 @@ if [ "$cacheOnly" = "true" ]; then
 fi
 
 # get file ending
+isFTBInstaller="false"; isZip="false"; isJar="false"
 fileEnding=$(echo "$MY_FILE" | grep -Eo -e '[^.]+$')
 if [ "$fileEnding" = "zip" ]; then
-	isZip="true"; isJar="false"
+	isZip="true"
 
 elif [ "$fileEnding" = "jar" ]; then
-	isZip="false"; isJar="true"
+	isJar="true"
+
+elif grep -q 'serverinstall_[0-9]*_[0-9]*' <<< "$MY_FILE"; then
+  isFTBInstaller="true"
 
 else
-	echo "[entrypoint][ERROR] File doesn't look like jar / zip, can't handle it"
+	echo "[entrypoint][ERROR] File doesn't look like jar / zip / FTB installer, can't handle it"
 	exit 2
 fi
 
@@ -185,16 +189,15 @@ for path in $PERSISTENT_PATHS; do
 done
 
 # clean existing files, f.e. if mods are removed on update
-if [ "$isZip" = "true" ] || [ "$isJar" = "true" ]; then
-  for path in $CLEANUP_PATHS; do
-    	echo "[entrypoint][INFO] Cleaning existing folders $path"
-    	# shellcheck disable=SC2086
-    	rm -rf "$path" || true
-  done
-fi
+for path in $CLEANUP_PATHS; do
+  echo "[entrypoint][INFO] Cleaning existing folders $path"
+  # shellcheck disable=SC2086
+  rm -rf "$path" || true
+done
 
-# unzip server files
-if [ "$isZip" = "true" ]; then
+# prepare server installation
+# e.g. unzip server files
+if "$isZip"; then
 	unzip -q -o "${MY_FILE}"
 	echo "[entrypoint][INFO] server files extracted"
 
@@ -206,10 +209,21 @@ if [ "$isZip" = "true" ]; then
 	fi
 	
 	rm -f "${MY_FILE}"
+elif "$isFTBInstaller"; then
+  chmod +x "${MY_FILE}"
 fi
 
-# install forge (TODO currently only forge?)
-if [ -n "$FORGE_VERSION" ] ; then
+# install server
+# e.g. install forge (TODO currently only forge?)
+if "$isFTBInstaller"; then
+  if ./"${MY_FILE}" --auto --integrityupdate --integrity; then
+    echo "[entrypoint][INFO] FTB installer successful"
+  else
+    echo "[entrypoint][ERROR] FTB installer failed"
+  fi
+  TARGET_JAR="$FORGE_JAR"
+
+elif [ -n "$FORGE_VERSION" ]; then
 	if [ ! -f "${MY_VOLUME}/${FORGE_JAR}" ]; then
 		#remove existing forge
 		rm -f forge-*.jar || true
@@ -236,7 +250,7 @@ if [ -n "$FORGE_VERSION" ] ; then
 	fi
 	TARGET_JAR="$FORGE_JAR"
 
-else
+elif ! "$isFTBInstaller"; then
 	echo "[entrypoint][INFO] no forge version configured, expecting MY_FILE is TARGET_JAR"
 	TARGET_JAR="$MY_FILE"
 fi

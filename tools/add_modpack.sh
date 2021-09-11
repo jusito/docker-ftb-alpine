@@ -81,19 +81,35 @@ function getArgumentFromString() {
 
   ## get URL
   URL=""
+  MODE=""
+  FILE=""
   if [ -f "$download_link" ]; then
     cp "$download_link" "server.zip"
     NAME="$(basename "$download_link")"
   else
     URL="$download_link"
-    NAME="$(wget "$download_link" 2>&1 | grep -oP '(?<=Saving to: .)[a-zA-Z0-9_.%+-\[\]]*')"
+    #NAME="$(wget --server-response -q "$download_link" --spider 2>&1 | grep -oP '(?<=filename=")[^"]*')"
+    #wget -O "$NAME" "$download_link"
+    NAME="$(wget "$download_link" --content-disposition 2>&1 | grep -oP '(?<=Saving to: .)[a-zA-Z0-9_.%+-\[\]]*')"
     cp -f "$NAME" "$script_location/"
-    mv "$NAME" "server.zip"
+    if grep -q 'serverinstall_[0-9]*_[0-9]*' <<< "$NAME"; then
+      echo "[add_modpack][INFO] found FTB modpack"
+      id="$(grep -oP '(?<=serverinstall_)[0-9]*' <<< "$NAME")"
+      version="$(grep -oE "[0-9]*$" <<< "$NAME")"
+      MODE="FTB"
+      chmod +x "$NAME"
+      FILE="$NAME"
+      NAME="$(wget -O - "https://api.modpacks.ch/public/modpack/$id" | jq -r '.name')-$(wget -O - "https://api.modpacks.ch/public/modpack/$id/$version" | jq -r '.name')"
+    else
+      MODE="zip"
+      FILE="server.zip"
+      mv "$NAME" "$FILE"
+    fi
   fi
   echo "[add_modpack][INFO] name=$NAME"
   if [ "${#NAME}" -le "6" ]; then
     NAME="minecraft-server"
-  else
+  elif [ "$MODE" != "FTB" ]; then
     NAME="${NAME::-4}" # remove zip
   fi
   NAME="$(sed -E 's/^[^a-zA-Z0-9]*(.*)$/\1/' <<< "${NAME//[^a-zA-Z0-9_.-]/_}")" # replace illegal signs with _ and ensure valid start
@@ -106,19 +122,23 @@ function getArgumentFromString() {
 
 
   ## get md5
-  readonly MD5="$(md5sum "server.zip" | grep -Eo '^[0-9a-f]*')"
+  readonly MD5="$(md5sum "$FILE" | grep -Eo '^[0-9a-f]*')"
   echo "[add_modpack][INFO] MD5=$MD5"
-  unzip -o server.zip &>> /dev/null
   "$VERBOSE" && echo ""
 
 
   ## check root in modpack
   ROOT_IN_MODPACK_ZIP=""
-  if [ "$(find ./* -maxdepth 0 -type d | wc -l)" -eq "1" ]; then
-    cd "$(find ./* -maxdepth 0 -type d)"
-    ROOT_IN_MODPACK_ZIP="${PWD##*/}"
+  if [ "$MODE" = "zip" ]; then
+    unzip -o "$FILE" &>> /dev/null
+    if [ "$(find ./* -maxdepth 0 -type d | wc -l)" -eq "1" ]; then
+      cd "$(find ./* -maxdepth 0 -type d)"
+      ROOT_IN_MODPACK_ZIP="${PWD##*/}"
+    fi
+    echo "[add_modpack][INFO] ROOT_IN_MODPACK_ZIP=$ROOT_IN_MODPACK_ZIP"
+  elif [ "$MODE" = "FTB" ]; then
+    ./"$FILE" --auto
   fi
-  echo "[add_modpack][INFO] ROOT_IN_MODPACK_ZIP=$ROOT_IN_MODPACK_ZIP"
 
   ## find mc/forge version
   MC_VERSION=""
@@ -326,6 +346,9 @@ function getArgumentFromString() {
     if [ -n "$ROOT_IN_MODPACK_ZIP" ]; then
       echo "ENV	ROOT_IN_MODPACK_ZIP=\"$ROOT_IN_MODPACK_ZIP\" \\"
       echo "	MINECRAFT_VERSION=\"$MC_VERSION\" \\"
+    elif [ "$MODE" = "FTB" ]; then
+      echo "ENV	MY_FILE=\"$FILE\" \\"
+      echo "	MINECRAFT_VERSION=\"$MC_VERSION\" \\"
     else
       echo "ENV	MINECRAFT_VERSION=\"$MC_VERSION\" \\"
     fi
@@ -358,6 +381,8 @@ function getArgumentFromString() {
       echo "    environment:"
       if [ -n "$ROOT_IN_MODPACK_ZIP" ]; then
         echo "      ROOT_IN_MODPACK_ZIP: '$ROOT_IN_MODPACK_ZIP'"
+      elif [ "$MODE" = "FTB" ]; then
+        echo "      MY_FILE: '$FILE'"
       fi
       echo "      MINECRAFT_VERSION: '$MC_VERSION'"
       echo "      FORGE_VERSION: '$FORGE_VERSION'"

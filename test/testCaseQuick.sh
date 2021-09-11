@@ -7,7 +7,7 @@ if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
 set +o nounset
 readonly IMAGE_TAG="$([ -n "$1" ] && echo "$1" || echo "$DEFAULT_TAG")"
 readonly CHECK_STYLE="$(grep -q 'test-style' <<< "$@" && echo "true" || echo "false")"
-readonly BUILD_BASES="$(grep -q 'skip-base' <<< "$@" && echo "false" || echo "true")"
+readonly BUILD_BASES="$(grep -q 'build-bases' <<< "$@" && echo "true" || echo "false")"
 readonly TEST_FEATURES="$(grep -q 'test-features' <<< "$@" && echo "true" || echo "false")"
 readonly TEST_BASES="$(grep -q 'test-bases' <<< "$@" && echo "true" || echo "false")"
 set -o nounset
@@ -31,7 +31,7 @@ for modpack in "${MODPACKS[@]}"; do
   name="$(getImageTag "$modpack")"
   directory="modpacks/${name//-*/}/${name//${name//-*/}-/}"
 
-  if grep -qF "$IMAGE_TAG" <<< "$name" || grep -qF "$IMAGE_TAG" <<< "$directory"; then
+  if grep -qE "$IMAGE_TAG" <<< "$name" || grep -qE "$IMAGE_TAG" <<< "$directory"; then
     loop=("default")
     if "$TEST_BASES"; then
       loop=("${BASE_IMAGES[@]}")
@@ -49,7 +49,9 @@ for modpack in "${MODPACKS[@]}"; do
 
       # run it once
       if bash test/standard/testRun.sh "${name}"; then
-        touch "$directory/$baseImage.base"
+        if [ "$baseImage" != "default" ]; then
+          touch "$directory/$baseImage.base"
+        fi
       else
         rm "$directory/$baseImage.base" || true
       fi
@@ -59,5 +61,25 @@ for modpack in "${MODPACKS[@]}"; do
         bash test/features/testAddOp.sh "$IMAGE_TAG"
       fi
     done
+
+    # set default base
+    successful_bases=()
+    mapfile -t successful_bases < <(cd "$directory" > /dev/null && find . -type f -iname "*.base" | sed -E 's/^.\///g' | sed -E 's/.base$//g' | sort -g)
+    new_default_base=""
+    # check for hotspot
+    for base_successful in "${successful_bases[@]}"; do
+      if grep -qE -e '-hotspot$' <<< "$base_successful"; then
+        new_default_base="$base_successful"
+        break
+      fi
+    done
+    # no hotspot found (weird) take first
+    if [ -z "$new_default_base" ] && [ "${#successful_bases[@]}" -gt "0" ]; then
+      new_default_base="${successful_bases[0]}"
+    fi
+    echo "[testCaseBaseImageSupport][INFO] $name new default base image is: ${new_default_base:-"none because no run successful"}"
+
+    sed -Ei "s/jusito\/docker-ftb-alpine:[^#]*/jusito\/docker-ftb-alpine:$new_default_base/g" "$directory/docker-compose.yml"
+    sed -Ei "s/imageBase=\"[^\"]*/imageBase=\"$new_default_base/g" "$directory/Dockerfile"
   fi
 done
