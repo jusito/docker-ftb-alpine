@@ -1,0 +1,21 @@
+services:
+  ftb_endeavour-1.5.0:
+    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
+    command: ["https://api.modpacks.ch/public/modpack/80/2068/server/linux", "b5eda1019ba99a06a813aa14b0f0b8ac"]
+    ports:
+      - 25565:25565
+    environment:
+      MY_FILE: 'serverinstall_80_2068'
+      MINECRAFT_VERSION: '1.16.5'
+      FORGE_VERSION: '36.2.2'
+      JAVA_PARAMETERS: '-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -Xmx6144M -Xms4096M'
+      ADMIN_NAME: ''
+    volumes:
+      - ftb_endeavour-1.5.0:/home/docker:rw
+    deploy:
+      resources:
+        limits:
+          memory: 8192M
+
+volumes:
+  ftb_endeavour-1.5.0:

@@ -1,4 +1,4 @@
-ARG imageBase="8jre-alpine-hotspot"
+ARG imageBase="11jre-alpine-hotspot"
 ARG imageSuffix=""
 
 FROM "jusito/docker-ftb-alpine:$imageBase$imageSuffix"

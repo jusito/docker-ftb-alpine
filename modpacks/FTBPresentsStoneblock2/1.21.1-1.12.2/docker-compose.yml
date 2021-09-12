@@ -1,0 +1,21 @@
+services:
+  ftb_presents_stoneblock_2-1.21.1:
+    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
+    command: ["https://api.modpacks.ch/public/modpack/4/153/server/linux", "b5eda1019ba99a06a813aa14b0f0b8ac"]
+    ports:
+      - 25565:25565
+    environment:
+      MY_FILE: 'serverinstall_4_153'
+      MINECRAFT_VERSION: '1.12.2'
+      FORGE_VERSION: '14.23.5.2847'
+      JAVA_PARAMETERS: '-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -Xmx6122M -Xms4096M'
+      ADMIN_NAME: ''
+    volumes:
+      - ftb_presents_stoneblock_2-1.21.1:/home/docker:rw
+    deploy:
+      resources:
+        limits:
+          memory: 8170M
+
+volumes:
+  ftb_presents_stoneblock_2-1.21.1:

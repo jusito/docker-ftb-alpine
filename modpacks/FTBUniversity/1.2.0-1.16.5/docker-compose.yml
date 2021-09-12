@@ -1,0 +1,21 @@
+services:
+  ftb_university_1.16-1.2.0:
+    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
+    command: ["https://api.modpacks.ch/public/modpack/90/2073/server/linux", "b5eda1019ba99a06a813aa14b0f0b8ac"]
+    ports:
+      - 25565:25565
+    environment:
+      MY_FILE: 'serverinstall_90_2073'
+      MINECRAFT_VERSION: '1.16.5'
+      FORGE_VERSION: '36.2.2'
+      JAVA_PARAMETERS: '-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -Xmx7000M -Xms5000M'
+      ADMIN_NAME: ''
+    volumes:
+      - ftb_university_1.16-1.2.0:/home/docker:rw
+    deploy:
+      resources:
+        limits:
+          memory: 9048M
+
+volumes:
+  ftb_university_1.16-1.2.0:

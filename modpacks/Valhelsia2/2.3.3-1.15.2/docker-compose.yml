@@ -1,6 +1,6 @@
 services:
   valhelsia_2-2.3.3-server:
-    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
+    image: jusito/docker-ftb-alpine:11jre-alpine-hotspot
     command: ["https://media.forgecdn.net/files/3283/29/Valhelsia_2-2.3.3-SERVER.zip", "c0556560538a3b564c673a6f7ae4b878"]
     ports:
       - 25565:25565

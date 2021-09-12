@@ -1,6 +1,6 @@
 services:
   explorico_mp_easy_3.2:
-    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
+    image: jusito/docker-ftb-alpine:11jre-alpine-hotspot
     command: ["https://media.forgecdn.net/files/3418/150/Explorico_mp_easy_3.2.zip", "93e37a59da8a1c66523d79a51a5c0db3"]
     ports:
       - 25565:25565

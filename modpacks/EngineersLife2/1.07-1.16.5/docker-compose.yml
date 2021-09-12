@@ -1,0 +1,30 @@
+# fixed forge version because mods required it
+services:
+  el2-serverpack-1.07:
+    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
+    command: ["https://media.forgecdn.net/files/3422/423/EL2-Serverpack-1.07.zip", "1b6f48a36a129fd7a226542aeb10a426"]
+    ports:
+      - 25565:25565
+    environment:
+      ROOT_IN_MODPACK_ZIP: 'EL2-Serverpack-1.07'
+      MINECRAFT_VERSION: '1.16.5'
+      FORGE_VERSION: '36.2.0'
+      JAVA_PARAMETERS: '-Xmx4G'
+      ADMIN_NAME: ''
+      allow_flight: 'true'
+      difficulty: 'normal'
+      gamemode: 'survival'
+      level_type: 'realistic'
+      max_players: '5'
+      motd: 'Engineers Life 2 Server'
+      spawn_protection: '8'
+      view_distance: '7'
+    volumes:
+      - el2-serverpack-1.07:/home/docker:rw
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+
+volumes:
+  el2-serverpack-1.07:

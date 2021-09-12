@@ -5,8 +5,8 @@ services:
     ports:
       - 25565:25565
     environment:
-      MINECRAFT_VERSION: 'ERROR_FILL_MANUALLY'
-      FORGE_VERSION: 'ERROR_FILL_MANUALLY'
+      MINECRAFT_VERSION: '1.7.10'
+      FORGE_VERSION: '10.13.4.1614'
       JAVA_PARAMETERS: '-Xms512M -Xmx2048M -XX:PermSize=256M -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:+CMSClassUnloadingEnabled -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10'
       ADMIN_NAME: ''
     volumes:
