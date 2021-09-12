@@ -8,10 +8,10 @@ set -o errexit
 #set -o pipefail
 
 # get arguments
-cacheOnly=$3
+cacheOnly="$3"
 set -o nounset #3 not always given
-export MY_SERVER=$1
-export MY_MD5=$2
+export MY_SERVER="$1"
+export MY_MD5="$2"
 
 # set local vars
 FORGE_INSTALLER="forge-${MINECRAFT_VERSION}-${FORGE_VERSION}-installer.jar"
@@ -31,9 +31,9 @@ done
 #region functions
 download() {
 	# using env $FORCE_DOWNLOAD
-	target=$1
-	source=$2
-	md5=$3
+	target="$1"
+	source="$2"
+	md5="$3"
 	skip="false"
 	cache="/home/${MY_FILE}"
 	
@@ -71,7 +71,7 @@ download() {
 	fi
 	
 	if [ "$skip" = "false" ]; then
-		echo "[entrypoint][INFO] downloading..."
+		echo "[entrypoint][INFO] downloading \"$source\""
 		wget -O "$target" "$source"
 		
 		# check md5
@@ -167,8 +167,9 @@ if [ "$cacheOnly" = "true" ]; then
 fi
 
 # get file ending
+#shellcheck disable=SC2034
 isFTBInstaller="false"; isZip="false"; isJar="false"
-fileEnding=$(echo "$MY_FILE" | grep -Eo -e '[^.]+$')
+fileEnding=$(echo "$MY_FILE" | grep -Eo -e '[^.]+$' | tr '[:upper:]' '[:lower:]')
 if [ "$fileEnding" = "zip" ]; then
 	isZip="true"
 
@@ -250,7 +251,7 @@ elif [ -n "$FORGE_VERSION" ]; then
 	fi
 	TARGET_JAR="$FORGE_JAR"
 
-elif ! "$isFTBInstaller"; then
+elif "$isJar"; then
 	echo "[entrypoint][INFO] no forge version configured, expecting MY_FILE is TARGET_JAR"
 	TARGET_JAR="$MY_FILE"
 fi

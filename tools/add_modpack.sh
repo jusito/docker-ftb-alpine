@@ -20,11 +20,22 @@ for script_file in "$properties_config"/*; do
   . "$script_file"
 done
 
+function getConfigFiles() {
+  find ./* -maxdepth 0 -iname "*.bat" -print
+  find ./* -maxdepth 0 -iname "*.sh" -print
+  find ./* -maxdepth 0 -iname "*.txt" -print
+  find ./* -maxdepth 0 -iname "*.cfg" -print
+}
+
 
 function resolveVariable() {
   var="$1"
 
-  for exe in $(find ./* -maxdepth 0 -iname "*.sh" ) $(find ./* -maxdepth 0 -iname "*.bat" ); do
+  #var="${var//?/\\?}"
+  #var="${var//+/\\+}"
+  #var="${var//\*/\\*}"
+
+  for exe in $(getConfigFiles); do
     if grep -qP "(?<=$var=).*" "$exe"; then
       results="$(grep -m 1 -oP "(?<=$var=)[^#]*" "$exe" | tr -d '\r\n')"
 
@@ -86,6 +97,8 @@ function getArgumentFromString() {
   if [ -f "$download_link" ]; then
     cp "$download_link" "server.zip"
     NAME="$(basename "$download_link")"
+    FILE="$download_link"
+    MODE="zip"
   else
     URL="$download_link"
     #NAME="$(wget --server-response -q "$download_link" --spider 2>&1 | grep -oP '(?<=filename=")[^"]*')"
@@ -113,7 +126,7 @@ function getArgumentFromString() {
     NAME="${NAME::-4}" # remove zip
   fi
   NAME="$(sed -E 's/^[^a-zA-Z0-9]*(.*)$/\1/' <<< "${NAME//[^a-zA-Z0-9_.-]/_}")" # replace illegal signs with _ and ensure valid start
-  NAME="$(sed -E 's/__/_/g' <<< "$NAME")"
+  NAME="$(sed -E 's/[_]+/_/g' <<< "$NAME")"
   NAME="$(sed -E 's/_*$//' <<< "$NAME")"
   NAME="$(tr '[:upper:]' '[:lower:]' <<< "$NAME")" # all lower case
   echo "[add_modpack][INFO] URL=$URL"
@@ -139,6 +152,7 @@ function getArgumentFromString() {
   elif [ "$MODE" = "FTB" ]; then
     ./"$FILE" --auto
   fi
+
 
   ## find mc/forge version
   MC_VERSION=""
@@ -219,20 +233,24 @@ function getArgumentFromString() {
 
 
   ## preprocessor, try to remove variables
-  for exe in $(find ./* -maxdepth 0 -iname "*.sh" ) $(find ./* -maxdepth 0 -iname "*.bat" ); do
-    "$VERBOSE" && echo "[add_modpack][DEBUG] checking $exe"
-    for var in $(grep -Po '((?<!\\)\$[a-zA-Z0-9_]+|(?<!\\)\$\{[^}]+\}|(?<!%)%[a-zA-Z0-9_]+%)' "$exe" | sort | uniq); do
+  for config in $(getConfigFiles); do
+    echo "[add_modpack][DEBUG] checking $config"
+    for var in $(grep -Po '((?<!\\)\$[a-zA-Z0-9_]+|(?<!\\)\$\{[^}]+\}|(?<!%)%[a-zA-Z0-9_]+%)' "$config" | sort | uniq); do
       "$VERBOSE" && echo -e '\n\n\n'
       # shellcheck disable=SC2016
       s_var="$(tr -d '${}%' <<< "$var")"
       "$VERBOSE" && echo "[add_modpack][DEBUG] resolving $var / $s_var"
+
+      # remove e.g. ${var:0:1}
+      s_var="$(sed -E 's/^([a-zA-Z0-9_]+).*/\1/' <<< "$s_var")"
       replace="$(resolveVariable "$s_var")"
+
       if [ -n "$replace" ]; then
         # sanitize
         var="${var//\//\\\/}" # sed escape /
         replace="${replace//\//\\\/}" # sed escape /
         "$VERBOSE" && echo "[add_modpack][DEBUG] variable: $var -> $replace"
-        sed -i "s/$var/$replace/g" "$exe"
+        sed -i "s/$var/$replace/g" "$config"
       else
         echo "[add_modpack][WARNING] variable: $var unresolved"
       fi
@@ -242,7 +260,7 @@ function getArgumentFromString() {
 
   # extract JVM args
   JAVA_CALL=""
-  for exe in $(find ./* -maxdepth 0 -iname "*.sh" ) $(find ./* -maxdepth 0 -iname "*.bat" ); do
+  for exe in $(getConfigFiles); do
     "$VERBOSE" && echo -en "\n\n\n"
     "$VERBOSE" && echo "[add_modpack][DEBUG] checking $exe"
 
@@ -334,27 +352,27 @@ function getArgumentFromString() {
   ###################
   # generating output
   ###################
-
+  #8jre-alpine-hotspot
   echo "[add_modpack][INFO] generating files"
   {
-    echo 'ARG imageBase="8jre-alpine-hotspot"'
-    echo 'ARG imageSuffix=""'
+    echo 'ARG imageBase='8jre-alpine-hotspot''
+    echo "ARG imageSuffix=''"
     echo ''
     # shellcheck disable=SC2016
     echo 'FROM "jusito/docker-ftb-alpine:$imageBase$imageSuffix"'
     echo ''
     if [ -n "$ROOT_IN_MODPACK_ZIP" ]; then
-      echo "ENV	ROOT_IN_MODPACK_ZIP=\"$ROOT_IN_MODPACK_ZIP\" \\"
-      echo "	MINECRAFT_VERSION=\"$MC_VERSION\" \\"
+      echo "ENV	ROOT_IN_MODPACK_ZIP='$ROOT_IN_MODPACK_ZIP' \\"
+      echo "	MINECRAFT_VERSION='$MC_VERSION' \\"
     elif [ "$MODE" = "FTB" ]; then
-      echo "ENV	MY_FILE=\"$FILE\" \\"
-      echo "	MINECRAFT_VERSION=\"$MC_VERSION\" \\"
+      echo "ENV	MY_FILE='$FILE' \\"
+      echo "	MINECRAFT_VERSION='$MC_VERSION' \\"
     else
-      echo "ENV	MINECRAFT_VERSION=\"$MC_VERSION\" \\"
+      echo "ENV	MINECRAFT_VERSION='$MC_VERSION' \\"
     fi
-    printf "%s" "	FORGE_VERSION=\"$FORGE_VERSION\" "
+    printf "%s" "	FORGE_VERSION='$FORGE_VERSION' "
     if [ -n "$JAVA_CALL" ]; then
-      printf "\\\\\n	%s" "JAVA_PARAMETERS=\"$JAVA_CALL\""
+      printf "\\\\\n	%s" "JAVA_PARAMETERS='$JAVA_CALL'"
     fi
 
     if [ "${#SERVER_PROPERTIES_MINIMAL[@]}" -gt "0" ]; then
@@ -364,7 +382,7 @@ function getArgumentFromString() {
     #for env in "${SERVER_PROPERTIES_CUSTOM[@]}"; do
     #done
     for property_line in "${SERVER_PROPERTIES_MINIMAL[@]}"; do
-        printf "\\\\\n %s"  "	$(propertyLineToDocker "${property_line//=*/}" "${property_line//*=/}" "=" "\"")"
+        printf " \\\\\n %s" "	$(propertyLineToDocker "${property_line//=*/}" "${property_line//*=/}" "=" "'")"
     done
     echo ''
     echo ''
@@ -375,7 +393,7 @@ function getArgumentFromString() {
       echo 'services:'
       echo "  $NAME:"
       echo "    image: jusito/docker-ftb-alpine:8jre-alpine-hotspot"
-      echo "    command: [\"$URL\", \"$MD5\"]"
+      echo "    command: ['$URL', '$MD5']"
       echo "    ports:"
       echo "      - 25565:25565"
       echo "    environment:"

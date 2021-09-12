@@ -1,7 +1,7 @@
 services:
-  mnm_1.6.0_normal_serverpack:
+  mineshaftsnmonsters_normal_serverpack:
     image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
-    command: ["https://media.forgecdn.net/files/3453/327/MnM+1.6.0+Normal+Serverpack.zip", "86f006b062aa9740b98670f738acb630"]
+    command: ['https://media.forgecdn.net/files/3455/962/MineshaftsnMonsters++(Normal_Serverpack).zip', '78d1e616daf044b8d6b32a93077be420']
     ports:
       - 25565:25565
     environment:
@@ -12,7 +12,7 @@ services:
       enable_command_block: 'true'
       level_type: 'biomesoplenty'
     volumes:
-      - mnm_1.6.0_normal_serverpack:/home/docker:rw
+      - mineshaftsnmonsters_normal_serverpack:/home/docker:rw
 
 volumes:
-  mnm_1.6.0_normal_serverpack:
+  mineshaftsnmonsters_normal_serverpack:
