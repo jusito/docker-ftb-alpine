@@ -7,7 +7,7 @@ services:
     environment:
       MY_FILE: 'serverinstall_4_153'
       MINECRAFT_VERSION: '1.12.2'
-      FORGE_VERSION: '14.23.5.2847'
+      FORGE_VERSION: '14.23.5.2855'
       JAVA_PARAMETERS: '-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -Xmx6122M -Xms4096M'
       ADMIN_NAME: ''
     volumes:

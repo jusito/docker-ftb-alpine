@@ -3,8 +3,8 @@ ARG imageSuffix=''
 
 FROM "jusito/docker-ftb-alpine:$imageBase$imageSuffix"
 
-ENV	MINECRAFT_VERSION='ERROR_FILL_MANUALLY' \
-	FORGE_VERSION='ERROR_FILL_MANUALLY' \
+ENV	MINECRAFT_VERSION='1.12.2' \
+	FORGE_VERSION='14.23.5.2855' \
 	JAVA_PARAMETERS='-Xmx5G'\
 	 \
  	allow_flight='true' \

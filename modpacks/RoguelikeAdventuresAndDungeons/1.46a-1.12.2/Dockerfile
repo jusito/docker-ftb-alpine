@@ -5,7 +5,7 @@ FROM "jusito/docker-ftb-alpine:$imageBase$imageSuffix"
 
 ENV	ROOT_IN_MODPACK_ZIP="RAD-Serverpack-1.46a" \
 	MINECRAFT_VERSION="1.12.2" \
-	FORGE_VERSION="14.23.5.2854" \
+	FORGE_VERSION="14.23.5.2855" \
 	JAVA_PARAMETERS="-Xms2048m -Xmx4096m -XX:PermSize=256m"\
 	\
  	difficulty="2"\

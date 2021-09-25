@@ -5,6 +5,6 @@ FROM "jusito/docker-ftb-alpine:8jre-alpine-hotspot$imageSuffix"
 ENV MY_FILE="Server.jar" \
     MINECRAFT_VERSION="1.13.2"
 
-RUN bash /home/entrypoint.sh "https://launcher.mojang.com/v1/objects/3737db93722a9e39eeada7c27e7aca28b144ffa7/server.jar" "dc51d617728fdccac2082220aaaf7188" "true"
+RUN bash /home/entrypoint.sh "https://launcher.mojang.com/v1/objects/3737db93722a9e39eeada7c27e7aca28b144ffa7/server.jar" "dc51d617728fdccac2082220aaaf7188" "cache-only"
 
 CMD ["https://launcher.mojang.com/v1/objects/3737db93722a9e39eeada7c27e7aca28b144ffa7/server.jar", "dc51d617728fdccac2082220aaaf7188"]

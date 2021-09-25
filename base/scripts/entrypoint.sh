@@ -36,14 +36,14 @@ download() {
 	md5="$3"
 	skip="false"
 	cache="/home/${MY_FILE}"
-	
+
 	# check if file already exists
 	if [ -e "${cache}" ]; then
 		echo "[entrypoint][INFO] found existing file ${cache}"
-		
+
 		# check md5
 		md5current="$(md5sum "/home/$target" | grep -Eo -e '^\S+')"
-		if [ "$md5current" = "$md5" ]; then 
+		if [ "$md5current" = "$md5" ]; then
 			md5Matches="true"
 		else
 			md5Matches="false"
@@ -54,12 +54,12 @@ download() {
 			echo "[entrypoint][INFO] force reload activated"
 			rm "$cache"
 			skip="false"
-			
+
 		# check if md5 matches
 		elif [ "$md5Matches" = "true" ]; then
 			echo "[entrypoint][INFO] found existing file, no redownload: $md5"
 			skip="true"
-			
+
 		# if md5 doesn't match
 		else
 			echo "[entrypoint][WARN] file doesn't match md5, redownloading: $md5"
@@ -69,14 +69,14 @@ download() {
 	else
 		echo "[entrypoint][INFO] found no cached download"
 	fi
-	
+
 	if [ "$skip" = "false" ]; then
 		echo "[entrypoint][INFO] downloading \"$source\""
 		wget -O "$target" "$source"
-		
+
 		# check md5
 		md5current="$(md5sum "$target" | grep -Eo -e '^\S+')"
-		if [ "$md5current" = "$md5" ]; then 
+		if [ "$md5current" = "$md5" ]; then
 			md5Matches="true"
 		else
 			md5Matches="false"
@@ -113,7 +113,7 @@ doBackup() {
 doRestore() {
 	file=$1
 	cd "${MY_VOLUME}"
-	
+
 	if [ -z "$file" ]; then
 		echo "[entrypoint][ERROR] can't restore empty filename"
 	elif [ ! -e "/home/$file" ]; then
@@ -124,7 +124,7 @@ doRestore() {
 }
 
 writeServerProperties() {
-	
+
 	if [ "$OVERWRITE_PROPERTIES" = "true" ]; then
 		echo "[entrypoint][INFO] OVERWRITE_PROPERTIES activated (default) overwriting properties."
 
@@ -203,7 +203,7 @@ if "$isZip"; then
 	echo "[entrypoint][INFO] server files extracted"
 
 	#move files from zip/xxx/* (volume/xxx/*) to volume/
-	if [ -n "$ROOT_IN_MODPACK_ZIP" ]; then 
+	if [ -n "$ROOT_IN_MODPACK_ZIP" ]; then
 		echo "[entrypoint][INFO] moving all files from \"real\" zip root (zip/${ROOT_IN_MODPACK_ZIP}) to volume"
 		mv -vf "${MY_VOLUME}/${ROOT_IN_MODPACK_ZIP}/"* "${MY_VOLUME}"
 		echo "[entrypoint][INFO] done"
