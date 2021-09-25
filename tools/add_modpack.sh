@@ -192,6 +192,25 @@ function getArgumentFromString() {
   if [ -z "$MC_VERSION" ]; then
     echo "[add_modpack][ERROR] couldn't get mc version"
     MC_VERSION="ERROR_FILL_MANUALLY"
+
+  # enforce recommended forge versions for older MC versions
+  # download for old forge versions are restricted and theres no good reason in my opinion to use them
+  # only used for releases older as 1 year
+  elif [ "$MC_VERSION" = "1.7.10" ] && [ "$FORGE_VERSION" != "10.13.4.1614" ]; then
+    echo "[add_modpack][WARNING] overwritten $FORGE_VERSION"
+    FORGE_VERSION="10.13.4.1614"
+  elif [ "$MC_VERSION" = "1.10.2" ] && [ "$FORGE_VERSION" != "12.18.3.2511" ]; then
+    echo "[add_modpack][WARNING] overwriting found Forge version: $FORGE_VERSION"
+    FORGE_VERSION="12.18.3.2511"
+  elif [ "$MC_VERSION" = "1.12.2" ] && [ "$FORGE_VERSION" != "14.23.5.2855" ]; then
+    echo "[add_modpack][WARNING] overwriting found Forge version: $FORGE_VERSION"
+    FORGE_VERSION="14.23.5.2855"
+  elif [ "$MC_VERSION" = "1.13.2" ] && [ "$FORGE_VERSION" != "25.0.219" ]; then
+    echo "[add_modpack][WARNING] overwriting found Forge version: $FORGE_VERSION"
+    FORGE_VERSION="25.0.219"
+  elif [ "$MC_VERSION" = "1.14.4" ] && [ "$FORGE_VERSION" != "28.2.0" ]; then
+    echo "[add_modpack][WARNING] overwriting found Forge version: $FORGE_VERSION"
+    FORGE_VERSION="28.2.0"
   fi
   if [ -z "$FORGE_VERSION" ]; then
     echo "[add_modpack][ERROR] couldn't get forge version"
