@@ -1,7 +1,7 @@
 services:
   ftb_presents_direwolf20_1.16-1.11.0:
     image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
-    command: ["https://api.modpacks.ch/public/modpack/79/2067/server/linux", "b5eda1019ba99a06a813aa14b0f0b8ac"]
+    command: ["https://api.modpacks.ch/public/modpack/79/2067/server/linux", ""]
     ports:
       - 25565:25565
     environment:

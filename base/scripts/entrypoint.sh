@@ -43,7 +43,7 @@ download() {
 
 		# check md5
 		md5current="$(md5sum "/home/$target" | grep -Eo -e '^\S+')"
-		if [ "$md5current" = "$md5" ]; then
+		if [ -z "$md5" ] || [ "$md5current" = "$md5" ]; then
 			md5Matches="true"
 		else
 			md5Matches="false"
@@ -76,7 +76,7 @@ download() {
 
 		# check md5
 		md5current="$(md5sum "$target" | grep -Eo -e '^\S+')"
-		if [ "$md5current" = "$md5" ]; then
+		if [ -z "$md5" ] || [ "$md5current" = "$md5" ]; then
 			md5Matches="true"
 		else
 			md5Matches="false"

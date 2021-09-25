@@ -1,7 +1,7 @@
 services:
   ftb_academy_1.16-1.1.0:
     image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
-    command: ["https://api.modpacks.ch/public/modpack/88/2062/server/linux", "b5eda1019ba99a06a813aa14b0f0b8ac"]
+    command: ["https://api.modpacks.ch/public/modpack/88/2062/server/linux", ""]
     ports:
       - 25565:25565
     environment:

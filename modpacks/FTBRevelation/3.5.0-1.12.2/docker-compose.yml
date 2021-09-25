@@ -1,7 +1,7 @@
 services:
   ftb_revelation-3.5.0:
     image: jusito/docker-ftb-alpine:8jre-alpine-hotspot
-    command: ["https://api.modpacks.ch/public/modpack/35/2059/server/linux", "b5eda1019ba99a06a813aa14b0f0b8ac"]
+    command: ["https://api.modpacks.ch/public/modpack/35/2059/server/linux", ""]
     ports:
       - 25565:25565
     environment:

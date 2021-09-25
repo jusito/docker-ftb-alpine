@@ -8,4 +8,4 @@ ENV	MY_FILE="serverinstall_88_2062" \
 	FORGE_VERSION="36.1.4" \
 	JAVA_PARAMETERS="-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -Xmx6000M -Xms5000M"
 
-CMD ["https://api.modpacks.ch/public/modpack/88/2062/server/linux", "b5eda1019ba99a06a813aa14b0f0b8ac"]
+CMD ["https://api.modpacks.ch/public/modpack/88/2062/server/linux", ""]

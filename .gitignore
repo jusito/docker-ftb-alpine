@@ -1,3 +1,6 @@
 /.README.md.html
 /.project
 .idea
+*.zip
+serverinstall_*_*
+ideas
