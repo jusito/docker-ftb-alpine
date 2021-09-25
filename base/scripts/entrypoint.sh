@@ -8,7 +8,7 @@ set -o errexit
 #set -o pipefail
 
 # get arguments
-cacheOnly="$3"
+cacheOnly=CHECK_STYLE="$(grep -q 'cache-only' <<< "$@" && echo "true" || echo "false")"
 set -o nounset #3 not always given
 export MY_SERVER="$1"
 export MY_MD5="$2"
@@ -48,7 +48,7 @@ download() {
 		else
 			md5Matches="false"
 		fi
-		
+
 		# check user config
 		if [ "$FORCE_DOWNLOAD" = "true" ]; then
 			echo "[entrypoint][INFO] force reload activated"
@@ -130,7 +130,7 @@ writeServerProperties() {
 
 		loadServerPropertyConfig "$MINECRAFT_VERSION"
 		readServerProperties_fromEnvironment_toVariable
-		writeServerProperties_toFile "fix-illegal"
+		writeServerProperties_toFile "server.properties"
 	else
 		echo "[entrypoint][INFO]OVERWRITE_PROPERTIES deactivated, skipping properties."
 	fi
@@ -208,7 +208,7 @@ if "$isZip"; then
 		mv -vf "${MY_VOLUME}/${ROOT_IN_MODPACK_ZIP}/"* "${MY_VOLUME}"
 		echo "[entrypoint][INFO] done"
 	fi
-	
+
 	rm -f "${MY_FILE}"
 elif "$isFTBInstaller"; then
   chmod +x "${MY_FILE}"
@@ -240,12 +240,12 @@ elif [ -n "$FORGE_VERSION" ]; then
 			echo "[entrypoint][ERROR] Couldn't download forge installer tried: $FORGE_URL and $FORGE_URL_LEGACY"
 			exit 3
 		fi
-		
+
 		if ! java -jar "${MY_VOLUME}/$FORGE_INSTALLER" --installServer; then
       echo "[entrypoint][WARN] failed online forge installation, trying offline"
       java -jar "${MY_VOLUME}/$FORGE_INSTALLER" --installServer --offline
 		fi
-		
+
 		#cleanup forge installer
 		rm -f "${MY_VOLUME}/$FORGE_INSTALLER"
 	fi
