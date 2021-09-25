@@ -63,23 +63,25 @@ for modpack in "${MODPACKS[@]}"; do
     done
 
     # set default base
-    successful_bases=()
-    mapfile -t successful_bases < <(cd "$directory" > /dev/null && find . -type f -iname "*.base" | sed -E 's/^.\///g' | sed -E 's/.base$//g' | sort -g)
-    new_default_base=""
-    # check for hotspot
-    for base_successful in "${successful_bases[@]}"; do
-      if grep -qE -e '-hotspot$' <<< "$base_successful"; then
-        new_default_base="$base_successful"
-        break
+    if "$TEST_BASES"; then
+      successful_bases=()
+      mapfile -t successful_bases < <(cd "$directory" > /dev/null && find . -type f -iname "*.base" | sed -E 's/^.\///g' | sed -E 's/.base$//g' | sort -g)
+      new_default_base=""
+      # check for hotspot
+      for base_successful in "${successful_bases[@]}"; do
+        if grep -qE -e '-hotspot$' <<< "$base_successful"; then
+          new_default_base="$base_successful"
+          break
+        fi
+      done
+      # no hotspot found (weird) take first
+      if [ -z "$new_default_base" ] && [ "${#successful_bases[@]}" -gt "0" ]; then
+        new_default_base="${successful_bases[0]}"
       fi
-    done
-    # no hotspot found (weird) take first
-    if [ -z "$new_default_base" ] && [ "${#successful_bases[@]}" -gt "0" ]; then
-      new_default_base="${successful_bases[0]}"
-    fi
-    echo "[testCaseBaseImageSupport][INFO] $name new default base image is: ${new_default_base:-"none because no run successful"}"
+      echo "[testCaseBaseImageSupport][INFO] $name new default base image is: ${new_default_base:-"none because no run successful"}"
 
-    sed -Ei "s/jusito\/docker-ftb-alpine:[^#]*/jusito\/docker-ftb-alpine:$new_default_base/g" "$directory/docker-compose.yml"
-    sed -Ei "s/imageBase=\"[^\"]*/imageBase=\"$new_default_base/g" "$directory/Dockerfile"
+      sed -Ei "s/jusito\/docker-ftb-alpine:[^#]*/jusito\/docker-ftb-alpine:$new_default_base/g" "$directory/docker-compose.yml" || true
+      sed -Ei "s/imageBase=\"[^\"]*/imageBase=\"$new_default_base/g" "$directory/Dockerfile" || true
+    fi
   fi
 done
