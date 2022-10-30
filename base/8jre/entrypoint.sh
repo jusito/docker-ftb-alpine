@@ -39,7 +39,7 @@ download() {
 		
 		# check md5
 		md5current="$(md5sum "/home/$target" | grep -Eo -e '^\S+')"
-		if [ "$md5current" = "$md5" ]; then 
+		if [ "$md5current" = "$md5" ] || [ "$md5" = "variable" ]; then 
 			md5Matches="true"
 		else
 			md5Matches="false"
@@ -72,7 +72,7 @@ download() {
 		
 		# check md5
 		md5current="$(md5sum "$target" | grep -Eo -e '^\S+')"
-		if [ "$md5current" = "$md5" ]; then 
+		if [ "$md5current" = "$md5" ] || [ "$md5" = "variable" ]; then 
 			md5Matches="true"
 		else
 			md5Matches="false"
@@ -252,13 +252,17 @@ if [ "$cacheOnly" = "true" ]; then
 	exit 0
 fi
 
-# get file ending
+# get installation method
 fileEnding=$(echo "$MY_FILE" | grep -Eo -e '[^.]+$')
+isFTBInstaller="false"; isJar="false"; isZip="false"
 if [ "$fileEnding" = "zip" ]; then
-	isZip="true"; isJar="false"
+	isZip="true"
 
 elif [ "$fileEnding" = "jar" ]; then
-	isZip="false"; isJar="true"
+	isJar="true"
+
+elif echo "$MY_FILE" | grep -Eq "^serverinstall_.*$"; then
+	isFTBInstaller="true"
 
 else
 	echo "[entrypoint][ERROR] File doesn't look like jar / zip, can't handle it"
@@ -290,10 +294,17 @@ if [ "$isZip" = "true" ]; then
 	fi
 	
 	rm -f "${MY_FILE}"
+elif "$isFTBInstaller"; then
+	chmod +x "$MY_FILE"
+	printf '\ny\ny\n' | ./serverinstall_99_2272
+
 fi
 
 # install forge (TODO currently only forge?)
-if [ -n "$FORGE_VERSION" ] ; then
+if [ "$FORGE_VERSION" = "use-shipped" ]; then
+	echo "[entrypoint][INFO] using shipped forge version"
+
+elif [ -n "$FORGE_VERSION" ] ; then
 	if [ ! -f "${MY_VOLUME}/${FORGE_JAR}" ]; then
 		#remove existing forge
 		rm -f forge-*.jar || true
@@ -345,8 +356,13 @@ trap 'stopServer' 15
 if [ -e "$SERVER_QUERY_PIPE" ]; then rm "$SERVER_QUERY_PIPE"; fi
 mkfifo "$SERVER_QUERY_PIPE"
 # run and wait #dont "$TARGET_JAR" because * in it for forge....jar and -universal.jar(v1.12.2 e.g.)
-# shellcheck disable=SC2086
-java -server $JAVA_PARAMETERS -jar $TARGET_JAR <> "$SERVER_QUERY_PIPE" &
+if "$isFTBInstaller"; then
+    # shellcheck disable=SC2086
+	java $JAVA_PARAMETERS <> "$SERVER_QUERY_PIPE" &
+else
+	# shellcheck disable=SC2086
+	java -server $JAVA_PARAMETERS -jar $TARGET_JAR <> "$SERVER_QUERY_PIPE" &
+fi
 if [ "$TEST_MODE" = "true" ]; then
 	sh /home/entrypointTestMode.sh
 	exit $?
