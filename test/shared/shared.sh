@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! which sha3sum > /dev/null 2>&1; then
+	echo "[error] sha3sum missing please install libdigest-sha3-perl"
+	exit 1
+fi
+
 export DEFAULT_TAG="Vanilla-1.17.1"
 if [ -z "$DOCKER_REPO" ]; then
 	export REPO="docker.io/jusito/docker-ftb-alpine"

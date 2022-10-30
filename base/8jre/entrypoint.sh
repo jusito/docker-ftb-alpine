@@ -8,10 +8,10 @@ set -o errexit
 #set -o pipefail
 
 # get arguments
-cacheOnly=$3
+cacheOnly="$3"
 set -o nounset #3 not always given
-export MY_SERVER=$1
-export MY_MD5=$2
+export MY_SERVER="$1"
+export MY_MD5="$2"
 
 # set local vars
 FORGE_INSTALLER="forge-${MINECRAFT_VERSION}-${FORGE_VERSION}-installer.jar"
@@ -27,9 +27,9 @@ FORGE_URL_LEGACY="https://files.minecraftforge.net/maven/net/minecraftforge/forg
 #region functions
 download() {
 	# using env $FORCE_DOWNLOAD
-	target=$1
-	source=$2
-	md5=$3
+	target="$1"
+	source="$2"
+	md5="$3"
 	skip="false"
 	cache="/home/${MY_FILE}"
 	

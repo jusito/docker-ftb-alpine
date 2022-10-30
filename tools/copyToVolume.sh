@@ -35,9 +35,9 @@ if [ "$srcType" = "path" ]; then
 	suffix="/*"
 	srcSuffix=""
 	# if only sub-files wanted
-	if test "$src" != "${src%$suffix}"; then
+	if test "$src" != "${src%"$suffix"}"; then
 		echo "[copyToVolume][INFO] found suffix \"$suffix\" for directory"
-		src="${src%$suffix}"
+		src="${src%"$suffix"}"
 		srcSuffix="$suffix"
 		srcDir=true
 		
