@@ -17,8 +17,9 @@ traceMsg() {
 }
 
 cd "${MY_VOLUME}"
-mkdir "${MY_VOLUME}/logs/" || true
+mkdir "${MY_VOLUME}/logs/" > /dev/null 2>&1 || true
 latest="${MY_VOLUME}/logs/latest.log"
+rm "$latest" > /dev/null 2>&1 || true
 touch "$latest" || true
 	
 #until not found
@@ -51,7 +52,7 @@ while [ "$running" = "true" ]; do
 	if [ "$processesRunning" -lt 1 ]; then
 		running=false
 		
-	elif [ "$logLinesServerDone" -ge 1 ]; then
+	elif grep -qFe ': Done (' "$latest"; then
 		foundLogEntry=true
 		running=false
 	
