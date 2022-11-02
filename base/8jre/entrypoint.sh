@@ -296,7 +296,7 @@ if [ "$isZip" = "true" ]; then
 	rm -f "${MY_FILE}"
 elif "$isFTBInstaller"; then
 	chmod +x "$MY_FILE"
-	printf '\ny\ny\n' | ./serverinstall_99_2272
+	printf '\ny\ny\n' | ./"$MY_FILE"
 
 fi
 
