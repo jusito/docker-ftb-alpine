@@ -32,7 +32,6 @@ There are two different base images which provides different java virtual machin
 * [DungeonsDragonsAndSpaceShuttles MC 1.12.2](https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles) `DungeonsDragonsAndSpaceShuttles-8.0r1-1.12.2`
 
  ### other
-* [FTB Infinity Evolved MC 1.7.10](https://www.feed-the-beast.com/projects/ftb-infinity-evolved) `FTBInfinity-3.1.0-1.7.10` `FTBInfinity-3.1.0-1.7.10-openj9`
 * [FTB Continuum MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-continuum) `FTBContinuum-1.6.0-1.12.2` `FTBContinuum-1.6.0-1.12.2-openj9`
 * [FTB Presents Direwolf20 MC 1.12.2](https://www.feed-the-beast.com/projects/ftb-presents-direwolf20-1-12)  `FTBPresentsDirewolf20-2.5.0-1.12.2` `FTBPresentsDirewolf20-2.5.0-1.12.2-openj9`
 * [FTB Presents SkyFactory 3 MC 1.10.2](https://www.feed-the-beast.com/projects/ftb-presents-skyfactory-3)  `FTBPresentsSkyfactory3-3.0.21-1.10.2` `FTBPresentsSkyfactory3-3.0.21-1.10.2-openj9`

@@ -12,8 +12,8 @@ bash test/testCaseStyle.sh
 bash test/standard/testBuild.bases.sh
 
 bash test/testCaseQuick.sh "$DEFAULT_TAG" "skipStyle" "skipBase"
-bash test/testCaseQuick.sh "FTBInfinity-3.1.0-1.7.10" "skipStyle" "skipBase"
 bash test/testCaseQuick.sh "FTBPresentsSkyfactory3-3.0.15-1.10.2" "skipStyle" "skipBase"
 bash test/testCaseQuick.sh "FTBRevelation-3.0.1-1.12.2" "skipStyle" "skipBase"
+bash test/testCaseQuick.sh "FTBInferno-1.1.1-1.18.2" "skipStyle" "skipBase"
 
 echo "[testCaseMedium] successful!"
