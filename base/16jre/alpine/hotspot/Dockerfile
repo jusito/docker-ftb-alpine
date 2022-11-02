@@ -12,15 +12,15 @@ ENV MY_GROUP_ID=10000 \
 	MY_MD5="" \
 	SERVER_QUERY_PIPE="/home/query.pipe" \
 	\
-# for CI needed
+	# for CI needed
 	TEST_MODE="" \
 	STARTUP_TIMEOUT=600 \
 	\
-# changeable by user
+	# changeable by user
 	HEALTH_URL="127.0.0.1" \
 	HEALTH_PORT="" \
 	FORCE_DOWNLOAD="false" \
-	JAVA_PARAMETERS="-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+UseCGroupMemoryLimitForHeap" \
+	JAVA_PARAMETERS="-Xms4G -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+UseStringDeduplication" \
 	OVERWRITE_PROPERTIES="true" \
 	ADMIN_NAME="" \
 	DEBUGGING=false \
@@ -30,7 +30,7 @@ ENV MY_GROUP_ID=10000 \
 	CLEANUP_PATHS="mods config scripts structures libraries resources" \
 	PERSISTENT_PATHS="banned-ips.json banned-players.json config.sh ops.json server.properties usercache.json usernamecache.json whitelist.json" \
 	\
-# server.properties
+	# server.properties
 	IGNORE_PROPERTY_ERRORS=false \
 	allow_flight=false \
 	allow_nether=true \
@@ -79,21 +79,21 @@ ENV MY_GROUP_ID=10000 \
 	sync_chunk_writes=true \
 	view_distance=10 \
 	white_list=false
-		
+
 COPY ["base/8jre/entrypoint.sh", "base/8jre/checkHealth.sh", "base/8jre/entrypointTestMode.sh", "base/8jre/addOp.sh", "base/8jre/serverQuery.sh", "/home/" ]
 
 RUN apk update && \
 	apk add --no-cache ca-certificates && \
-# create user
+	# create user
 	addgroup -g "${MY_GROUP_ID}" "${MY_NAME}" && \
 	adduser -h "${MY_HOME}" -g "" -s "/bin/false" -G "${MY_NAME}" -D -u "${MY_USER_ID}" "${MY_NAME}" && \
-# add permissions to all in /home
+	# add permissions to all in /home
 	chown -R "${MY_NAME}:${MY_NAME}" "/home" && \
 	chmod -R u=rwx,go= "/home" && \
-# remove temp files
+	# remove temp files
 	apk del --quiet --no-cache --progress --purge && \
 	rm -rf /var/cache/apk/* && \
-# create symlinks for easy usage
+	# create symlinks for easy usage
 	ln -s "/home/serverQuery.sh" "/usr/local/bin/query" && \
 	ln -s "/home/addOp.sh" "/usr/local/bin/addop"
 
@@ -107,8 +107,8 @@ USER "${MY_USER_ID}:${MY_GROUP_ID}"
 # check integrity of checkHealth.sh
 # execute sh
 HEALTHCHECK --interval=10s --timeout=610s CMD \
- sha3sum "/home/checkHealth.sh" | grep -Eq '^54492d1bcb582c0247fa8f8fafa9d2d0bfe04c837e978d2f99d645e0\s' && \
- sh /home/checkHealth.sh 
+	sha3sum "/home/checkHealth.sh" | grep -Eq '^54492d1bcb582c0247fa8f8fafa9d2d0bfe04c837e978d2f99d645e0\s' && \
+	sh /home/checkHealth.sh 
 
 LABEL version="2.0.0" \
 	maintainer="docker@jusito.de"
