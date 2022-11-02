@@ -1,27 +1,25 @@
 #!/bin/bash
 
+set -euo pipefail
+
 if ! which sha3sum > /dev/null 2>&1; then
 	echo "[error] sha3sum missing please install libdigest-sha3-perl"
 	exit 1
 fi
 
 export DEFAULT_TAG="Vanilla-1.17.1"
-if [ -z "$DOCKER_REPO" ]; then
+if [ -z "${DOCKER_REPO:-}" ]; then
 	export REPO="docker.io/jusito/docker-ftb-alpine"
 else
 	export REPO="$DOCKER_REPO"
 fi
 
 export TEST_CONTAINER="JusitoTesting"
-if [ "${DEBUGGING}" = "true" ]; then
+if [ "${DEBUGGING:-}" = "true" ]; then
 	set -o xtrace
 else
 	export DEBUGGING=false
 fi
-
-set -o errexit
-set -o nounset
-set -o pipefail
 
 function loadBaseImages() {
 	if cd "base"; then

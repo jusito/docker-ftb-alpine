@@ -1,43 +1,83 @@
 #!/bin/bash
 
-if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
-# shellcheck disable=SC1091
-. test/shared/shared.sh
+set -euxo pipefail
 
-echo "[testCaseQuick] starting..."
-set +o nounset
-if [ -n "$1" ]; then
-	IMAGE_TAG="$1"
-else
-	IMAGE_TAG="$DEFAULT_TAG"
-fi
-set -o nounset
-echo "[testCaseQuick] tag=${IMAGE_TAG}"
+(
+	cd "$(dirname "$0")/.."
 
-set +o nounset
-if [ "$2" != "skipStyle" ]; then
-	bash test/testCaseStyle.sh
-fi
-if [ "$3" != "skipBase" ]; then
-	echo "[testCaseQuick] build bases"
-	bash test/standard/testBuild.bases.sh
-fi
-set -o nounset
+	# shellcheck disable=SC1091
+	. test/shared/shared.sh
+	
+	IMAGE="$DEFAULT_TAG"
+	STYLE="true"
+	HEALTH="false"
+	ADD_OP="false"
+	BUILD_BASE="true"
+	while [ $# -ge 1 ]; do
+		key="$1"
+		shift
 
+		case "$key" in
+			-h|--help)
+				echo "[help][multiple] testing every feature of specified server"
+				echo "[help][multiple] full.sh [option] [server]"
+				echo "[help][multiple] "
+				echo "[help][multiple] options:"
+				echo "[help][multiple] -a --all        enable all checks"
+				echo "[help][multiple] -h --health     enable health check testing"
+				echo "[help][multiple] -ns --no-style  disable style check"
+				echo "[help][multiple] -op --add-op    enable add op feature testing"
+				exit 0;;
+			-a|--all)
+				HEALTH="true"
+				ADD_OP="true";;
+			-ns|--no-style)
+				STYLE="true";;
+			*)
+				if [ "$IMAGE" = "$DEFAULT_TAG" ]; then
+					IMAGE="$key"
+					echo "[info][multiple] using image $IMAGE"
+					
+				else
+					echo "[error][multiple] image=\"$IMAGE\" but got additional image name I can't handle \"$key\""
+					exit 1
+				fi
+				;;
+		esac
+	done
 
-echo "[testCaseQuick][INFO] build modpacks/${IMAGE_TAG}"
-docker rmi "${REPO}:${IMAGE_TAG}" || true
-bash test/standard/testBuild.sh "${IMAGE_TAG}" "$(echo "${IMAGE_TAG}/." | sed 's/-/\//')" "modpacks"
-echo "[testCaseQuick][INFO] running ${IMAGE_TAG}"
-bash test/standard/testRun.sh "${IMAGE_TAG}"
-docker stop "${TEST_CONTAINER}" || true
-docker rm "${TEST_CONTAINER}" || true
+	if "$STYLE"; then
+		bash test/testCaseStyle.sh
+	fi
 
-set +o nounset
-if [ "$4" != "skipFeatures" ]; then
-	bash test/features/testHealth.sh "$IMAGE_TAG"
-	bash test/features/testAddOp.sh "$IMAGE_TAG"
-fi
-set -o nounset
+	if "$BUILD_BASE"; then
+		bash test/standard/testBuild.bases.sh
+	fi
 
-echo "[testCaseQuick] tag=${IMAGE_TAG} successful!"
+	echo "[testCaseQuick][INFO] build modpacks/${IMAGE}"
+	docker rmi "${REPO}:${IMAGE}" || true
+	bash test/standard/testBuild.sh "${IMAGE}" "$(echo "${IMAGE}/." | sed 's/-/\//')" "modpacks"
+	echo "[testCaseQuick][INFO] running ${IMAGE}"
+	if bash test/standard/testRun.sh "${IMAGE}"; then
+		docker stop "${TEST_CONTAINER}"
+		echo "[testCaseQuick][INFO] run is fine, try to rerun"
+		if bash test/standard/testRun.sh "${IMAGE}"; then
+			echo "[testCaseQuick][INFO] could restart server"
+		else
+			echo "[testCaseQuick][ERROR] failed to rerun"
+			docker logs -n 100 "${TEST_CONTAINER}"
+		fi
+	fi
+	docker stop "${TEST_CONTAINER}" > /dev/null 2>&1 || true
+	docker rm "${TEST_CONTAINER}" > /dev/null 2>&1  || true
+
+	if "$HEALTH"; then
+		bash test/features/testHealth.sh "${IMAGE}"
+	fi
+
+	if "$ADD_OP"; then
+		bash test/features/testAddOp.sh "${IMAGE}"
+	fi
+
+	echo "[testCaseQuick] tag=${IMAGE} successful!"
+)
