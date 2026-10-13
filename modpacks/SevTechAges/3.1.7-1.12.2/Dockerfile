@@ -15,4 +15,4 @@ ENV force_gamemode=true \
 	MINECRAFT_VERSION="1.12.2" \
 	FORGE_VERSION="14.23.5.2854"
 
-CMD ["https://media.forgecdn.net/files/3047/442/SevTech-Ages_Server_3.1.7.zip", "e1e0714ffd5b3cf84324291f4b443b8d"]
+CMD ["https://mediafilez.forgecdn.net/files/3047/442/SevTech-Ages_Server_3.1.7.zip", "e1e0714ffd5b3cf84324291f4b443b8d"]

@@ -12,4 +12,4 @@ ENV enable_command_block=true \
 	MINECRAFT_VERSION="1.12.2" \
 	FORGE_VERSION="14.23.5.2847"
 
-CMD ["https://media.forgecdn.net/files/3018/935/Eternal+(ServerPack+1.3.7.1).zip", "f1c41d2947c1d2db73defa1f6ed71e51"]
+CMD ["https://mediafilez.forgecdn.net/files/3018/935/Eternal+(ServerPack+1.3.7.1).zip", "f1c41d2947c1d2db73defa1f6ed71e51"]

@@ -12,4 +12,4 @@ ENV allow_flight=true \
 	MINECRAFT_VERSION="1.12.2" \
 	FORGE_VERSION="14.23.5.2854"
 
-CMD ["https://media.forgecdn.net/files/3012/800/SkyFactory-4_Server_4.2.2.zip", "a3a28d3947bd97db87bf3743708f22d8"]
+CMD ["https://mediafilez.forgecdn.net/files/3012/800/SkyFactory-4_Server_4.2.2.zip", "a3a28d3947bd97db87bf3743708f22d8"]

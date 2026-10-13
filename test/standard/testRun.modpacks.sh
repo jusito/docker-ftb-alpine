@@ -5,8 +5,16 @@ if [ ! -f "test/shared/shared.sh" ]; then exit 1; fi
 . test/shared/shared.sh
 echo "[testRun.modpacks][INFO] starting ..."
 
+error="false"
 for modpack in "${MODPACKS[@]}"; do
-	bash test/standard/testRun.sh "$(getImageTag "$modpack")"
+	if bash test/standard/testRun.sh "$(getImageTag "$modpack")"; then
+		error="true"
+	fi
 done
 
-echo "[testRun.modpacks][INFO] successful!"
+
+if [ "$error" = "false" ]; then
+	echo "[testRun.modpacks][INFO] successful!"
+else
+	echo "[testRun.modpacks][ERROR] failed see above!"
+fi
