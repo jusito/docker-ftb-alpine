@@ -14,4 +14,4 @@ ENV level_name="Biome Bundle" \
 	MINECRAFT_VERSION="1.12.2" \
 	FORGE_VERSION="14.23.5.2854"
 
-CMD ["https://media.forgecdn.net/files/3376/563/RAD-Serverpack-1.46a.zip", "aa81c6cbfe13c0c164f7f753b6b78987"]
+CMD ["https://mediafilez.forgecdn.net/files/3376/563/RAD-Serverpack-1.46a.zip", "aa81c6cbfe13c0c164f7f753b6b78987"]

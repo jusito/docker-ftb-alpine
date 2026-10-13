@@ -9,4 +9,4 @@ ENV allow-flight=true \
 	MINECRAFT_VERSION="1.16.5" \
 	FORGE_VERSION="36.2.2"
 
-CMD ["https://media.forgecdn.net/files/3432/276/Valhelsia+3-3.4.2a-SERVER.zip", "42c133d8c02c67d47506bc4b052cf9e0"]
+CMD ["https://mediafilez.forgecdn.net/files/3432/276/Valhelsia+3-3.4.2a-SERVER.zip", "42c133d8c02c67d47506bc4b052cf9e0"]
